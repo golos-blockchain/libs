@@ -1,0 +1,36 @@
+<html>
+<head>
+    <script src='https://unpkg.com/golos-lib-js@0.9.35/dist/golos.min.js'></script>
+</head>
+<body>
+    <div class='loading'>
+        Loading...
+    </div>
+
+    <div class='login-form' style='display: none;'>
+        <button class='login'>Login OAuth</button>
+        <button class='login-keychain'>Login KeyChain</button>
+        <button class='meta'>Try To Update @cyberfounder's Metadata Without Authorization (will fail)</button>
+    </div>
+
+    <div class='actions' style='display: none;'>
+        <span class='username'></span>
+        <button class='logout'>Logout</button>
+        <p>Allowed operations: <span class='allowed'>none</span></p>
+        <h4>Transfer (test active)</h4>
+        <form>
+            From:<br/>current account<br/>
+            To:<br/>
+            <input type='text' name='to' value='null' /><br/>
+            Amount:<br/>
+            <input type='text' name='amount' value='0.001 GOLOS' /><br/>
+        </form>
+        <button class='transfer'>Transfer</button>
+        <hr/>
+        <h4>Account metadata (test posting)</h4>
+        <button class='meta'>Update metadata for current account</button>
+    </div>
+    <script src='./jquery.js'></script>
+    <script src='./main.js'></script>
+</body>
+</html>
