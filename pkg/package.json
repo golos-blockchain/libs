@@ -1,0 +1,16 @@
+{
+  "name": "golos-lib",
+  "version": "0.8.9",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/golos-blockchain/golos-lib"
+  },
+  "files": [
+    "golos_lib_bg.wasm",
+    "golos_lib.js",
+    "golos_lib.d.ts"
+  ],
+  "browser": "golos_lib.js",
+  "types": "golos_lib.d.ts"
+}
