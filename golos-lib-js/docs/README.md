@@ -18,7 +18,7 @@
 - [UIA](./files/UIA.md)
 - [Отправка операций](./files/broadcast.md)
 - [Примеры отправки операций](./files/broadcast.md)
-- [Golos Messenger](./files/database.md)
+- [Golos Messenger](./files/msgs.md)
 - [Formatter](./files/formatter.md)
 - [Утилиты](./files/utils.md)
 
