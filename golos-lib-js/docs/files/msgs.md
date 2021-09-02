@@ -1,21 +1,21 @@
-# Private Messages
+# Личные сообщения
 
-Golos Blockchain provides instant messages subsystem, which allows users communicate with encrypted private messages. Messages are encrypting on client-side (using sender's private memo key and recipient's public memo key), sending to blockchain via `private_message_operation`, and next can be obtained from DB with `private_message` API, and decrypted on client-side (using private memo key of from/to and public memo key of another user).
+Блокчейн Golos предоставляет подсистему мгновенных сообщений, которая позволяет создать полноценный мессенджер с приватными, шифрованными сообщениями. Сообщения шифруются на стороне клиента (с использованием закрытого мемо-ключа отправителя и открытого мемо-ключа получателя), отправляются в блокчейн через `private_message_operation`, а затем могут быть получены из БД с помощью API `private_message` и расшифрованы на стороне клиента (с использованием закрытого мемо-ключа из from / to и публичный мемо-ключ другого пользователя).
 
-### Encrypt and send
+### Шифрование и отправка
 
-Messages are JSON objects. If you want they showing in Golos Messenger (in blogs, forums), you should use JSON objects with `body` field which containing string with text of message, and also, with `app` and `version` fields which are describing your client app. Also, you can add any custom fields. But if you using only `body`, we recommend you set `app` as `'golos-messenger'` and `version` as `1`.
+Сообщения - это объекты JSON. Если вы хотите, чтобы отправленные вами сообщения отображались в Golos Messenger (в блогах, на форумах), вы должны использовать объекты JSON с полем `body`, содержащим строку с текстом сообщения, а также с полями `app` и `version`, описывающими ваше приложение. Также вы можете добавлять любые ваши собственные поля. Но если вы используете только `body`, мы рекомендуем вам установить `app` - `'golos-messenger'`, а `version` - `1`.
 
-To create a message, you should use the `golos.messages.newTextMsg` function.
+Для создания объекта-сообщения используйте функцию `golos.messages.newTextMsg`.
 
-Message should correspond to the following rules:
-- `app` field should be a string with length from 1 to 16;
-- `version` field should be an integer, beginning from 1;
-- `body` should be a string.
+Сообщение должно соответствовать следующим правилам:
+- `app` должно быть строкой, длиной от 1 до 16 символов;
+- `version` должно быть целым числом, начиная с 1;
+- `body` должно быть строкой.
 
-Next, message object should be JSON-stringified, enciphered (uses SHA-512 with nonce, which is a UNIX timestamp-based unique identifier, and AES), and converted to HEX string (`encrypted_message`). You can do it easy with `golos.messages.encode` function.
+Полсе создания объекта-сообщения, следует преобразовать его в JSON-строку, зашифровать (используется SHA-512 с nonce, который является уникальным идентифиатором на основе UNIX timestamp, и затем AES), и преобразовать результат в HEX-строку (`encrypted_message`). Все это автоматически делается с помощью функции `golos.messages.encode`.
 
-Full example:
+Полный пример:
 
 ```js
 let data = golos.messages.encode('alice private memo key', 'bob public memo key', golos.messages.newTextMsg('Hello world', 'golos-messenger', 1));
@@ -36,17 +36,17 @@ golos.broadcast.customJson('alice private posting key', [], ['alice'], 'private_
 });
 ```
 
-### Edit message
+### Редактирование сообщений
 
-Messages are identifying by from+to+nonce, so when you updating message, you should encode it with same nonce as in its previous version.
+Сообщения идентифицируются с помощью from+to+nonce, поэтому при обновлении сообщения вы должны кодировать его тем же значением nonce, что и в предыдущей версии.
 
 ```js
 data = golos.messages.encode('alice private memo key', 'bob public memo key', golos.messages.newTextMsg('Goodbye world', 'golos-messenger', 1), data.nonce);
 ```
 
-Next, this data should be sent with `private_message` operation, same as in previous case, but with `update` = `true`.
+Затем эти данные должны быть отправлены с помощью операции `private_message`, как и в предыдущем случае, но с `update` = `true`.
 
-### Image messages
+### Отправка изображений
 
 Image messages, same as text messages, are JSON objects. Besides `app` and `version` fields, these messages should contain following fields:
 - `body` field, which should be a string, containing an Internet URL of the image (its full version);
@@ -55,18 +55,18 @@ Image messages, same as text messages, are JSON objects. Besides `app` and `vers
 
 You should create image messages with `golos.messages.newImageMsgAsync` and `golos.messages.newImageMsg` functions. (These functions return an image message with computed `previewWidth` and `previewHeight`).
 
-**Warning:** Golos Blockchain willn't download this image and store its content. It will just store the URL. Thefore, you should provide an URL of image, storing in some reliable image hosting, which will never delete this message.
+**Предупреждение:** изображения не скачиваются блокчейном и не хранятся в нем. Блокчейн просто сохраняет их URL-адреса. Поэтому вы должны предоставить URL-адрес изображения, хранящегося на каком-либо надежном хостинге, который никогда не удалит это изображение.
 
-**Also, it is strongly recommended to use the `https://`**. Some clients (incl. our official ones) may not support the `http://` in the Content Security Policy, they willn't show such images.
+**Также необходимо использовать `https://`**. Некоторые клиенты (в том числе наши официальные) могут не поддерживать `http://` в Политике безопасности контента, и тогда ваши изображения не будут отображаться.
 
-Full example (asynchronous, should run in `async function`):
+Пример (асинхронный, должен быть заключен в `async function`):
 
 ```js
 let msg;
 try {
     msg = await golos.messages.newImageMsgAsync('https://site.com/https-is-recommended.jpg', (progress, extra_data) => {
         console.log('Progress: %i%', progress);
-        // also, if error occured, you can get error in extra_data.error
+        // если произойдет ошибка, вы можете получить ее в поле extra_data.error
     }, 'golos-messenger', 1);
 } catch (err) {
     alert(err);
@@ -74,11 +74,11 @@ try {
 }
 if (msg) {
     let data = golos.messages.encode('alice private memo key', 'bob public memo key', msg);
-    // ...and send it same as a text message
+    // ...и отправьте, так же, как обычное текстовое сообщение
 }
 ```
 
-Full example #2 (synchronous):
+Пример #2 (синхронный):
 
 ```js
 golos.messages.newImageMsg('https://site.com/https-is-recommended.jpg', (err, msg) => {
@@ -87,17 +87,17 @@ golos.messages.newImageMsg('https://site.com/https-is-recommended.jpg', (err, ms
             console.error(err);
         } else {
             let data = golos.messages.encode('alice private memo key', 'bob public memo key', msg);
-            // ...and send it same as a text message
+            // ...и отправьте, так же, как обычное текстовое сообщение
         }
     }, (progress, extra_data) => {
         console.log('Progress: %i%', progress);
-        // also, if error occured, you can get error in extra_data.error
+        // если произойдет ошибка, вы можете получить ее в поле extra_data.error
     }, 'golos-messenger', 1);
 ```
 
-### Obtain and decrypt
+### Получение сообщений при открытии мессенджера. Расшифровка сообщений
 
-Message can be obtained with `golos.api.getThread`, each message is object with `from_memo_key`, `to_memo_key`, `nonce`, `checksum`, `encrypted_message` and another fields. Next, message can be decrypted with `golos.messages.decode` which supports batch processing (can decrypt few messages at once) and provides good performance.
+Сообщение можно получить с помощью `golos.api.getThread`, каждое сообщение является объектом с полями `from_memo_key`, `to_memo_key`, `nonce`, `checksum`, `encrypted_message` и другими полями. Затем сообщение можно расшифровать с помощью `golos.messages.decode`, который поддерживает пакетную обработку (может расшифровать несколько сообщений одновременно) и обеспечивает высокую производительность.
 
 ```js
 golos.api.getThread('alice', 'bob', {}, (err, results) => {
@@ -106,39 +106,43 @@ golos.api.getThread('alice', 'bob', {}, (err, results) => {
 });
 ```
 
-**Note:** it also validates messages to correspond to the following rules:
-- message should be a correct JSON object, with fields conforming to the next rules;
-- `app` field should be a string with length from 1 to 16;
-- `version` field should be an integer, beginning from 1;
-- `body` should be a string;
-- for image messages: `previewWidth` and `previewHeight` should be the integers, which are result of fitting an image to 600x300 px area. 
+**Примечание:** это также проверяет сообщения на соответствие следующим правилам:
+- сообщение должно быть правильным объектом JSON с полями, соответствующими следующим правилам;
+- поле `app` должно быть строкой длиной от 1 до 16;
+- поле `версия` должно быть целым числом, начиная с 1;
+- body должно быть строкой;
+- для сообщений-изображений: previewWidth и previewHeight должны быть целыми числами, которые являются результатом подгонки изображения к области 600x300 пикселей.
 
-**Note:** if message cannot be decoded, parsed as JSON and/or validated, it still adding to result, but has `message: null` (if cannot be parsed as JSON, or validated), and `raw_message: null` (if cannot be decoded at all). Such behaviour allows client to mark this message as read, but not display it to user. If you want to change this behaviour, you can use `on_error` parameter in `golos.messages.decode` (see the source code for more details).
+**Примечание:** если сообщение не может быть расшифровано, распарсено как JSON и/или проверено, оно все равно добавляется к результату, но имеет `message: null` (если не может быть распарсено как JSON или проверено) и `raw_message: null` (если вообще не может быть расшифровано). Такое поведение позволяет клиенту пометить это сообщение как прочитанное в блокчейне, но не отображать его пользователю. Если вы хотите изменить это поведение, вы можете переопределить параметр `on_error` в `golos.messages.decode` (подробнее см. в коде).
 
-### Mark Messages Read & Delete Messages
+### Мгновенное получение сообщений
 
-Blockchain provides `private_mark_message` operation for marking messages as read, and `private_delete_message` to delete them.
-Each of these operations can be used by one of two cases:
-- to process 1 message: set `nonce` to message nonce,
-- to process range of few messages: set `start_date` to (1st message's create_date minus 1 sec), and `stop-date` to last message's create_date.
-Also, you can process multiple ranges of messages by combining few operations in single transaction.
+`getThread` позволяет легко и быстро получить список сообщений беседы при открытии страницы мессенджера. Однако `getThread` не годится для того, чтобы получать дальнейшие сообщения от собеседника (и других пользователей) мгновенно, без перезагрузки страницы. Это будет медленно, неудобно, к тому же, блокчейн расценит это как DDoS-атаку. Для мгновенности следует использовать [Golos Notify Service](https://github.com/golos-blockchain/notify).
 
-**Note: you should not use case with `nonce` if processing 2 or more sequential messages.**
+### Отметка сообщений прочитанными & удаление сообщеннй
 
-To make ranges, you can use `golos.messages.makeDatedGroups`, which builds such ranges by a condition, and can wrap them into real operations in-place.
+Блокчейн предоставляет операцию `private_mark_message` для пометки сообщений как прочитанных (получателем) и `private_delete_message` для их удаления (как получателем, так и отправителем).
+Каждая из этих операций может использоваться двумя способами:
+- для обработки 1 сообщения: установить `nonce` в значение nonce сообщения,
+- для обработки диапазона нескольких сообщений: установите `start_date` равным (create_date 1-го сообщения минус 1 секунда), а `stop_date` - равным `create_date` последнего сообщения.
+Кроме того, вы можете обрабатывать несколько диапазонов сообщений, объединив несколько операций в одной транзакции.
 
-It accepts decoded messages from `golos.messages.decode`.
+**Примечание: не следует отправлять множество операций с `nonce` при обработке 2 или более последовательных сообщений. Это не оптимально по нагрузке на блокчейн и интерфейс мессенджеров.**
 
-**Note: function should iterate messages from end to start.**
+Для создания диапазонов вы можете использовать `golos.messages.makeDatedGroups`, который строит такие диапазоны по условию и может превращать их в реальные операции "на лету".
+
+Он принимает декодированные сообщения от `golos.messages.decode`.
+
+**Примечание: функция должна перебирать сообщения от start к end.**
 
 ```js
 let operations = golos.messages.makeDatedGroups(messages, (message_object, idx) => {
-    return message_object.read_date.startsWith('19') && message_object.from !== 'bob'; // unread and not by bob
+    return message_object.read_date.startsWith('19') && message_object.from !== 'bob'; // непрочитанное и не от Боба
 }, (group) => {
-    const json = JSON.stringify(['private_mark_message', { // or 'private_delete_message'
+    const json = JSON.stringify(['private_mark_message', { // или 'private_delete_message'
         from: 'alice',
         to: 'bob',
-        //requester: 'bob', // add it for delete case
+        //requester: 'bob', // это нужно в случае удаления
         ...group,
     }]);
     return ['custom_json',
@@ -148,7 +152,7 @@ let operations = golos.messages.makeDatedGroups(messages, (message_object, idx) 
             json,
         }
     ];
-}, 0, messages.length); // specify right direction of iterating
+}, 0, messages.length); // в последних 2 параметрах - задается направление обхода сообщений
 
 golos.broadcast.send({
         operations,
@@ -159,53 +163,52 @@ golos.broadcast.send({
 });
 ```
 
-### Replying
+### Цитирование сообщений
 
-Starting from 0.8.3, library supports replying to messages. For user, it works as following:
-- alice sends some message to bob;
-- bob clicks this message, then clicks "Reply", and writes some reply message;
-- messenger UI should display the quote of alice message on top of the bob message.
+Начиная с версии 0.8.3, библиотека поддерживает ответы на сообщения. Для пользователя это работает следующим образом:
+- Алиса отправляет сообщение Бобу;
+- Боб нажимает на это сообщение, затем нажимает «Ответить» и пишет ответное сообщение;
+- Пользовательский интерфейс мессенджера должен отображать цитату сообщения Алисы над сообщением Боба.
 
-**Note:** also, alice can reply bob message, which already contains his reply to her message. In this case, quotes should not be nested (we are not supporting it), alice just quotes body of bob message, without re-quoting her first message quote.
+**Примечание:** также Алиса может ответить на сообщение Боба, которое уже содержит его ответ на ее сообщение. В этом случае кавычки не должны быть вложенными (мы не поддерживаем это), Алиса просто цитирует тело сообщения Боба без повторного цитирования своей первой цитаты сообщения.
 
-You can reply messages of any type (text, image and any other), and your reply can be a message of any type, too.
+Вы можете отвечать на сообщения любого типа (текстовые, изображения и любые другие), и ваш ответ также может быть сообщением любого типа.
 
-As a regular message, reply message is a JSON object, which has `app`, `version`, `body` and etc. But it also contains `quote` field. `quote` field is an object, and should contain the following fields:
-- `from` field is a nickname of "alice" (who wrote original message);
-- `nonce` field is a nonce of original message;
-- `type` field is a type of original message (for image message it should be `"image"`, and for text message it should be omitted);
-- `body` is a **truncated** text of original message. If it is image message, `body` should have length <= 2000. In any another case, it is <= 200. If it is image message and its URL is too long, `type` should be omitted, and `body` should be truncated to 200.
+Как и обычное сообщение, ответное сообщение представляет собой объект JSON, который имеет `app`, `version`, `body` и т.д. Но оно также содержит поле `quote`. Поле `quote` является объектом и должно содержать следующие поля:
+- поле `from` - это имя автора сообщения, на которое дается ответ;
+- поле nonce - это nonce этого сообщения;
+- поле `type` - это тип этого сообщения (для графического сообщения это должно быть `"image"`, а для текстового сообщения это поле должно отсутствовать);
+- `body` - **урезанный** текст исходного сообщения. Если это изображение, то body должно иметь длину <= 2000. В любом другом случае это <= 200. Если это графическое сообщение и его URL-адрес слишком длинный, `type` следует опустить, а` body` следует усечь до 200.
 
-This library provides `golos.messages.makeQuoteMsg` function, which can (and should) be used to easily construct reply messages, conforming to rules above. This function automatically truncates messages, so it works with any **valid** messages from `golos.messages.decode`.
+Эта библиотека предоставляет функцию `golos.messages.makeQuoteMsg`, которую можно (и нужно) использовать для простого создания ответных сообщений в соответствии с приведенными выше правилами. Эта функция автоматически обрезает сообщения, поэтому она работает с любыми **корректными** сообщениями, полученными `golos.messages.decode`.
 
-It can be used by 2 different approaches. You can choose any of them, which is more convenient for your architecture.
+Его можно использовать двумя разными способами. Вы можете выбрать любой из них, который удобнее для архитектуры вашего приложения.
 
-#### Approach #1: Construct your message, and add a quote to it
+#### Способ #1: Сначала создать ответное сообщение, а потом добавить к нему цитатуote to it
 
 ```js
-let msgOriginal = messages[0]; // messages is result returned from `golos.messages.decode`, with `from`, `nonce` and `message` field. It should be a valid (!) message object, otherwise makeQuoteMsg will throw
+let msgOriginal = messages[0]; // messages - это результат, возвращенный из `golos.messages.decode`, с полями `from`, `nonce` и `message`. Это должно быть корректное (!) сообщение, иначе makeQuoteMsg выбросит исключением
 
-let msg = golos.messages.newTextMsg('Bob!'); // let! not const, because makeQuoteMsg changes it
+let msg = golos.messages.newTextMsg('Bob!'); // let! не const, поскольку makeQuoteMsg изменяет сообщение - добавляет цитату
 golos.messages.makeQuoteMsg(msg, msgOriginal);
-// now encode msg as usually, and send it
+// и теперь вызываем encode для msg, и отправляем. Здесь все как с обычным сообщением
 ```
 
-#### Approach #2: Pre-construct quote, and then construct your message with quote
+#### Способ #2: Сначала создать цитату, а потом уже к ней сообщение, которое на эту цитату отвечает
 
 ```js
 let msgOriginal = messages[0];
 let quote = golos.messages.makeQuoteMsg({}, msgOriginal);
 ...
-let msg = golos.messages.newTextMsg('Bob!'); // let! not const, because we will add quote here
-msg = {...msg, ...quote}; // add quote to message
-// now encode msg as usually, and send it
+let msg = golos.messages.newTextMsg('Bob!'); // let! не const, поскольку мы добавим сюда цитату
+msg = {...msg, ...quote}; // добавляем цитату
+// и теперь вызываем encode для msg, и отправляем. Здесь все как с обычным сообщением
 ```
 
-#### Obtaining messages with quotes
+#### Отображение сообщений с цитатами
 
-`golos.messages.decode` supports messages with quotes. Each such message has `quote` field in its `message` field. But, if `quote` of message is wrong (message composed with some wrong UI, which don't uses `makeQuoteMsg`, and composes quotes wrong), **the whole message object will be invalid**, and `message` field will be `null`.
+`golos.messages.decode` поддерживает сообщения с цитатами. Каждое такое сообщение имеет поле `quote` в своем поле `сообщение`. Но, если `quote` сообщения неверна (сообщение составлено с некорректным пользовательским интерфейсом, который не использует `makeQuoteMsg` и неправильно составляет цитаты), **весь объект сообщения будет считаться некорректным**, то есть поле `message` будет `null`.
 
+#### Редактирование сообщений с цитатами
 
-#### Editing messages with quotes
-
-To edit a message with quote, you should re-construct it with `newTextMsg`/`newImageMsg`/..., add the `quote` field (just get it from existing decoded message, not re-construct), and encode+send it as usually (see "Edit message" chapter).
+Чтобы отредактировать сообщение с цитатой, вы должны заново выстроить его с помощью `newTextMsg` /` newImageMsg` / ..., добавить поле `quote` (просто взять его из существующего декодированного сообщения) и зашифровать + отправить его как обычно (см. параграф «Редактирование сообщений»).
