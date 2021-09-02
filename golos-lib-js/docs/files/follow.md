@@ -1,12 +1,12 @@
-## Follow API
+## Подписчики
 
-### Get Followers
-```
-golos.api.getFollowers(following, startFollower, followType, limit, function(err, result) {
-  console.log(err, result);
+### Получение подписчиков
+```js
+golos.api.getFollowers(following, startFollower, followType, limit, (err, result) => {
+    console.log(err, result);
 });
 ```
-#### Example
+#### Пример
 ```js
 /**
  * getFollowers() returns subscribers
@@ -19,23 +19,23 @@ var following = 'epexa';
 var startFollower = '';
 var followType = null;
 var limit = 100;
-golos.api.getFollowers(following, startFollower, followType, limit, function(err, result) {
-  //console.log(err, result);
-  if ( ! err) {
-    result.forEach(function(item) {
-      console.log('getFollowers', item);
-    });
-  }
-  else console.error(err);
+golos.api.getFollowers(following, startFollower, followType, limit, (err, result) => {
+    //console.log(err, result);
+    if (!err) {
+        for (const item of result) {
+            console.log('getFollowers', item);
+        }
+    }
+    else console.error(err);
 });
 ```
-### Get Following
-```
-golos.api.getFollowing(follower, startFollowing, followType, limit, function(err, result) {
-  console.log(err, result);
+### Получение тех, на кого подписан
+```js
+golos.api.getFollowing(follower, startFollowing, followType, limit, (err, result) => {
+    console.log(err, result);
 });
 ```
-#### Example:
+#### Пример:
 ```js
 /**
  * getFollowing() returns subscriptions
@@ -48,34 +48,34 @@ var follower = 'epexa';
 var startFollower = '';
 var followType = null;
 var limit = 100;
-golos.api.getFollowing(follower, startFollower, followType, limit, function(err, result) {
-  //console.log(err, result);
-  if ( ! err) {
-    result.forEach(function(item) {
-      console.log('getFollowing', item);
-    });
-  }
-  else console.error(err);
+golos.api.getFollowing(follower, startFollower, followType, limit, (err, result) => {
+    //console.log(err, result);
+    if (!err) {
+        for (const item of result) {
+            console.log('getFollowing', item);
+        };
+    }
+    else console.error(err);
 });
 ```
-### Get Follow Count
-```
-golos.api.getFollowCount(account, function(err, result) {
-  console.log(err, result);
+### Получение кол-ва подписчиков и подписок
+```js
+golos.api.getFollowCount(account, (err, result) => {
+    console.log(err, result);
 });
 ```
-#### Example:
+#### Пример:
 ```js
 /**
  * getFollowCount() returns count of subscribers and subscriptions
  * @param {String} account - username of the user to return data
 */
 var account = 'epexa';
-golos.api.getFollowCount(account, function(err, result) {
-  console.log(err, result);
-  if (!err) {
-    console.log('getFollowCount', result);
-  }
-  else console.error(err);
+golos.api.getFollowCount(account, (err, result) => {
+    console.log(err, result);
+    if (!err) {
+        console.log('getFollowCount', result);
+    }
+    else console.error(err);
 });
 ```
