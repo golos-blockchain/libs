@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Golos.js</title>
+</head>
+<body>
+
+<script src="../dist/golos.min.js"></script>
+<script>
+golos.api.getConfig(function(err, response){
+  console.log(err, response);
+});
+golos.api.getAccounts(['ned', 'dan'], function(err, response){
+  console.log(err, response);
+});
+golos.api.getAccountCount(function(err, response){
+  console.log(err, response);
+});
+</script>
+
+</body>
+</html>

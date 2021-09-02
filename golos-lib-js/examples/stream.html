@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Golos.js Stream</title>
+</head>
+<body>
+
+<script src="../dist/golos.min.js"></script>
+<script>
+golos.api.streamOperations(function (err, operations) {
+  operations.forEach(function (operation) {
+    console.log(operation);
+  });
+});
+</script>
+
+</body>
+</html>
