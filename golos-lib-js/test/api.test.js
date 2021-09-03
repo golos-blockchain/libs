@@ -1,4 +1,3 @@
-require('babel-polyfill');
 import Promise from 'bluebird';
 import assert from 'assert';
 import makeStub from 'mocha-make-stub'
