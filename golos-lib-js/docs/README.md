@@ -1,6 +1,6 @@
 # Документация
 
-- [Авторизация](./files/auth.md)
+- [Авторизация и ключи](./files/auth.md)
 - [Database API](./files/database.md)
     - [Подписка на события](./files/database.md#подписка-на-события)
     - [Тэги постов](./files/database.md#тэги-постов)
