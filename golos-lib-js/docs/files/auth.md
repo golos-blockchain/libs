@@ -1,10 +1,50 @@
-# Auth
+# Авторизация и ключи
 
-### Verify
+Обычно, когда вы разрабатываете сайт или приложение, вы авторизуете пользователя на своем сервере. Причем, как правило, пользователь передает на сервер свои логин и пароль, а сервер их проверяет. Это не очень безопасно и требует дополнительной работы от вас.
+
+Поскольку БЧ Golos сам является "сервером", от вашего сервера в простом случае не требуется никаких действий. И нет, отправлять логин и пароль в Golos не нужно. Нужно просто запросить аккаунт у БЧ Golos (прямо с клиента) и проверить, соответствует ли его публичный ключ приватному ключу posting, введенному пользователем. Если соответствует, то этим приватным ключом следует подписывать все операции, отправляемые с клиента в БЧ (а сам ключ отправлять опять-таки не нужно), и они будут проходить.
+
+Пользователь сможет авторизоваться, вводя непосредственно приватный posting, или же вводя пароль, поскольку пароль дает posting и другие ключи.
+
+Для этого в библиотеке есть готовая функция `golos.auth.login`.
+
+### Вход пользователя на ваш сайт или в приложение
+```
+golos.auth.login(name, privWifOrPassword, callback);
+```
+Эта функция рекомендуется для использования в формах входа в приложениях на блокчейне Golos.
+Получает указанный аккаунт в блокчейне (используя API `getAccounts`), сравнивает каждый из ключей аккаунта с указанной строкой и возвращает объект с WIF (приватными ключами), которые предоставляет эта строка и которые следует использовать для авторизации операций. У объекта есть поля: `active`, `posting`, `owner` и `memo`. Каждое поле имеет значение `true`, если строка предоставляет эту роль, или «ложь» в противном случае. Также в нем есть поле `password`. Если предоставленная строка является паролем (а не ключом), и этот пароль предоставляет роль `posting`, то в поле `password` лежит пароль, переданный в функцию.
+#### Рекомендуемый алгоритм авторизации:
+```js
+var accountName = 'alice';
+var privWifOrPassword = '5J...'; // или 'P5J...'
+golos.auth.login(accountName, privWifOrPassword, function(err, response) {
+  console.log(response); // Object { owner: '5J...', active: null, posting: '5J...', memo: '5J...' }
+  if (response.active && !response.password) {
+    console.log('Авторизоваться не удалось! Не рекомендуется авторизовать пользователей на сайте с active ключом. Active-ключ следует вводить только непосредственно перед вызовом операций, для отправки которых он требуется, а не хранить его как сессию авторизации.');
+    return;
+  }
+  if (!response.posting) {
+    console.log('Авторизоваться не удалось! Неверный пароль (Переданная строка не является ни posting-ключом, ни паролем.)');
+    return;
+  }
+  console.log('Авторизация успешна! При отправке большинства операций, используйте этот WIF: ' + response.posting)
+});
+```
+Ваше приложение может сохранить response.posting в localStorage или document.cookie, и тем самым запомнит авторизацию пользователя, а при нажатии кнопки "Выход" должно будет удалить response.posting из localStorage.
+
+Однако не рекомендуется сохранять posting-ключ в чистом виде. Иначе разработчики вирусов изучат ваш сайт или приложение и легко напишут вирус, который будет воровать ключ, если попадет на ПК пользователя. Применяйте хоть какое-нибудь "шифрование".
+
+### Вспомогательные функции
+
+Помимо `golos.auth.login`, есть и другие функции, которые для авторизации понадобятся навряд ли, но могут быть нужны для регистрации новых пользователей и для других более редких задач, связанных с ключами.
+
+#### Проверка пароля
+Похожа на `golos.auth.login`, но не запрашивает аккаунт у БЧ, вы должны сами это сделать, извлечь из него публичные ключи и передать их в эту функцию.
 ```
 golos.auth.verify(name, password, auths);
 ```
-#### Example:
+##### Пример:
 ```js
 var username = 'epexa';
 var password = 'P5...';  // master password
@@ -16,11 +56,12 @@ var verifyResult = golos.auth.verify(username, password, auths);
 console.log('verify', verifyResult);
 ```
 
-### Generate Keys
+#### Генерация ключей
+При **регистрации нового** пользователя он придумывает пароль. Этот пароль всегда дает приватные posting-, active-, owner- и memo-ключ (их можно получить из него криптографически). А по приватному ключу можно получить публичные. Именно эти **публичные** ключи (а не приватные и не пароль) нужно передать в операцию, которая создает аккаунт в БЧ. Данная функция позволяет получить **публичные** ключи из пароля.
 ```
 golos.auth.generateKeys(name, password, roles);
 ```
-#### Example:
+##### Пример:
 ```js
 /**
  * generateKeys() generating new keys for a new account
@@ -33,11 +74,12 @@ var newKeys = golos.auth.generateKeys(name, password, ['owner', 'active', 'posti
 console.log('newKeys', newKeys);
 ```
 
-### Get Private Keys
+### Получение приватных ключей по паролю
+Аналогично `generateKeys`, но получает и публичные, и приватные ключи
 ```
 golos.auth.getPrivateKeys(name, password, roles);
 ```
-#### Example:
+##### Пример:
 ```js
 var username = 'epexa';
 var password = 'P5H...'; // master password
@@ -46,46 +88,24 @@ var keys = golos.auth.getPrivateKeys(username, password, roles);
 console.log('getPrivateKeys', keys);
 ```
 
-### Is Wif
+### Проверить, является ли строка корректным приватным ключом
+Но эта функция не проверяет, принадлежит ли ключ какому-то аккаунту. Пригодна для случаев, когда ключ нужен не для авторизации пользователя на сайте, а для каких-то других задач с криптографией.
 ```
 golos.auth.isWif(privWif);
 ```
-#### Example:
+##### Пример:
 ```js
 var privWif = '5J...';
 var resultIsWif = golos.auth.isWif(privWif);
 console.log('isWif', resultIsWif);
 ```
 
-### Login Form Validation
-```
-golos.auth.login(name, privWifOrPassword, callback);
-```
-Recommended for usage in login forms in dApps on Golos Blockchain.
-Obtains specified account (using `getAccounts` API), compares each of account keys with specified string, and returns object with WIFs (private keys) which this string provides and which should be used to authorize operations. Object has fields: `active`, `posting`, `owner`, and `memo`. Each field is `true` if string provides this role, or `false` otherwise. Also, it has field `password`. If provided string is a password (not key) and this password provides `posting` role, field `password` has password's value.
-#### Example:
-```js
-var name = 'alice';
-var privWifOrPassword = '5J...'; // or 'P5J...'
-golos.auth.login(name, privWifOrPassword, function(err, response) {
-  console.log(response); // Object { owner: '5J...', active: null, posting: '5J...', memo: '5J...' }
-  if (response.active && !response.password) {
-    console.log('Login failed! It is not recommended to authorize users with active key (or key which can be used as active), except case if it is also the password!');
-    return;
-  }
-  if (!response.posting) {
-    console.log('Login failed! Incorrect password');
-    return;
-  }
-  console.log('Login OK! To authorize most of operations, use following WIF: ' + response.posting)
-});
-```
-
-### To Wif
+### Получить приватный ключ по паролю
+Аналогично `getPrivateKeys`, но получает только приватный ключ и только один.
 ```
 golos.auth.toWif(name, password, role);
 ```
-#### Example:
+##### Пример:
 ```js
 var username = 'epexa';
 var password = 'P5H...'; // master password
@@ -94,11 +114,12 @@ var privateKey = golos.auth.toWif(username, password, role);
 console.log('toWif', privateKey);
 ```
 
-### Wif Is Valid
+### Проверить, соответствует ли приватный ключ - публичному
+Своего рода, низкоуровневый аналог функции `login`, который работает лишь с отдельным ключом.
 ```
 golos.auth.wifIsValid(privWif, pubWif);
 ```
-#### Example:
+##### Пример:
 ```js
 var privWif = '5J...'; // private key
 var pubWif = 'GLS6...'; // public key
@@ -106,18 +127,20 @@ var resultWifIsValid = golos.auth.wifIsValid(privWif, pubWif);
 console.log('wifIsValid', resultWifIsValid);
 ```
 
-### Wif To Public
+### По приватному ключу получить публичный
+...но не наоборот, естественно.
 ```
 golos.auth.wifToPublic(privWif);
 ```
-#### Example:
+##### Пример:
 ```js
 var privWif = '5J...'; // private key
 var resultWifToPublic = golos.auth.wifToPublic(privWif, pubWif);
 console.log('wifToPublic', resultWifToPublic);
 ```
 
-### Sign Transaction
+### Подписать транзакцию (а отправить потом)
+Нужно разве что в каких-то специфических случаях.
 ```
 golos.auth.signTransaction(trx, keys);
 ```
