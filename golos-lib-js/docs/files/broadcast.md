@@ -1,38 +1,38 @@
-## Broadcast API
+### Отправка операций
 
-### Broadcast Transaction
+#### Отправка транзакции
 ```
-golos.api.broadcastTransaction(trx, function(err, result) {
+golos.api.broadcastTransaction(trx, (err, result) => {
   console.log(err, result);
 });
 ```
-### Broadcast Transaction Synchronous
+#### Синхронная отправка транзакции
 ```
-golos.api.broadcastTransactionSynchronous(trx, function(err, result) {
+golos.api.broadcastTransactionSynchronous(trx, (err, result) => {
   console.log(err, result);
 });
 ```
-### Broadcast Block
+#### Отправка блока
 ```
-golos.api.broadcastBlock(b, function(err, result) {
+golos.api.broadcastBlock(b, (err, result) => {
   console.log(err, result);
 });
 ```
-### Broadcast Transaction With Callback
+#### Отправка транзакции с callback'ом
 ```
-golos.api.broadcastTransactionWithCallback(confirmationCallback, trx, function(err, result) {
+golos.api.broadcastTransactionWithCallback(confirmationCallback, trx, (err, result) => {
   console.log(err, result);
 });
 ```
-# Broadcast
+### Примеры отправки операций
 
-### Account Create
+#### Account Create
 ```
-golos.broadcast.accountCreate(wif, fee, creator, newAccountName, owner, active, posting, memoKey, jsonMetadata, function(err, result) {
-  console.log(err, result);
+golos.broadcast.accountCreate(wif, fee, creator, newAccountName, owner, active, posting, memoKey, jsonMetadata, (err, result) => {
+    console.log(err, result);
 });
 ```
-#### Example:
+##### Пример:
 ```js
 /**
  * accountCreate() new account registration
@@ -67,63 +67,63 @@ var posting = {
 };
 var memoKey = newKeys.memo;
 var jsonMetadata = '{}';
-golos.broadcast.accountCreate(wif, fee, creator, newAccountName, owner, active, posting, memoKey, jsonMetadata, function(err, result) {
-  //console.log(err, result);
-  if (!err) {
-    console.log('accountCreate', result);
-  }
-  else console.error(err);
+golos.broadcast.accountCreate(wif, fee, creator, newAccountName, owner, active, posting, memoKey, jsonMetadata, (err, result) => {
+    //console.log(err, result);
+    if (!err) {
+        console.log('accountCreate', result);
+    }
+    else console.error(err);
 });
 ```
-### Account Create With Delegation
+#### Account Create With Delegation
 ```
-golos.broadcast.accountCreateWithDelegation(wif, fee, delegation, creator, newAccountName, owner, active, posting, memoKey, jsonMetadata, extensions, function(err, result) {
-  console.log(err, result);
+golos.broadcast.accountCreateWithDelegation(wif, fee, delegation, creator, newAccountName, owner, active, posting, memoKey, jsonMetadata, extensions, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Delegate Vesting Shares
+#### Delegate Vesting Shares
 ```
-golos.broadcast.delegateVestingShares(wif, delegator, delegatee, vesting_shares, function(err, result) {
-  console.log(err, result);
+golos.broadcast.delegateVestingShares(wif, delegator, delegatee, vesting_shares, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Account Update
+#### Account Update
 ```
-golos.broadcast.accountUpdate(wif, account, owner, active, posting, memoKey, jsonMetadata, function(err, result) {
-  console.log(err, result);
+golos.broadcast.accountUpdate(wif, account, owner, active, posting, memoKey, jsonMetadata, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Account Witness Proxy
+#### Account Witness Proxy
 ```
-golos.broadcast.accountWitnessProxy(wif, account, proxy, function(err, result) {
-  console.log(err, result);
+golos.broadcast.accountWitnessProxy(wif, account, proxy, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Account Witness Vote
+#### Account Witness Vote
 ```
-golos.broadcast.accountWitnessVote(wif, account, witness, approve, function(err, result) {
-  console.log(err, result);
+golos.broadcast.accountWitnessVote(wif, account, witness, approve, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Challenge Authority
+#### Challenge Authority
 ```
-golos.broadcast.challengeAuthority(wif, challenger, challenged, requireOwner, function(err, result) {
-  console.log(err, result);
+golos.broadcast.challengeAuthority(wif, challenger, challenged, requireOwner, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Change Recovery Account
+#### Change Recovery Account
 ```
-golos.broadcast.changeRecoveryAccount(wif, accountToRecover, newRecoveryAccount, extensions, function(err, result) {
-  console.log(err, result);
+golos.broadcast.changeRecoveryAccount(wif, accountToRecover, newRecoveryAccount, extensions, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Comment
+#### Comment
 ```
-golos.broadcast.comment(wif, parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, function(err, result) {
-  console.log(err, result);
+golos.broadcast.comment(wif, parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, (err, result) => {
+    console.log(err, result);
 });
 ```
-#### Example add a post:
+##### Пример создания поста:
 ```js
 /**
  * comment() add a post
@@ -144,15 +144,15 @@ var permlink = 'test-url';
 var title = 'test';
 var body = 'test2';
 var jsonMetadata = '{}';
-golos.broadcast.comment(wif, parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, function(err, result) {
-  //console.log(err, result);
-  if (!err) {
-    console.log('comment', result);
-  }
-  else console.error(err);
+golos.broadcast.comment(wif, parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, (err, result) => {
+    //console.log(err, result);
+    if (!err) {
+        console.log('comment', result);
+    }
+    else console.error(err);
 });
 ```
-#### Example add a comment:
+##### Пример добавления комментария:
 ```js
 /**
  * comment() add a comment
@@ -173,135 +173,135 @@ var permlink = 're-' + parentAuthor + '-' + parentPermlink + '-' + Date.now(); /
 var title = '';
 var body = 'hi!';
 var jsonMetadata = '{}';
-golos.broadcast.comment(wif, parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, function(err, result) {
-  //console.log(err, result);
-  if (!err) {
-    console.log('comment', result);
-  }
-  else console.error(err);
+golos.broadcast.comment(wif, parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, (err, result) => {
+    //console.log(err, result);
+    if (!err) {
+        console.log('comment', result);
+    }
+    else console.error(err);
 });
 ```
-### Comment Options
+#### Comment Options
 ```
-golos.broadcast.commentOptions(wif, author, permlink, maxAcceptedPayout, percentGolosDollars, allowVotes, allowCurationRewards, extensions, function(err, result) {
-  console.log(err, result);
+golos.broadcast.commentOptions(wif, author, permlink, maxAcceptedPayout, percentGolosDollars, allowVotes, allowCurationRewards, extensions, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Comment Reward
+#### Comment Reward
 ```
-golos.broadcast.commentReward(wif, author, permlink, sbdPayout, vestingPayout, function(err, result) {
-  console.log(err, result);
+golos.broadcast.commentReward(wif, author, permlink, sbdPayout, vestingPayout, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Convert
+#### Convert
 ```
-golos.broadcast.convert(wif, owner, requestid, amount, function(err, result) {
-  console.log(err, result);
+golos.broadcast.convert(wif, owner, requestid, amount, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Custom
+#### Custom
 ```
-golos.broadcast.custom(wif, requiredAuths, id, data, function(err, result) {
-  console.log(err, result);
+golos.broadcast.custom(wif, requiredAuths, id, data, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Custom Binary
+#### Custom Binary
 ```
-golos.broadcast.customBinary(wif, id, data, function(err, result) {
-  console.log(err, result);
+golos.broadcast.customBinary(wif, id, data, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Custom Json
+#### Custom Json
 ```
-golos.broadcast.customJson(wif, requiredAuths, requiredPostingAuths, id, json, function(err, result) {
-  console.log(err, result);
+golos.broadcast.customJson(wif, requiredAuths, requiredPostingAuths, id, json, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Delete Comment
+#### Delete Comment
 ```
-golos.broadcast.deleteComment(wif, author, permlink, function(err, result) {
-  console.log(err, result);
+golos.broadcast.deleteComment(wif, author, permlink, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Escrow Dispute
+#### Escrow Dispute
 ```
-golos.broadcast.escrowDispute(wif, from, to, agent, who, escrowId, function(err, result) {
-  console.log(err, result);
+golos.broadcast.escrowDispute(wif, from, to, agent, who, escrowId, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Escrow Release
+#### Escrow Release
 ```
-golos.broadcast.escrowRelease(wif, from, to, agent, who, receiver, escrowId, sbdAmount, golosAmount, function(err, result) {
-  console.log(err, result);
+golos.broadcast.escrowRelease(wif, from, to, agent, who, receiver, escrowId, sbdAmount, golosAmount, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Escrow Transfer
+#### Escrow Transfer
 ```
-golos.broadcast.escrowTransfer(wif, from, to, agent, escrowId, sbdAmount, golosAmount, fee, ratificationDeadline, escrowExpiration, jsonMeta, function(err, result) {
-  console.log(err, result);
+golos.broadcast.escrowTransfer(wif, from, to, agent, escrowId, sbdAmount, golosAmount, fee, ratificationDeadline, escrowExpiration, jsonMeta, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Escrow Approve
+#### Escrow Approve
 ```
-golos.broadcast.escrowApprove(wif, from, to, agent, who, escrowId, approve, function(err, result) {
-  console.log(err, result);
+golos.broadcast.escrowApprove(wif, from, to, agent, who, escrowId, approve, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Feed Publish
+#### Feed Publish
 ```
-golos.broadcast.feedPublish(wif, publisher, exchangeRate, function(err, result) {
-  console.log(err, result);
+golos.broadcast.feedPublish(wif, publisher, exchangeRate, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Fill Convert Request
+#### Fill Convert Request
 ```
-golos.broadcast.fillConvertRequest(wif, owner, requestid, amountIn, amountOut, function(err, result) {
-  console.log(err, result);
+golos.broadcast.fillConvertRequest(wif, owner, requestid, amountIn, amountOut, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Fill Vesting Withdraw
+#### Fill Vesting Withdraw
 ```
-golos.broadcast.fillVestingWithdraw(wif, fromAccount, toAccount, withdrawn, deposited, function(err, result) {
-  console.log(err, result);
+golos.broadcast.fillVestingWithdraw(wif, fromAccount, toAccount, withdrawn, deposited, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Interest
+#### Interest
 ```
-golos.broadcast.interest(wif, owner, interest, function(err, result) {
-  console.log(err, result);
+golos.broadcast.interest(wif, owner, interest, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Prove Authority
+#### Prove Authority
 ```
-golos.broadcast.proveAuthority(wif, challenged, requireOwner, function(err, result) {
-  console.log(err, result);
+golos.broadcast.proveAuthority(wif, challenged, requireOwner, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Recover Account
+#### Recover Account
 ```
-golos.broadcast.recoverAccount(wif, accountToRecover, newOwnerAuthority, recentOwnerAuthority, extensions, function(err, result) {
-  console.log(err, result);
+golos.broadcast.recoverAccount(wif, accountToRecover, newOwnerAuthority, recentOwnerAuthority, extensions, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Request Account Recovery
+#### Request Account Recovery
 ```
-golos.broadcast.requestAccountRecovery(wif, recoveryAccount, accountToRecover, newOwnerAuthority, extensions, function(err, result) {
-  console.log(err, result);
+golos.broadcast.requestAccountRecovery(wif, recoveryAccount, accountToRecover, newOwnerAuthority, extensions, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Set Withdraw Vesting Route
+#### Set Withdraw Vesting Route
 ```
-golos.broadcast.setWithdrawVestingRoute(wif, fromAccount, toAccount, percent, autoVest, function(err, result) {
-  console.log(err, result);
+golos.broadcast.setWithdrawVestingRoute(wif, fromAccount, toAccount, percent, autoVest, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Transfer
+#### Transfer
 ```
-golos.broadcast.transfer(wif, from, to, amount, memo, function(err, result) {
-  console.log(err, result);
+golos.broadcast.transfer(wif, from, to, amount, memo, (err, result) => {
+    console.log(err, result);
 });
 ```
-#### Example:
+##### Пример:
 ```js
 /**
  * transfer() transfer golos or golos gold
@@ -316,92 +316,92 @@ var from = 'epexa';
 var to = 'melnikaite';
 var amount = '0.001 GOLOS';
 var memo = 'gift';
-golos.broadcast.transfer(wif, from, to, amount, memo, function(err, result) {
-  //console.log(err, result);
-  if (!err) {
-    console.log('transfer', result);
-  }
-  else console.error(err);
+golos.broadcast.transfer(wif, from, to, amount, memo, (err, result) => {
+    //console.log(err, result);
+    if (!err) {
+        console.log('transfer', result);
+    }
+    else console.error(err);
 });
 ```
-### Transfer To Vesting
+#### Transfer To Vesting
 ```
-golos.broadcast.transferToVesting(wif, from, to, amount, function(err, result) {
-  console.log(err, result);
+golos.broadcast.transferToVesting(wif, from, to, amount, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Vote
+#### Vote
 ```
-golos.broadcast.vote(wif, voter, author, permlink, weight, function(err, result) {
-  console.log(err, result);
+golos.broadcast.vote(wif, voter, author, permlink, weight, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Withdraw Vesting
+#### Withdraw Vesting
 ```
-golos.broadcast.withdrawVesting(wif, account, vestingShares, function(err, result) {
-  console.log(err, result);
+golos.broadcast.withdrawVesting(wif, account, vestingShares, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Witness Update
+#### Witness Update
 ```
-golos.broadcast.witnessUpdate(wif, owner, url, blockSigningKey, props, fee, function(err, result) {
-  console.log(err, result);
+golos.broadcast.witnessUpdate(wif, owner, url, blockSigningKey, props, fee, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Fill Transfer From Savings
+#### Fill Transfer From Savings
 ```
-golos.broadcast.fillTransferFromSavings(wif, from, to, amount, requestId, memo, function(err, result) {
-  console.log(err, result);
+golos.broadcast.fillTransferFromSavings(wif, from, to, amount, requestId, memo, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Transfer To Savings
+#### Transfer To Savings
 ```
-golos.broadcast.transferToSavings(wif, from, to, amount, memo, function(err, result) {
-  console.log(err, result);
+golos.broadcast.transferToSavings(wif, from, to, amount, memo, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Transfer From Savings
+#### Transfer From Savings
 ```
-golos.broadcast.transferFromSavings(wif, from, requestId, to, amount, memo, function(err, result) {
-  console.log(err, result);
+golos.broadcast.transferFromSavings(wif, from, requestId, to, amount, memo, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Cancel Transfer From Savings
+#### Cancel Transfer From Savings
 ```
-golos.broadcast.cancelTransferFromSavings(wif, from, requestId, function(err, result) {
-  console.log(err, result);
+golos.broadcast.cancelTransferFromSavings(wif, from, requestId, (err, result) => {
+    console.log(err, result);
 });
 ```
-### Transfer To Tip
+#### Transfer To Tip
 ```
-  golos.broadcast.transferToTip(
+golos.broadcast.transferToTip(
     '5JVFFWRLwz6JoP9kguuRFfytToGU6cLgBVTL9t6NB3D3BQLbUBS',
     'cyberfounder', '', '1.000 SUPER', 'Hello world!',
-    [], function(err, result) {
-  console.log(err, result);
+    [], (err, result) => {
+    console.log(err, result);
 });
 ```
-### Donate
+#### Donate
 ```
-golos.broadcast.donate(wif, 'alice', 'bob', '1.000 GOLOS', {app: 'golos-blog', version: 1, comment: 'Hello', target: {author: 'bob', permlink: 'test'}}, [], function(err, result) {
-  console.log(err, result);
+golos.broadcast.donate(wif, 'alice', 'bob', '1.000 GOLOS', {app: 'golos-blog', version: 1, comment: 'Hello', target: {author: 'bob', permlink: 'test'}}, [], (err, result) => {
+    console.log(err, result);
 });
 ```
-### Invite
+#### Invite
 ```
-  golos.broadcast.invite(
+golos.broadcast.invite(
     '5JVFFWRLwz6JoP9kguuRFfytToGU6cLgBVTL9t6NB3D3BQLbUBS',
     'cyberfounder', '11.000 SUPER', 'GLS7Pbawjjr71ybgT6L2yni3B3LXYiJqEGnuFSq1MV9cjnV24dMG3',
-    [], function(err, result) {
-  console.log(err, result);
+    [], (err, result) => {
+    console.log(err, result);
 });
 ```
-### Invite Claim
+#### Invite Claim
 ```
-  golos.broadcast.inviteClaim(
+golos.broadcast.inviteClaim(
     '5JVFFWRLwz6JoP9kguuRFfytToGU6cLgBVTL9t6NB3D3BQLbUBS',
     'cyberfounder', 'cyberfounder', '5JFZC7AtEe1wF2ce6vPAUxDeevzYkPgmtR14z9ZVgvCCtrFAaLw',
-    [], function(err, result) {
-  console.log(err, result);
+    [], (err, result) => {
+    console.log(err, result);
 });
 ```
