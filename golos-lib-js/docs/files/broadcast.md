@@ -1,25 +1,25 @@
 ### Отправка операций
 
 #### Отправка транзакции
-```
+```js
 golos.api.broadcastTransaction(trx, (err, result) => {
   console.log(err, result);
 });
 ```
 #### Синхронная отправка транзакции
-```
+```js
 golos.api.broadcastTransactionSynchronous(trx, (err, result) => {
   console.log(err, result);
 });
 ```
 #### Отправка блока
-```
+```js
 golos.api.broadcastBlock(b, (err, result) => {
   console.log(err, result);
 });
 ```
 #### Отправка транзакции с callback'ом
-```
+```js
 golos.api.broadcastTransactionWithCallback(confirmationCallback, trx, (err, result) => {
   console.log(err, result);
 });
@@ -27,7 +27,7 @@ golos.api.broadcastTransactionWithCallback(confirmationCallback, trx, (err, resu
 ### Примеры отправки операций
 
 #### Account Create
-```
+```js
 golos.broadcast.accountCreate(wif, fee, creator, newAccountName, owner, active, posting, memoKey, jsonMetadata, (err, result) => {
     console.log(err, result);
 });
@@ -76,49 +76,49 @@ golos.broadcast.accountCreate(wif, fee, creator, newAccountName, owner, active, 
 });
 ```
 #### Account Create With Delegation
-```
+```js
 golos.broadcast.accountCreateWithDelegation(wif, fee, delegation, creator, newAccountName, owner, active, posting, memoKey, jsonMetadata, extensions, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Delegate Vesting Shares
-```
+```js
 golos.broadcast.delegateVestingShares(wif, delegator, delegatee, vesting_shares, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Account Update
-```
+```js
 golos.broadcast.accountUpdate(wif, account, owner, active, posting, memoKey, jsonMetadata, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Account Witness Proxy
-```
+```js
 golos.broadcast.accountWitnessProxy(wif, account, proxy, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Account Witness Vote
-```
+```js
 golos.broadcast.accountWitnessVote(wif, account, witness, approve, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Challenge Authority
-```
+```js
 golos.broadcast.challengeAuthority(wif, challenger, challenged, requireOwner, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Change Recovery Account
-```
+```js
 golos.broadcast.changeRecoveryAccount(wif, accountToRecover, newRecoveryAccount, extensions, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Comment
-```
+```js
 golos.broadcast.comment(wif, parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, (err, result) => {
     console.log(err, result);
 });
@@ -182,121 +182,121 @@ golos.broadcast.comment(wif, parentAuthor, parentPermlink, author, permlink, tit
 });
 ```
 #### Comment Options
-```
+```js
 golos.broadcast.commentOptions(wif, author, permlink, maxAcceptedPayout, percentGolosDollars, allowVotes, allowCurationRewards, extensions, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Comment Reward
-```
+```js
 golos.broadcast.commentReward(wif, author, permlink, sbdPayout, vestingPayout, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Convert
-```
+```js
 golos.broadcast.convert(wif, owner, requestid, amount, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Custom
-```
+```js
 golos.broadcast.custom(wif, requiredAuths, id, data, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Custom Binary
-```
+```js
 golos.broadcast.customBinary(wif, id, data, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Custom Json
-```
+```js
 golos.broadcast.customJson(wif, requiredAuths, requiredPostingAuths, id, json, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Delete Comment
-```
+```js
 golos.broadcast.deleteComment(wif, author, permlink, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Escrow Dispute
-```
+```js
 golos.broadcast.escrowDispute(wif, from, to, agent, who, escrowId, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Escrow Release
-```
+```js
 golos.broadcast.escrowRelease(wif, from, to, agent, who, receiver, escrowId, sbdAmount, golosAmount, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Escrow Transfer
-```
+```js
 golos.broadcast.escrowTransfer(wif, from, to, agent, escrowId, sbdAmount, golosAmount, fee, ratificationDeadline, escrowExpiration, jsonMeta, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Escrow Approve
-```
+```js
 golos.broadcast.escrowApprove(wif, from, to, agent, who, escrowId, approve, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Feed Publish
-```
+```js
 golos.broadcast.feedPublish(wif, publisher, exchangeRate, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Fill Convert Request
-```
+```js
 golos.broadcast.fillConvertRequest(wif, owner, requestid, amountIn, amountOut, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Fill Vesting Withdraw
-```
+```js
 golos.broadcast.fillVestingWithdraw(wif, fromAccount, toAccount, withdrawn, deposited, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Interest
-```
+```js
 golos.broadcast.interest(wif, owner, interest, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Prove Authority
-```
+```js
 golos.broadcast.proveAuthority(wif, challenged, requireOwner, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Recover Account
-```
+```js
 golos.broadcast.recoverAccount(wif, accountToRecover, newOwnerAuthority, recentOwnerAuthority, extensions, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Request Account Recovery
-```
+```js
 golos.broadcast.requestAccountRecovery(wif, recoveryAccount, accountToRecover, newOwnerAuthority, extensions, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Set Withdraw Vesting Route
-```
+```js
 golos.broadcast.setWithdrawVestingRoute(wif, fromAccount, toAccount, percent, autoVest, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Transfer
-```
+```js
 golos.broadcast.transfer(wif, from, to, amount, memo, (err, result) => {
     console.log(err, result);
 });
@@ -325,55 +325,55 @@ golos.broadcast.transfer(wif, from, to, amount, memo, (err, result) => {
 });
 ```
 #### Transfer To Vesting
-```
+```js
 golos.broadcast.transferToVesting(wif, from, to, amount, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Vote
-```
+```js
 golos.broadcast.vote(wif, voter, author, permlink, weight, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Withdraw Vesting
-```
+```js
 golos.broadcast.withdrawVesting(wif, account, vestingShares, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Witness Update
-```
+```js
 golos.broadcast.witnessUpdate(wif, owner, url, blockSigningKey, props, fee, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Fill Transfer From Savings
-```
+```js
 golos.broadcast.fillTransferFromSavings(wif, from, to, amount, requestId, memo, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Transfer To Savings
-```
+```js
 golos.broadcast.transferToSavings(wif, from, to, amount, memo, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Transfer From Savings
-```
+```js
 golos.broadcast.transferFromSavings(wif, from, requestId, to, amount, memo, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Cancel Transfer From Savings
-```
+```js
 golos.broadcast.cancelTransferFromSavings(wif, from, requestId, (err, result) => {
     console.log(err, result);
 });
 ```
 #### Transfer To Tip
-```
+```js
 golos.broadcast.transferToTip(
     '5JVFFWRLwz6JoP9kguuRFfytToGU6cLgBVTL9t6NB3D3BQLbUBS',
     'cyberfounder', '', '1.000 SUPER', 'Hello world!',
@@ -382,13 +382,13 @@ golos.broadcast.transferToTip(
 });
 ```
 #### Donate
-```
+```js
 golos.broadcast.donate(wif, 'alice', 'bob', '1.000 GOLOS', {app: 'golos-blog', version: 1, comment: 'Hello', target: {author: 'bob', permlink: 'test'}}, [], (err, result) => {
     console.log(err, result);
 });
 ```
 #### Invite
-```
+```js
 golos.broadcast.invite(
     '5JVFFWRLwz6JoP9kguuRFfytToGU6cLgBVTL9t6NB3D3BQLbUBS',
     'cyberfounder', '11.000 SUPER', 'GLS7Pbawjjr71ybgT6L2yni3B3LXYiJqEGnuFSq1MV9cjnV24dMG3',
@@ -397,7 +397,7 @@ golos.broadcast.invite(
 });
 ```
 #### Invite Claim
-```
+```js
 golos.broadcast.inviteClaim(
     '5JVFFWRLwz6JoP9kguuRFfytToGU6cLgBVTL9t6NB3D3BQLbUBS',
     'cyberfounder', 'cyberfounder', '5JFZC7AtEe1wF2ce6vPAUxDeevzYkPgmtR14z9ZVgvCCtrFAaLw',
