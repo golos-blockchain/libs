@@ -1,6 +1,7 @@
-# Utils
+## Утилиты, ускоряющие разработку клиентов
 
-### Validate Username
+#### Валидация имен аккаунтов
+Возвращает строку на английском языке, а также идентификатор ошибки. Вы можете использовать идентификатор для создания локализованных сообщений об ошибках в своем приложении.
 ```js
 var nameRes = golos.utils.validateAccountName('test1234');
 console.log(nameRes.error); // => 'null'
@@ -8,12 +9,12 @@ console.log(nameRes.msg); // => ''
 
 var nameRes = golos.utils.validateAccountName('a1');
 if (nameRes.error) {
-  console.log(nameRes.error); // => 'account_name_should_be_longer'
-  console.log(nameRes.msg); // => 'Account name should be longer.'
+    console.log(nameRes.error); // => 'account_name_should_be_longer'
+    console.log(nameRes.msg); // => 'Account name should be longer.'
 }
 ```
-All possible errors:
-```
+Все возможные ошибки:
+```js
 { error: "account_name_should_not_be_empty", msg: "Account name should not be empty." }
 { error: "account_name_should_be_longer", msg: "Account name should be longer." }
 { error: "account_name_should_be_shorter", msg: "Account name should be shorter." }
@@ -24,12 +25,12 @@ All possible errors:
 { error: "each_account_segment_should_be_longer", msg: "Each account segment should be longer" }
 ```
 
-### Work With GOLOS Assets
+#### Asset для финансовых расчетов
 
-There is `golos.utils.Asset` class which allows parsing asset strings, received from blockchain (g.e. '99.999 GOLOS'), as well as constructing such strings from data entered by user. Also, it supports arithmetic and Math.* operations on asset's amount.
+В библиотеке есть класс `golos.utils.Asset`, который позволяет парсить строки с денежными суммами, полученные от блокчейна (такие, как '99.999 GOLOS'), получая при этом объект `Asset`, с которым можно проводить арифметические действия и действия из Math. И наоборот, Asset может создать такую строку из суммы, введенной пользователем, и затем отправить какую-нибудь операцию с этой строкой. Кроме того, Asset позволяет отображать суммы с заданной точностью (кол-во разрядов копеек) или вообще без копеек ('99 GOLOS'). 
 
 ```js
-let asset = golos.utils.Asset('99.999 GOLOS');  // or golos.utils.Asset(99999, 3, 'GOLOS')
+let asset = golos.utils.Asset('99.999 GOLOS');  // или golos.utils.Asset(99999, 3, 'GOLOS')
 console.log(asset.amount); // => 99999
 console.log(asset.amountFloat); // => 99.999
 console.log(asset.precision); // => 3
@@ -37,7 +38,7 @@ console.log(asset.symbol); // => 'GOLOS'
 console.log(asset.toString()); // => '99.999 GOLOS'
 console.log(asset.toString(0)); // => '99 GOLOS'
 
-// amount and amountFloat supports all arithmetic and Math.* operations
-asset.amount += 1; // it will be '100.000 GOLOS'
-asset.amountFloat -= 1; // it will be 99.000 GOLOS
+// amount и amountFloat поддерживают все арифметические и Math.* действия
+asset.amount += 1; // получится '100.000 GOLOS'
+asset.amountFloat -= 1; // получится 99.000 GOLOS
 ```
