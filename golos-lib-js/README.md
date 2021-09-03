@@ -56,14 +56,14 @@ var golos = require('golos');
 
 var wif = golos.auth.toWif(username, password, 'posting');
 golos.broadcast.vote(wif, voter, author, permlink, weight, (err, result) => {
-	  console.log(err, result);
+    console.log(err, result);
 });
 ```
 
 Получить данные об аккаунтах:
 ```js
 golos.api.getAccounts(['ned', 'dan'], (err, result) => {
-	  console.log(err, result);
+    console.log(err, result);
 });
 ```
 
