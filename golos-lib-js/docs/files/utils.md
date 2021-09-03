@@ -42,3 +42,7 @@ console.log(asset.toString(0)); // => '99 GOLOS'
 asset.amount += 1; // получится '100.000 GOLOS'
 asset.amountFloat -= 1; // получится 99.000 GOLOS
 ```
+
+#### Formatter
+
+[Formatter](./formatter.md)
