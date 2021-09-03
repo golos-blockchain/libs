@@ -20,7 +20,9 @@
 - [Примеры отправки операций](./files/broadcast.md)
 - [Golos Messenger](./files/msgs.md)
 - [Formatter](./files/formatter.md)
-- [Утилиты](./files/utils.md)
+- [Утилиты, ускоряющие разработку клиентов](./files/utils.md)
+    - [Валидация имен аккаунтов](./files/utils.md#валидация-имен-аккаунтов)
+    - [Asset для финансовых расчетов](./files/utils.md#asset-для-финансовых-расчетов)
 
 ## Установка
 ```
