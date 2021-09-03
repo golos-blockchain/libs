@@ -13,6 +13,7 @@ beforeEach(function() {
 
 afterEach(function() {
     global.sandbox.restore();
+    if (global.fakeClock) clearInterval(global.fakeClock);
 });
 
 module.exports = {
@@ -34,7 +35,7 @@ module.exports = {
 
     clockSpeed(fakeMsecs, realMsecs) {
         var clock;
-        setInterval(() => { clock.tick(fakeMsecs); }, realMsecs);
+        global.fakeClock = setInterval(() => { clock.tick(fakeMsecs); }, realMsecs);
         clock = sandbox.useFakeTimers();
     }
 }
