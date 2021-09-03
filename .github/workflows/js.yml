@@ -1,0 +1,19 @@
+name: test JS
+
+on:
+  push:
+    paths:
+      - 'golos-lib-js/**'
+      
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: npm install
+        working-directory: golos-lib-js
+      - run: npm test
+        working-directory: golos-lib-js
