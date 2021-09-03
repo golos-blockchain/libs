@@ -5,6 +5,10 @@ on:
     paths:
       - 'golos-lib-js/**'
       
+defaults:
+  run:
+    working-directory: golos-lib-js
+      
 jobs:
   test:
     runs-on: ubuntu-18.04
@@ -13,7 +17,5 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - run: npm install
-        working-directory: golos-lib-js
-      - run: npm test
-        working-directory: golos-lib-js
+      - run: yarn install
+      - run: yarn test
