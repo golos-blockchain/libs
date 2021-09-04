@@ -15,12 +15,6 @@ declare namespace wasm_bindgen {
 	*/
 	export function aes256_decrypt(key: Uint8Array, iv: Uint8Array, data: Uint8Array): Uint8Array;
 	/**
-	* @param {Uint8Array} a
-	* @param {Uint8Array} b
-	* @returns {Uint8Array}
-	*/
-	export function multiply_buffers(a: Uint8Array, b: Uint8Array): Uint8Array;
-	/**
 	*/
 	export class StreamingHandle {
 	  free(): void;
@@ -174,7 +168,6 @@ declare interface InitOutput {
   readonly __wbg_streaminghandle_free: (a: number) => void;
   readonly stream_block_number: (a: number, b: number) => number;
   readonly aes256_decrypt: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
-  readonly multiply_buffers: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hbcef8e440c0e4d5b: (a: number, b: number, c: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;

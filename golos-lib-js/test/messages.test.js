@@ -5,6 +5,7 @@ import { encode, decode, newTextMsg, newImageMsgAsync, makeQuoteMsg,
     MAX_TEXT_QUOTE_LENGTH, MAX_IMAGE_QUOTE_LENGTH } from '../src/auth/messages';
 import th from './test_helper';
 import { correctImageURL } from './mock_image';
+import { importNativeLib } from '../src/';
 var sandbox = global.sandbox;
 
 const alice = {
@@ -17,6 +18,10 @@ const bob = {
 };
 
 describe('golos.messages: encode()', function() {
+    beforeEach(async function() {
+        await importNativeLib();
+    });
+
     it('input arguments', function() {
         assert.throws(() => encode(), 'from_private_memo_key is required');
         assert.throws(() => encode(alice.memo), 'to_public_memo_key is required');

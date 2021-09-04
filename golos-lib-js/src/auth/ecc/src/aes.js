@@ -5,6 +5,7 @@ import assert from 'assert';
 import PublicKey from './key_public';
 import PrivateKey from './key_private';
 import hash from './hash';
+import { assertNativeLib, aes_decrypt, } from '../../../core';
 
 const Long = ByteBuffer.Long;
 
@@ -97,26 +98,14 @@ function crypt(private_key_or_shared_secret, public_key, nonce, message, checksu
     check = cbuf.readUint32()
 
     if (checksum) {
+        assertNativeLib('Aes.decrypt()');
         if (check !== checksum)
             throw new Error('Invalid key')
-        message = cryptoJsDecrypt(message, key, iv)
+        message = Buffer.from(aes_decrypt(key, iv, message));
     } else {
         message = cryptoJsEncrypt(message, key, iv)
     }
     return {nonce, message, checksum: check}
-}
-
-/** This method does not use a checksum, the returned data must be validated some other way.
-    @arg {string|Buffer} ciphertext - binary format
-    @return {Buffer}
-*/
-function cryptoJsDecrypt(message, key, iv) {
-    assert(message, "Missing cipher text")
-    message = toBinaryBuffer(message)
-    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
-    // decipher.setAutoPadding(true)
-    message = Buffer.concat([decipher.update(message), decipher.final()])
-    return message
 }
 
 /** This method does not use a checksum, the returned data must be validated some other way.

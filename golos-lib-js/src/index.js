@@ -7,15 +7,21 @@ const messages = require('./auth/messages');
 const config = require('./config');
 const utils = require('./utils');
 const ecc = require('./auth/ecc/');
+const { importNativeLibCtx, importNativeLib,
+    isNativeLibLoaded, assertNativeLib, } = require('./core');
 
 module.exports = {
-  api,
-  auth,
-  broadcast,
-  formatter,
-  memo,
-  messages,
-  config,
-  utils,
-  ecc
+    importNativeLibCtx,
+    importNativeLib,
+    isNativeLibLoaded,
+    assertNativeLib,
+    api,
+    auth,
+    broadcast,
+    formatter,
+    memo,
+    messages,
+    config,
+    utils,
+    ecc
 };

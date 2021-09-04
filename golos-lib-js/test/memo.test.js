@@ -1,4 +1,5 @@
 import assert from 'assert'
+import { importNativeLib } from '../src/';
 import {encode, decode} from '../src/auth/memo';
 import {PrivateKey} from '../src/auth/ecc';
 
@@ -7,6 +8,10 @@ const private_key = PrivateKey.fromSeed("")
 const public_key = private_key.toPublicKey()
 
 describe('golos.auth: memo', ()=> {
+    beforeEach(async function() {
+        await importNativeLib();
+    });
+
     it('plain text', () => {
         const plaintext1 = encode(null/*private_key*/, null/*public_key*/, 'memo')
         assert.equal(plaintext1, 'memo')

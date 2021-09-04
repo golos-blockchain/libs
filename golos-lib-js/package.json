@@ -7,7 +7,7 @@
     "test": "mocha -t 20000 --require @babel/register",
     "test-auth": "npm test -- --grep 'golos.auth'",
     "test-messages": "npm test -- --watch --grep 'golos.messages'",
-    "build": "npm run build-browser && npm run build-node",
+    "build": "node ./include_core.js && npm run build-browser && npm run build-node",
     "build-browser": "rm -rf dist && NODE_ENV=production webpack && gzip -k -f ./dist/*.js && du -h ./dist/*",
     "build-node": "mkdir -p ./lib && cp -r ./src/* ./lib/ && babel ./src --out-dir ./lib",
     "disable-test-prepublish": "npm run test && npm run build"

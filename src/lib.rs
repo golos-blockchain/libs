@@ -4,7 +4,7 @@ extern crate block_modes;
 extern crate num_bigint;
 
 use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use num_bigint::BigInt;
 use aes::Aes256;
 use block_modes::block_padding::Pkcs7;
@@ -26,7 +26,7 @@ impl _Asset {
         let symbol = amount_str.split_off(space_idx + 1);
         amount_str.pop();
 
-        let amount_float: f32 = amount_str.parse().unwrap();
+        let amount_float: f64 = amount_str.parse().unwrap();
 
         let mut precision: u32 = 0;
         let precision_idx0 = amount_str.find('.');
@@ -34,7 +34,7 @@ impl _Asset {
             precision = (amount_str.chars().count() - precision_idx) as u32 - 1u32;
         }
 
-        let amount = (amount_float * (i32::pow(10, precision) as f32)) as i64;
+        let amount = (amount_float * (i32::pow(10, precision) as f64)) as i64;
 
         _Asset{ amount, precision, symbol }
     }
@@ -212,11 +212,14 @@ type Aes256Cbc = Cbc<Aes256, Pkcs7>;
 #[wasm_bindgen]
 pub fn aes256_decrypt(key: &[u8], iv: &[u8], data: &[u8]) -> Vec<u8> {
     let mut encrypted_data = data.clone().to_owned();
-    let cipher = Aes256Cbc::new_from_slices(&key, &iv).unwrap();
-    cipher.decrypt(&mut encrypted_data).unwrap().to_vec()
+    let cipher = Aes256Cbc::new_from_slices(&key, &iv).expect_throw(
+        "Wrong key or iv"
+    );
+    cipher.decrypt(&mut encrypted_data).expect_throw(
+        "Cannot decrypt dta"
+    ).to_vec()
 }
 
-#[wasm_bindgen]
 pub fn multiply_buffers(a: &[u8], b: &[u8]) -> Vec<u8> {
     let mut ba = BigInt::from_signed_bytes_be(a);
     let bb = BigInt::from_signed_bytes_be(b);
