@@ -5,11 +5,6 @@ const {
     _Asset, aes256_decrypt,
 } = init;
 
-global.tef_str = init.tef_str;
-global.tef_arr = init.tef_arr;
-global.tef_int = init.tef_int;
-global.tef = init.tef;
-
 export class NativeLibContext {
 }
 
@@ -33,16 +28,22 @@ export async function importNativeLibCtx() {
     return new NativeLibContext();
 }
 
+let globalNativeCtx = null;
+
 export async function importNativeLib() {
-    if (global._golos_native_ctx) {
-        return global._golos_native_ctx;
+    if (globalNativeCtx) {
+        return globalNativeCtx;
     }
-    global._golos_native_ctx = await importNativeLibCtx();
-    return global._golos_native_ctx;
+    globalNativeCtx = await importNativeLibCtx();
+    return globalNativeCtx;
+}
+
+export function unloadNativeLib() {
+    globalNativeCtx = null;
 }
 
 export function isNativeLibLoaded() {
-    return !!global._golos_native_ctx;
+    return !!globalNativeCtx;
 }
 
 export function assertNativeLib(forWhat, version = '0.9.0') {

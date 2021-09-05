@@ -1,14 +1,13 @@
 import { assert } from 'chai';
 import { importNativeLib } from '../src/';
+import { unloadNativeLib } from '../src/core';
 import { Asset } from '../src/utils';
 import th from './test_helper';
 var sandbox = global.sandbox;
 
 describe('golos.utils.Asset', function() {
     beforeEach(function() {
-        if (global._golos_native_ctx) {
-            delete global._golos_native_ctx;
-        }
+        unloadNativeLib();
     });
 
     it('returns promise if core not initialized', function() {
