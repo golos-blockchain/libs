@@ -26,6 +26,10 @@ golos.api.getAccounts(['ned', 'dan'], (err, response) => {
 </script>
 ```
 
+## Загрузка модуля WebAssembly
+
+[См. здесь](./docs/files/wasm.md).
+
 ## Протоколы WebSockets и HTTP
 
 Библиотека поддерживает 2 транспортных протокола: ws/wss и http/https, для общения с нодами блокчейна Golos. Данные внутри библиотеки передаются в формате JSON-RPC.
