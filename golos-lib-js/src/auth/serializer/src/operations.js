@@ -916,6 +916,10 @@ let chain_properties_26 = new Serializer(
         invite_transfer_interval_sec: uint32,
         convert_fee_percent: uint16,
         min_golos_power_to_curate: asset,
+        worker_emission_percent: uint16,
+        vesting_of_remain_percent: uint16,
+        negrep_posting_window: uint16,
+        negrep_posting_per_window: uint16,
   }
 );
 
