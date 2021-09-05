@@ -99,7 +99,7 @@ golos.messages.newImageMsg('https://site.com/https-is-recommended.jpg', (err, ms
 
 Сообщение можно получить с помощью `golos.api.getThread`, каждое сообщение является объектом с полями `from_memo_key`, `to_memo_key`, `nonce`, `checksum`, `encrypted_message` и другими полями. Затем сообщение можно расшифровать с помощью `golos.messages.decode`, который поддерживает пакетную обработку (может расшифровать несколько сообщений одновременно) и обеспечивает высокую производительность.
 
-:electron: `golos.messages.decode` использует WebAssembly. Перед первым действием вызовите `await golos.importNativeLib()`.
+:electron: `golos.messages.decode` использует WebAssembly. Перед первым действием вызовите `await golos.importNativeLib()`. [Подробнее](./wasm.md).
 
 ```js
 await golos.importNativeLib();
