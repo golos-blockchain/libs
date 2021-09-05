@@ -28,7 +28,7 @@ golos.api.getAccounts(['ned', 'dan'], (err, response) => {
 
 ## Загрузка модуля WebAssembly
 
-[См. здесь](./docs/files/wasm.md).
+[См. здесь](https://github.com/golos-blockchain/libs/tree/master/golos-lib-js/docs/files/wasm.md).
 
 ## Протоколы WebSockets и HTTP
 
