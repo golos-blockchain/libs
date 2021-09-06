@@ -30,7 +30,7 @@ if (nameRes.error) {
 
 В библиотеке есть класс `golos.utils.Asset`, который позволяет парсить строки с денежными суммами, полученные от блокчейна (такие, как '99.999 GOLOS'), получая при этом объект `Asset`, с которым можно проводить арифметические действия и действия из Math. И наоборот, Asset может создать такую строку из суммы, введенной пользователем, и затем отправить какую-нибудь операцию с этой строкой. Кроме того, Asset позволяет отображать суммы с заданной точностью (кол-во разрядов копеек) или вообще без копеек ('99 GOLOS'). 
 
-Суммы в Asset хранятся в виде (https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/BigInt)[BigInt].
+Суммы в Asset хранятся в виде [BigInt](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/BigInt).
 
 ```js
 await golos.importNativeLib();
