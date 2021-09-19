@@ -114,7 +114,7 @@ class Golos extends EventEmitter {
 
           for (let i = startBlock; i <= currentBlock; i++) {
             const ret = callback(null, i);
-            if (ret || !running) return;
+            if (ret === true || !running) return;
           }
           startBlock = currentBlock + 1;
 
@@ -157,7 +157,7 @@ class Golos extends EventEmitter {
           res.block_num = current;
           res.timestamp_prev = new Date(new Date(res.timestamp).getTime() - 3000).toISOString().split('.')[0];
           const ret = callback(err, res);
-          if (ret) release();
+          if (ret === true) release();
         });
       }
     });
@@ -182,7 +182,7 @@ class Golos extends EventEmitter {
       if (block && block.transactions) {
         block.transactions.forEach((transaction) => {
           const ret = callback(null, transaction, block);
-          if (ret) release();
+          if (ret === true) release();
         });
       }
     });
@@ -206,7 +206,7 @@ class Golos extends EventEmitter {
 
       transaction.operations.forEach((operation) => {
         const ret = callback(null, operation, transaction, block);
-        if (ret) release();
+        if (ret === true) release();
       });
     });
 
@@ -233,7 +233,7 @@ class Golos extends EventEmitter {
         this.callReliable('getEventsInBlock', current, false, (err, res) => {
           for (const eventMeta of res) {
             const ret = callback(err, eventMeta.op, eventMeta);
-            if (ret) release();
+            if (ret === true) release();
           }
         });
       }

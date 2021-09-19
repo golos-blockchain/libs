@@ -39,6 +39,7 @@
     "bs58": "^4.0.0",
     "buffer": "^5.0.6",
     "bytebuffer": "^5.0.1",
+    "core-js": "^3.17.3",
     "create-hash": "^1.1.2",
     "create-hmac": "^1.1.4",
     "cross-env": "^5.0.0",
@@ -47,6 +48,7 @@
     "detect-node": "^2.0.3",
     "ecurve": "^1.0.5",
     "lodash": "^4.16.4",
+    "regenerator-runtime": "^0.13.9",
     "secure-random": "^1.1.1",
     "ws": "^1.1.1"
   },
@@ -75,7 +77,5 @@
     "Nilesh Suthar (https://github.com/nil1511)",
     "Pedro Tacla Yamada (https://github.com/yamadapc)"
   ],
-  "optionalDependencies": {
-    "core-js": "^3.17.2"
-  }
+  "optionalDependencies": {}
 }
