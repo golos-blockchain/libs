@@ -113,7 +113,8 @@ class Golos extends EventEmitter {
             startBlock = currentBlock;
 
           for (let i = startBlock; i <= currentBlock; i++) {
-            callback(null, i);
+            const ret = callback(null, i);
+            if (ret || !running) return;
           }
           startBlock = currentBlock + 1;
 
@@ -127,7 +128,7 @@ class Golos extends EventEmitter {
 
     update();
 
-    return () => {
+    return function () {
       running = false;
     };
   }
@@ -155,7 +156,8 @@ class Golos extends EventEmitter {
         this.callReliable('getBlock', current, (err, res) => {
           res.block_num = current;
           res.timestamp_prev = new Date(new Date(res.timestamp).getTime() - 3000).toISOString().split('.')[0];
-          callback(err, res);
+          const ret = callback(err, res);
+          if (ret) release();
         });
       }
     });
@@ -179,7 +181,8 @@ class Golos extends EventEmitter {
 
       if (block && block.transactions) {
         block.transactions.forEach((transaction) => {
-          callback(null, transaction, block);
+          const ret = callback(null, transaction, block);
+          if (ret) release();
         });
       }
     });
@@ -202,10 +205,39 @@ class Golos extends EventEmitter {
       }
 
       transaction.operations.forEach((operation) => {
-        callback(null, operation, transaction, block);
+        const ret = callback(null, operation, transaction, block);
+        if (ret) release();
       });
     });
 
+    return release;
+  }
+
+  streamEvents(options, callback) {
+    if (typeof options === 'function') {
+      callback = options;
+      options = {};
+    }
+    defaults(options, this._streamDefaults);
+    let current = '';
+    let last = '';
+    const release = this.streamBlockNumber(options, (err, id) => {
+      if (err) {
+        release();
+        callback(err);
+        return;
+      }
+      current = id;
+      if (current !== last) {
+        last = current;
+        this.callReliable('getEventsInBlock', current, false, (err, res) => {
+          for (const eventMeta of res) {
+            const ret = callback(err, eventMeta.op, eventMeta);
+            if (ret) release();
+          }
+        });
+      }
+    });
     return release;
   }
 }

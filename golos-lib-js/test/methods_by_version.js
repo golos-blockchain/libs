@@ -110,5 +110,6 @@ export const methods_0_25_3 = [
     "get_worker_requests",
     "get_worker_request_votes",
     "get_values",
-    "get_values_settings"
+    "get_values_settings",
+    "get_events_in_block"
 ]
