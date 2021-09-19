@@ -642,4 +642,9 @@ module.exports = [
     "has_default_values": true,
     "params": [`account`, `keys=${EMPTY_ARRAY}`]
   },
+  {
+    "api": "event_plugin",
+    "method": "get_events_in_block",
+    "params": ["blockNum", "onlyVirtual"]
+  }
 ]

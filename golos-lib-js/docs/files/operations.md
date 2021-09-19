@@ -1,3 +1,5 @@
+## Операции
+
 ### Отправка операций
 
 #### Отправка транзакции
@@ -24,6 +26,82 @@ golos.api.broadcastTransactionWithCallback(confirmationCallback, trx, (err, resu
   console.log(err, result);
 });
 ```
+
+### Стриминг событий от операций
+
+Чтобы мгновенно получать уведомления о большинстве операций, Golos Blockchain предоставляет [Golos Notify Service](https://github.com/golos-blockchain/golosnotify). Но если эти уведомления не подходят для ваших целей и вам требуются **все** операции, вы можете использовать стриминг событий golos-lib.
+
+**Примечание: эта функция пока что экспериментальная**, поэтому API может быть изменено в будущих версиях golos-lib.
+
+У каждой из функций стриминга есть 2 параметра - опции и обратный вызов. Параметр Опции - это объект, где поля - это опции.
+
+Опции по умолчанию:
+```js
+{
+  'mode': 'head', // 'head' для как можно более быстрого стриминга блоков, 'irreversible' для стриминга блоков по мере того, как они становятся irreversible. 
+  'start_block': 0, // Блок (в прошлом), с которого начать потоковую передачу. 0 означает начало с текущего блока.
+}
+```
+
+Каждый параметр можно не указывать, и тогда будет использоваться вариант по умолчанию. Также можно опустить весь параметр options.
+
+Чтобы **прекратить** стриминг блоков, транзакций, операций, событий - можно выполнить `return true;`. Это полезно в том случае, когда вам надо не строить микросервис, который постоянно стримит данные, а, скажем, получить лишь одну конкретную операцию или транзакцию.
+
+**golos.api.streamBlockNumber(options, callback)**
+
+```js
+golos.api.streamBlockNumber(options, (err, blockNum) => {
+  console.log(blockNum);
+});
+```
+
+**golos.api.streamBlock(options, callback)**
+
+Стримит все блоки, в том числе пустые (без операций),
+
+```js
+golos.api.streamBlock(options, (err, block) => {
+    console.log(block); // здесь та же структура, что и в golos.api.getBlock...
+    // ...но также содержит следующие дополнительные поля:
+    console.log(block.block_num);
+    console.log(block.timestamp_prev); // Дата и время в момент операции
+});
+```
+
+**golos.api.streamTransactions(options, callback)**
+
+```js
+golos.api.streamTransactions(options, (err, transaction, block) => {
+    console.log(transaction);
+    console.log(block); // Block which contains the transaction. Structure same as in streamBlock
+});
+```
+
+**golos.api.streamOperations(options, callback)**
+
+```js
+golos.api.streamOperations(options, (err, operation, transaction, block) => {
+    console.log(operation); // Массив, где элемент 0 - это имя операции, 1 - объект с ее полями
+    console.log(transaction); // Транзакция, содержащая операцию
+    console.log(block); // Блок, содержащий операцию
+});
+```
+
+**golos.api.streamEvents(options, callback)**
+
+```js
+golos.api.streamEvents(options, (err, event, eventMeta) => {
+    console.log(event); // Массив, где элемент 0 - это имя события, 1 - объект с его полями
+    console.log(eventMeta); // Данные блока и транзакции, в которой находится евент
+});
+```
+
+**Надежность**
+
+Потоковая передача построена на основе `golos.api.callReliable`, поэтому, если возникают какие-либо проблемы с получением событий (отключение сети, сбой блокчейна Golos), он будет повторять попытки до тех пор, пока не будет получен текущий блок.
+
+Кроме того, вы можете сохранить каждый `block.block_num` в своей базе данных, и если *ваша* служба выйдет из строя (сбой и т. д.), Вы можете передать его в` start_block` и получить все данные от этого блока до текущего блока.
+
 ### Примеры отправки операций
 
 #### Account Create
