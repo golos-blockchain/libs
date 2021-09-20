@@ -90,28 +90,28 @@ describe('golos.utils.Asset', function() {
         assert.equal(asset.toString(), '-123456789.123 GBG');
 
         var asset = Asset('9223372036854775.807 GBG');
-        assert.equal(asset.amount, 9223372036854775807n);
+        assert.equal(asset.amount, 9223372036854776000);
         assert.equal(asset.precision, 3);
         assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '9223372036854775.807 GBG');
+        assert.equal(asset.toString(), '9223372036854776.000 GBG');
 
         var asset = Asset('92233720368.54775808 GBG');
-        assert.equal(asset.amount, 9223372036854775807n);
+        assert.equal(asset.amount, 9223372036854776000);
         assert.equal(asset.precision, 8);
         assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '92233720368.54775807 GBG');
+        assert.equal(asset.toString(), '92233720368.54776000 GBG');
 
         var asset = Asset('-9223372036854775.808 GBG');
-        assert.equal(asset.amount, -9223372036854775808n);
+        assert.equal(asset.amount, -9223372036854776000);
         assert.equal(asset.precision, 3);
         assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '-9223372036854775.808 GBG');
+        assert.equal(asset.toString(), '-9223372036854776.000 GBG');
 
         var asset = Asset('-92233720368.54775808 GBG');
-        assert.equal(asset.amount, -9223372036854775808n);
+        assert.equal(asset.amount, -9223372036854776000);
         assert.equal(asset.precision, 8);
         assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '-92233720368.54775808 GBG');
+        assert.equal(asset.toString(), '-92233720368.54776000 GBG');
     })
 
     it('full constructor', async function() {
@@ -170,30 +170,6 @@ describe('golos.utils.Asset', function() {
         assert.equal(asset.precision, 3);
         assert.equal(asset.symbol, 'GBG');
         assert.equal(asset.toString(), '-123456789.123 GBG');
-
-        var asset = Asset(9223372036854775807n, 3, 'GBG');
-        assert.equal(asset.amount, 9223372036854775807n);
-        assert.equal(asset.precision, 3);
-        assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '9223372036854775.807 GBG');
-
-        var asset = Asset(9223372036854775807n, 8, 'GBG');
-        assert.equal(asset.amount, 9223372036854775807n);
-        assert.equal(asset.precision, 8);
-        assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '92233720368.54775807 GBG');
-
-        var asset = Asset(-9223372036854775808n, 3, 'GBG');
-        assert.equal(asset.amount, -9223372036854775808n);
-        assert.equal(asset.precision, 3);
-        assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '-9223372036854775.808 GBG');
-
-        var asset = Asset(-9223372036854775808n, 8, 'GBG');
-        assert.equal(asset.amount, -9223372036854775808n);
-        assert.equal(asset.precision, 8);
-        assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '-92233720368.54775808 GBG');
     })
 
     it('arithmetics: < > =', async function() {
@@ -235,20 +211,8 @@ describe('golos.utils.Asset', function() {
         assert.isTrue(a1.plus(a2).eq(a3));
 
         var a1 = await Asset('1.00000000 GESTS');
-        var a2 = 100000000n;
-        var a3 = Asset('2.00000000 GESTS');
-
-        assert.isTrue(a1.plus(a2).eq(a3));
-
-        var a1 = await Asset('1.00000000 GESTS');
         var a2 = 100000000;
         var a3 = Asset('2.00000000 GESTS');
-
-        assert.isTrue(a1.plus(a2).eq(a3));
-
-        var a1 = await Asset('1.00000000 GESTS');
-        var a2 = -200000000n;
-        var a3 = Asset('-1.00000000 GESTS');
 
         assert.isTrue(a1.plus(a2).eq(a3));
 

@@ -164,7 +164,7 @@ describe('golos.messages: decode()', function() {
         assert.throws(() => decode(alice.memo, bob.memo_pub), 'message_objects is required');
 
         assert.throws(() => decode('wrong key', bob.memo_pub, []), 'Non-base58 character');
-        assert.throws(() => decode(alice.memo, 'wrong key', []), 'Cannot read properties of null (reading \'toUncompressed\')');
+        assert.throws(() => decode(alice.memo, 'wrong key', []));
     })
 
     it('validation', async function() {

@@ -70,7 +70,6 @@ function wrapNative(orig) {
 export let Asset = wrapNative((amount, precision, symbol) => {
     let a = null;
     if (precision !== undefined && symbol) {
-        amount = BigInt(amount);
         a = _Asset.new(amount, precision, symbol);
     } else {
         const str = amount;
@@ -79,7 +78,7 @@ export let Asset = wrapNative((amount, precision, symbol) => {
     const wrapBinOp = function(op) {
         return function(asset2) {
             if (!(asset2 instanceof _Asset))
-                return this[`_${op}_num`](BigInt(asset2));
+                return this[`_${op}_num`](asset2);
             return this[`_${op}`](asset2);
         };
     };
