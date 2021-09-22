@@ -39,18 +39,18 @@ impl _Asset {
         _Asset{ amount, precision, symbol }
     }
 
-    pub fn new(amount: i64, precision: u32, symbol: String) -> _Asset {
-        _Asset{ amount, precision, symbol }
+    pub fn new(amount: f64, precision: u32, symbol: String) -> _Asset {
+        _Asset{ amount: amount as i64, precision, symbol }
     }
 
     #[wasm_bindgen(method, getter)]
-    pub fn amount(&self) -> i64 {
-        self.amount
+    pub fn amount(&self) -> f64 {
+        self.amount as f64
     }
 
     #[wasm_bindgen(method, setter)]
-    pub fn set_amount(&mut self, value: i64) {
-        self.amount = value
+    pub fn set_amount(&mut self, value: f64) {
+        self.amount = value as i64
     }
 
     #[wasm_bindgen(method, getter, js_name=amountFloat)]
@@ -116,32 +116,32 @@ impl _Asset {
 
     // Arithmetic +, -, *, /
 
-    pub fn _plus_num(&self, num: i64) -> _Asset {
-        self._copy(self.amount + num, self)
+    pub fn _plus_num(&self, num: f64) -> _Asset {
+        self._copy(self.amount + (num as i64), self)
     }
 
     pub fn _plus(&self, a: &_Asset) -> _Asset {
         self._copy(self.amount + a.amount, a)
     }
 
-    pub fn _minus_num(&self, num: i64) -> _Asset {
-        self._copy(self.amount - num, self)
+    pub fn _minus_num(&self, num: f64) -> _Asset {
+        self._copy(self.amount - (num as i64), self)
     }
 
     pub fn _minus(&self, a: &_Asset) -> _Asset {
         self._copy(self.amount - a.amount, a)
     }
 
-    pub fn _mul_num(&self, num: i64) -> _Asset {
-        self._copy(self.amount * num, self)
+    pub fn _mul_num(&self, num: f64) -> _Asset {
+        self._copy(self.amount * (num as i64), self)
     }
 
     pub fn _mul(&self, a: &_Asset) -> _Asset {
         self._copy(self.amount * a.amount, a)
     }
 
-    pub fn _div_num(&self, num: i64) -> _Asset {
-        self._copy(self.amount / num, self)
+    pub fn _div_num(&self, num: f64) -> _Asset {
+        self._copy(self.amount / (num as i64), self)
     }
 
     pub fn _div(&self, a: &_Asset) -> _Asset {

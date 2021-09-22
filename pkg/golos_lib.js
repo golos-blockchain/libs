@@ -131,10 +131,6 @@ function passStringToWasm0(arg, malloc, realloc) {
     return ptr;
 }
 
-const u32CvtShim = new Uint32Array(2);
-
-const int64CvtShim = new BigInt64Array(u32CvtShim.buffer);
-
 let cachegetInt32Memory0 = null;
 function getInt32Memory0() {
     if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
@@ -263,45 +259,29 @@ class _Asset {
         return _Asset.__wrap(ret);
     }
     /**
-    * @param {BigInt} amount
+    * @param {number} amount
     * @param {number} precision
     * @param {string} symbol
     * @returns {_Asset}
     */
     static new(amount, precision, symbol) {
-        int64CvtShim[0] = amount;
-        const low0 = u32CvtShim[0];
-        const high0 = u32CvtShim[1];
-        var ptr1 = passStringToWasm0(symbol, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
-        var ret = wasm._asset_new(low0, high0, precision, ptr1, len1);
+        var ptr0 = passStringToWasm0(symbol, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm._asset_new(amount, precision, ptr0, len0);
         return _Asset.__wrap(ret);
     }
     /**
-    * @returns {BigInt}
+    * @returns {number}
     */
     get amount() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm._asset_amount(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            u32CvtShim[0] = r0;
-            u32CvtShim[1] = r1;
-            const n0 = int64CvtShim[0];
-            return n0;
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-        }
+        var ret = wasm._asset_amount(this.ptr);
+        return ret;
     }
     /**
-    * @param {BigInt} value
+    * @param {number} value
     */
     set amount(value) {
-        int64CvtShim[0] = value;
-        const low0 = u32CvtShim[0];
-        const high0 = u32CvtShim[1];
-        wasm._asset_set_amount(this.ptr, low0, high0);
+        wasm._asset_set_amount(this.ptr, value);
     }
     /**
     * @returns {number}
@@ -376,14 +356,11 @@ class _Asset {
         }
     }
     /**
-    * @param {BigInt} num
+    * @param {number} num
     * @returns {_Asset}
     */
     _plus_num(num) {
-        int64CvtShim[0] = num;
-        const low0 = u32CvtShim[0];
-        const high0 = u32CvtShim[1];
-        var ret = wasm._asset__plus_num(this.ptr, low0, high0);
+        var ret = wasm._asset__plus_num(this.ptr, num);
         return _Asset.__wrap(ret);
     }
     /**
@@ -396,14 +373,11 @@ class _Asset {
         return _Asset.__wrap(ret);
     }
     /**
-    * @param {BigInt} num
+    * @param {number} num
     * @returns {_Asset}
     */
     _minus_num(num) {
-        int64CvtShim[0] = num;
-        const low0 = u32CvtShim[0];
-        const high0 = u32CvtShim[1];
-        var ret = wasm._asset__minus_num(this.ptr, low0, high0);
+        var ret = wasm._asset__minus_num(this.ptr, num);
         return _Asset.__wrap(ret);
     }
     /**
@@ -416,14 +390,11 @@ class _Asset {
         return _Asset.__wrap(ret);
     }
     /**
-    * @param {BigInt} num
+    * @param {number} num
     * @returns {_Asset}
     */
     _mul_num(num) {
-        int64CvtShim[0] = num;
-        const low0 = u32CvtShim[0];
-        const high0 = u32CvtShim[1];
-        var ret = wasm._asset__mul_num(this.ptr, low0, high0);
+        var ret = wasm._asset__mul_num(this.ptr, num);
         return _Asset.__wrap(ret);
     }
     /**
@@ -436,14 +407,11 @@ class _Asset {
         return _Asset.__wrap(ret);
     }
     /**
-    * @param {BigInt} num
+    * @param {number} num
     * @returns {_Asset}
     */
     _div_num(num) {
-        int64CvtShim[0] = num;
-        const low0 = u32CvtShim[0];
-        const high0 = u32CvtShim[1];
-        var ret = wasm._asset__div_num(this.ptr, low0, high0);
+        var ret = wasm._asset__div_num(this.ptr, num);
         return _Asset.__wrap(ret);
     }
     /**
@@ -586,7 +554,7 @@ async function init(input) {
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
-    imports.wbg.__wbindgen_closure_wrapper79 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper77 = function(arg0, arg1, arg2) {
         var ret = makeMutClosure(arg0, arg1, 18, __wbg_adapter_8);
         return addHeapObject(ret);
     };
