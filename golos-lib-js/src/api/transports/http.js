@@ -25,7 +25,7 @@ class RPCError extends Error {
 
 export function jsonRpc(uri, {method, id, params}) {
   const payload = {id, jsonrpc: '2.0', method, params};
-  return fetch(uri, {
+  let req = {
     body: JSON.stringify(payload),
     method: 'post',
     mode: 'cors',
@@ -33,7 +33,10 @@ export function jsonRpc(uri, {method, id, params}) {
       Accept: 'application/json, text/plain, */*',
       'Content-Type': 'application/json',
     },
-  }).then(res => {
+  }
+  req.credentials = config.get('credentials');
+  if (!req.credentials) delete req.credentials;
+  return fetch(uri, req).then(res => {
     if (!res.ok) {
       throw new Error(`HTTP ${ res.status }: ${ res.statusText }`);
     }
