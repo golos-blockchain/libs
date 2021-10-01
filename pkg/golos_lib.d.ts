@@ -29,12 +29,12 @@ declare namespace wasm_bindgen {
 	*/
 	  static fromString(value: string): _Asset;
 	/**
-	* @param {BigInt} amount
+	* @param {number} amount
 	* @param {number} precision
 	* @param {string} symbol
 	* @returns {_Asset}
 	*/
-	  static new(amount: BigInt, precision: number, symbol: string): _Asset;
+	  static new(amount: number, precision: number, symbol: string): _Asset;
 	/**
 	* @returns {boolean}
 	*/
@@ -45,40 +45,40 @@ declare namespace wasm_bindgen {
 	*/
 	  toString(_dec_places?: number): string;
 	/**
-	* @param {BigInt} num
+	* @param {number} num
 	* @returns {_Asset}
 	*/
-	  _plus_num(num: BigInt): _Asset;
+	  _plus_num(num: number): _Asset;
 	/**
 	* @param {_Asset} a
 	* @returns {_Asset}
 	*/
 	  _plus(a: _Asset): _Asset;
 	/**
-	* @param {BigInt} num
+	* @param {number} num
 	* @returns {_Asset}
 	*/
-	  _minus_num(num: BigInt): _Asset;
+	  _minus_num(num: number): _Asset;
 	/**
 	* @param {_Asset} a
 	* @returns {_Asset}
 	*/
 	  _minus(a: _Asset): _Asset;
 	/**
-	* @param {BigInt} num
+	* @param {number} num
 	* @returns {_Asset}
 	*/
-	  _mul_num(num: BigInt): _Asset;
+	  _mul_num(num: number): _Asset;
 	/**
 	* @param {_Asset} a
 	* @returns {_Asset}
 	*/
 	  _mul(a: _Asset): _Asset;
 	/**
-	* @param {BigInt} num
+	* @param {number} num
 	* @returns {_Asset}
 	*/
-	  _div_num(num: BigInt): _Asset;
+	  _div_num(num: number): _Asset;
 	/**
 	* @param {_Asset} a
 	* @returns {_Asset}
@@ -115,9 +115,9 @@ declare namespace wasm_bindgen {
 	*/
 	  gte(a: _Asset): boolean;
 	/**
-	* @returns {BigInt}
+	* @returns {number}
 	*/
-	  amount: BigInt;
+	  amount: number;
 	/**
 	* @returns {number}
 	*/
@@ -140,9 +140,9 @@ declare interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg__asset_free: (a: number) => void;
   readonly _asset_fromString: (a: number, b: number) => number;
-  readonly _asset_new: (a: number, b: number, c: number, d: number, e: number) => number;
-  readonly _asset_amount: (a: number, b: number) => void;
-  readonly _asset_set_amount: (a: number, b: number, c: number) => void;
+  readonly _asset_new: (a: number, b: number, c: number, d: number) => number;
+  readonly _asset_amount: (a: number) => number;
+  readonly _asset_set_amount: (a: number, b: number) => void;
   readonly _asset_amountFloat: (a: number) => number;
   readonly _asset_set_amountFloat: (a: number, b: number) => void;
   readonly _asset_precision: (a: number) => number;
@@ -151,13 +151,13 @@ declare interface InitOutput {
   readonly _asset_set_symbol: (a: number, b: number, c: number) => void;
   readonly _asset_isUIA: (a: number) => number;
   readonly _asset_toString: (a: number, b: number, c: number, d: number) => void;
-  readonly _asset__plus_num: (a: number, b: number, c: number) => number;
+  readonly _asset__plus_num: (a: number, b: number) => number;
   readonly _asset__plus: (a: number, b: number) => number;
-  readonly _asset__minus_num: (a: number, b: number, c: number) => number;
+  readonly _asset__minus_num: (a: number, b: number) => number;
   readonly _asset__minus: (a: number, b: number) => number;
-  readonly _asset__mul_num: (a: number, b: number, c: number) => number;
+  readonly _asset__mul_num: (a: number, b: number) => number;
   readonly _asset__mul: (a: number, b: number) => number;
-  readonly _asset__div_num: (a: number, b: number, c: number) => number;
+  readonly _asset__div_num: (a: number, b: number) => number;
   readonly _asset__div: (a: number, b: number) => number;
   readonly _asset_eq: (a: number, b: number) => number;
   readonly _asset_ne: (a: number, b: number) => number;

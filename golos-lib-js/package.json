@@ -1,6 +1,6 @@
 {
   "name": "golos-lib-js",
-  "version": "0.9.4",
+  "version": "0.9.8",
   "description": "Golos-js the JavaScript library with API for GOLOS blockchain",
   "main": "lib/index.js",
   "scripts": {
@@ -59,6 +59,7 @@
     "@babel/register": "^7.15.3",
     "babel-loader": "^8.2.2",
     "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^3.5.0",
     "eslint-plugin-import": "^1.15.0",
     "eslint-plugin-jsx-a11y": "^2.2.2",

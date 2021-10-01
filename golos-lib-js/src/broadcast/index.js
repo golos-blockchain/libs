@@ -22,26 +22,47 @@ const steemBroadcast = {};
  */
 
 steemBroadcast.send = function steemBroadcast$send(tx, privKeys, callback) {
-  const resultP = steemBroadcast._prepareTransaction(tx)
-    .then((transaction) => {
-      debug(
-        'Signing transaction (transaction, transaction.operations)',
-        transaction, transaction.operations
-      );
-      return Promise.join(
-        transaction,
-        steemAuth.signTransaction(transaction, privKeys)
-      );
-    })
-    .spread((transaction, signedTransaction) => {
-      debug(
-        'Broadcasting transaction (transaction, transaction.operations)',
-        transaction, transaction.operations
-      );
+  let noKeys = true;
+  if (privKeys) {
+    for (let role in privKeys) {
+      if (privKeys[role]) {
+        noKeys = false;
+        break;
+      }
+    }
+  }
+  const broadcast = (signedTransaction) => {
       return config.get('broadcast_transaction_with_callback') 
         ? steemApi.broadcastTransactionWithCallbackAsync(() => {}, signedTransaction).then(() => signedTransaction)
         : steemApi.broadcastTransactionAsync(signedTransaction).then(() => signedTransaction)
-    });
+  };
+  let resultP = null;
+  if (noKeys) {
+    debug(
+      'Broadcasting transaction without signing (transaction, transaction.operations)',
+      tx, tx.operations
+    );
+    resultP = broadcast(tx);
+  } else {
+    resultP = steemBroadcast._prepareTransaction(tx)
+      .then((transaction) => {
+        debug(
+          'Signing transaction (transaction, transaction.operations)',
+          transaction, transaction.operations
+        );
+        return Promise.join(
+          transaction,
+          steemAuth.signTransaction(transaction, privKeys)
+        );
+      })
+      .spread((transaction, signedTransaction) => {
+        debug(
+          'Broadcasting transaction (transaction, transaction.operations)',
+          transaction, transaction.operations
+        );
+        return broadcast(signedTransaction);
+      });
+  }
 
   resultP.nodeify(callback || noop);
 };
@@ -67,10 +88,14 @@ steemBroadcast._prepareTransaction = function steemBroadcast$_prepareTransaction
     });
 };
 
+steemBroadcast._operations = {};
+
 // Generated wrapper ----------------------------------------------------------
 
 // Generate operations from operations.js
 operations.forEach((operation) => {
+  steemBroadcast._operations[operation.operation] = operation;
+
   const operationName = camelCase(operation.operation);
   const operationParams = operation.params || [];
 

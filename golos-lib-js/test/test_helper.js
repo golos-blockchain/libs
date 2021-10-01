@@ -3,6 +3,8 @@ import chai from 'chai';
 import sinon from 'sinon';
 import { mockHTMLImageElement } from './mock_image';
 
+chai.use(require('chai-as-promised'));
+
 global.sandbox = sinon.sandbox.create();
 
 sinon.assert.expose(chai.assert, {prefix: ''});
