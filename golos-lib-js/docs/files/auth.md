@@ -12,7 +12,7 @@
 
 - [Вход пользователя с помощью OAuth](#вход-пользователя-с-помощью-oauth)
 - [Вход с паролем (клиентская авторизация без OAuth)](#вход-с-паролем-клиентская-авторизация-без-oauth)
-- [Сохранение сессии при авторизации без OAuth)](#сохранение-сессии-при-авторизации-без-oauth)
+- [Сохранение сессии при авторизации без OAuth](#сохранение-сессии-при-авторизации-без-oauth)
 - [Серверная авторизация](#серверная-авторизация)
 - [Вспомогательные функции](#вспомогательные-функции)
 
@@ -164,6 +164,7 @@ import { pageSession, } from 'golos-lib-js/lib/auth';
 // или: let { pageSession, } = golos.auth;
 
 pageSession.save(activeKey);
+// или: pageSession.save(passwordOrActiveKey, username, 'active');
 
 const [ timestamp, activeKey, ] = pageSession.load();
 // timestamp - это Date.now() на момент pageSession.save. Позволяет очистить сессию, в случае, если прошло достаточно времени.
