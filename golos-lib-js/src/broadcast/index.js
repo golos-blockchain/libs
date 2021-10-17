@@ -22,12 +22,18 @@ const steemBroadcast = {};
  */
 
 steemBroadcast.send = function steemBroadcast$send(tx, privKeys, callback) {
-  let noKeys = true;
+  let keyMeta = new Set();
   if (privKeys) {
     for (let role in privKeys) {
       if (privKeys[role]) {
-        noKeys = false;
-        break;
+        const str = privKeys[role].toString();
+        if (!str.startsWith('(')) {
+          keyMeta = null;
+          break;
+        } else {
+          const keys = str.slice(1, -1).split(',');
+          keys.forEach(keyMeta.add, keyMeta);
+        }
       }
     }
   }
@@ -37,10 +43,13 @@ steemBroadcast.send = function steemBroadcast$send(tx, privKeys, callback) {
         : steemApi.broadcastTransactionAsync(signedTransaction).then(() => signedTransaction)
   };
   let resultP = null;
-  if (noKeys) {
+  if (keyMeta) {
+    tx._meta = {
+      _keys: Array.from(keyMeta),
+    };
     debug(
-      'Broadcasting transaction without signing (transaction, transaction.operations)',
-      tx, tx.operations
+      'Broadcasting transaction without signing (transaction, transaction.operations, transaction._meta)',
+      tx, tx.operations, tx._meta
     );
     resultP = broadcast(tx);
   } else {

@@ -100,11 +100,11 @@ async function waitForLogin(onFinish, onFail, retries = 180, onRetry = undefined
     }
 }
 
-function login() {
+function login(permissions = []) {
     if (typeof(window) === 'undefined') {
         throw new Error('OAuth works only in browser environment (window should be defined)');
     }
-    window.open(uiHost() + '/oauth/' + clientId());
+    window.open(uiHost() + '/oauth/' + clientId() + '/' + permissions.join(','));
 }
 
 async function logout() {
