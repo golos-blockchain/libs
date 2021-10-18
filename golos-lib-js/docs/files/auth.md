@@ -31,21 +31,30 @@ golos.config.set('credentials', 'include');
 
 Подробнее: https://github.com/golos-blockchain/ui-auth/blob/master/API.md#%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-golos-lib-js-%D0%B4%D0%BB%D1%8F-oauth
 
+#### Права
+
+Когда пользователь авторизуется в приложении, пользова
+
 #### Вход
 
 В вашем приложении должна быть кнопка "Войти", при нажатии на которую:
 1. Открывать нашу страницу авторизации, где пользователь разрешит (или не разрешит) доступ вашему приложению:
 
 ```js
-golos.oauth.login();
+const permissions = ['transfer', 'account_create_with_delegation', 'private_message'];
+golos.oauth.login(permissions);
 ```
+permissions - это набор разрешений, которые надо предоставить вашему приложению. Большинство из них - это непосредственно операции, которые ваше приложение будет отправлять от имени пользователя. Но в некоторых случаях нужны особые разрешения. И некоторые операции вообще не поддерживаются в OAuth. Весь список возможных разрешений [здесь](https://github.com/golos-blockchain/ui-auth/blob/master/server/utils/oauthPermissions.js).
 
 2. Ожидать, когда пользователь авторизуется на этой странице.
 ```js
-golos.oauth.waitForLogin(() => {
+golos.oauth.waitForLogin((res) => {
     // Эта функция будет вызвана, когда (если) пользователь разрешит вашему приложению доступ.
-    // Если ваше приложение использует Redux и т.п., то в этом месте вы можете посылать action для того, чтобы UI обновился, и отобразил, что пользователь авторизован.
-    // А если нет, то просто:
+    //
+    // Если ваше приложение использует React state, Redux и т.п., то в этом месте вы можете изменять стейт, так, чтобы UI обновился, и отобразил, что пользователь авторизован.
+    // (используйте res.account, чтобы отобразить имя авторизованного пользователя; res.allowed содержит список полученных от него разрешений)
+    //
+    // А можно просто обновить страницу (при повторном открытии страницы вы проверите авторизацию):
     window.location.reload();
 }, () => {
     // Эта функция будет вызвана, если пользователь НЕ разрешит вашему приложению доступ
@@ -55,8 +64,9 @@ golos.oauth.waitForLogin(() => {
 });
 ```
 
-Пример (используется jQuery):  
-https://github.com/golos-blockchain/ui-auth/blob/dev/oauth_examples/main.js
+Примеры:  
+[jQuery](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/jquery/main.js)  
+[React](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/react/src/App.jsx)
 
 #### Проверка, что пользователь авторизован
 
@@ -73,6 +83,7 @@ async function init() {
         // разблокировать кнопки отправляющие операции,
         // из res.account взять имя пользователя и отобразить, что пользователь авторизован под этим именем
         alert('Вы авторизованы как ' + res.account);
+        // а res.allowed содержит список полученных разрешений
     } else {
         // Скрыть кнопку Выйти,
         // показать кнопку Войти,
@@ -84,8 +95,9 @@ async function init() {
 init();
 ```
 
-Пример (используется jQuery):  
-https://github.com/golos-blockchain/ui-auth/blob/dev/oauth_examples/main.js
+Примеры:  
+[jQuery](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/jquery/main.js)  
+[React](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/react/src/App.jsx)
 
 #### Кнопка Выйти
 
