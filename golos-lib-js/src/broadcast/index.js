@@ -8,7 +8,8 @@ import operations from './operations';
 import steemApi from '../api';
 import steemAuth from '../auth';
 import { camelCase } from '../utils';
-import config from '../config'
+import { mw, } from '../middlewares';
+import config from '../config';
 
 const debug = newDebug('golos:broadcast');
 const formatter = formatterFactory(steemApi);
@@ -40,7 +41,11 @@ steemBroadcast.send = function steemBroadcast$send(tx, privKeys, callback) {
   const broadcast = (signedTransaction) => {
       return config.get('broadcast_transaction_with_callback') 
         ? steemApi.broadcastTransactionWithCallbackAsync(() => {}, signedTransaction).then(() => signedTransaction)
-        : steemApi.broadcastTransactionAsync(signedTransaction).then(() => signedTransaction)
+        : steemApi.broadcastTransactionAsync(signedTransaction).then((res) => {
+          if (res.ref_block_num && res.operations)
+            return res;
+          return signedTransaction;
+        })
   };
   let resultP = null;
   if (keyMeta) {
@@ -51,7 +56,7 @@ steemBroadcast.send = function steemBroadcast$send(tx, privKeys, callback) {
       'Broadcasting transaction without signing (transaction, transaction.operations, transaction._meta)',
       tx, tx.operations, tx._meta
     );
-    resultP = broadcast(tx);
+    resultP = mw().broadcast({ tx, privKeys, orig: broadcast, });
   } else {
     resultP = steemBroadcast._prepareTransaction(tx)
       .then((transaction) => {
@@ -69,7 +74,8 @@ steemBroadcast.send = function steemBroadcast$send(tx, privKeys, callback) {
           'Broadcasting transaction (transaction, transaction.operations)',
           transaction, transaction.operations
         );
-        return broadcast(signedTransaction);
+        return mw().broadcast({ tx: signedTransaction,
+          privKeys, orig: broadcast, });
       });
   }
 

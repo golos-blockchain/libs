@@ -13,7 +13,7 @@ const cbMethods = [
 const debugProtocol = newDebug('golos:protocol');
 const debugHttp = newDebug('golos:http');
 
-class RPCError extends Error {
+export class RPCError extends Error {
   constructor(rpcError, rpcRes) {
     super(rpcError.message);
     this.name = 'RPCError';
