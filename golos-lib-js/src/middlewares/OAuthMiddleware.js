@@ -1,6 +1,5 @@
 const EmptyMiddleware = require('./EmptyMiddleware');
 const oauth = require('../oauth');
-const Promise = require('bluebird');
 const { delay, } = require('../utils');
 const { RPCError, } = require('../api/transports/http');
 
@@ -96,37 +95,28 @@ class OAuthMiddleware extends EmptyMiddleware {
         }
     }
 
-    broadcast({ tx, privKeys, orig, }) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                if (tx._meta && tx._meta._keys) {
-                    const res = await this._processPending(tx);
-                    resolve(res);
-                } else {
-                    resolve({ broadcast: true, });
-                }
-            } catch (err) {
-                reject(err);
+    async broadcast({ tx, privKeys, orig, }) {
+        let result = { broadcast: true, };
+        if (tx._meta && tx._meta._keys) {
+            result = await this._processPending(tx);
+        }
+        if (result.broadcast) {
+            return await super.broadcast({ tx, privKeys, orig, });
+        } else {
+            if (result.res)
+                return result.res;
+            const { err, } = result;
+            // http
+            if (err && err.name === 'RPCError')
+                throw new RPCError(err, err);
+            // ws should not be here, but...
+            if (err && err.message) {
+                let t = new Error(err.message);
+                t.payload = err.payload;
+                throw t;
             }
-        }).then((result) => {
-            if (result.broadcast) {
-                return super.broadcast({ tx, privKeys, orig, });
-            } else {
-                if (result.res)
-                    return result.res;
-                const { err, } = result;
-                // http
-                if (err && err.name === 'RPCError')
-                    throw new RPCError(err, err);
-                // ws should not be here, but...
-                if (err && err.message) {
-                    let t = new Error(err.message);
-                    t.payload = err.payload;
-                    throw t;
-                }
-                console.error('OAuthMiddleware broadcast', err);
-            }
-        });
+            console.error('OAuthMiddleware broadcast', err);
+        }
     }
 }
 

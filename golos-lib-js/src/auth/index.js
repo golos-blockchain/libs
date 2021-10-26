@@ -15,7 +15,7 @@ var bigi = require('bigi'),
 var Auth = {};
 var transaction = operations.transaction;
 var signed_transaction = operations.signed_transaction;
-import Promise from 'bluebird';
+import { promisify, } from '../promisify';
 
 Auth.verify = function (name, password, auths) {
     var hasKey = false;
@@ -121,7 +121,7 @@ Auth.loginAsync = function (name, password, callback) {
     } catch (err) { callback(err, null); }
 };
 
-Auth.login = Promise.promisify(Auth.loginAsync);
+Auth.login = promisify(Auth.loginAsync);
 
 Auth.toWif = function (name, password, role) {
     var seed = name + role + password;

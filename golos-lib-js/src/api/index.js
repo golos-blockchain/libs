@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-import Promise from 'bluebird';
 import cloneDeep from 'lodash/cloneDeep';
 import defaults from 'lodash/defaults';
 import isNode from 'detect-node';
@@ -7,6 +6,7 @@ import newDebug from 'debug';
 import config from '../config';
 import methods from './methods';
 import { camelCase } from '../utils';
+import { promisifyAll, } from '../promisify';
 import transports from './transports';
 
 const debugEmitters = newDebug('golos:emitters');
@@ -81,9 +81,9 @@ class Golos extends EventEmitter {
     this[method](...argsWithoutCb, (err, result)  => {
       if (err || !result) {
         console.error(method + ' reliable call - fail, retrying... Cause:', err ? err.message : 'API returned null');
-        Promise.delay(1000).then(() => {
+        setTimeout(() => {
           this.callReliable(method, ...args);
-        });
+        }, 1000);
         return;
       }
       callback(null, result);
@@ -118,9 +118,9 @@ class Golos extends EventEmitter {
           }
           startBlock = currentBlock + 1;
 
-          Promise.delay(1000).then(() => {
+          setTiemout(() => {
             update();
-          });
+          }, 1000);
         }, (err) => {
           callback(err);
         });
@@ -290,7 +290,7 @@ methods.forEach((method) => {
     };
 });
 
-Promise.promisifyAll(Golos.prototype);
+promisifyAll(Golos.prototype);
 
 Golos.prototype['setBlockAppliedCallback'] =
   function Golos$setCallback(type, callback) {

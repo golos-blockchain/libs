@@ -2,11 +2,11 @@
 import ByteBuffer from 'bytebuffer'
 import assert from 'assert'
 import base58 from 'bs58'
-import Promise from 'bluebird';
 import truncate from 'lodash/truncate';
 import {Aes, PrivateKey, PublicKey} from './ecc'
 import {ops} from './serializer'
 import {fitImageToSize} from '../utils';
+import { promisify, } from '../promisify';
 const {isInteger} = Number
 
 /** @const {string} DEFAULT_APP 
@@ -162,7 +162,7 @@ exports.newImageMsg = function(image_url, callback, on_progress = undefined, app
     @return {object} - result message object.
     @function newImageMsgAsync
 */
-exports.newImageMsgAsync = Promise.promisify(function (...args) {
+exports.newImageMsgAsync = promisify(function (...args) {
     const callback = args[args.length - 1];
     let [ image_url, on_progress, app, version ] = args.slice(0, args.length - 1);
     return exports.newImageMsg(image_url, callback, on_progress, app, version);

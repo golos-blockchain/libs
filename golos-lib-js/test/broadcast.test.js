@@ -1,6 +1,6 @@
-import Promise from 'bluebird';
 import should from 'should';
 import golos from '../src';
+import { delay, } from '../src/utils';
 
 const username = process.env.GOLOS_USERNAME || 'guest123';
 const password = process.env.GOLOS_PASSWORD;
@@ -73,8 +73,8 @@ describe.skip('golos.broadcast:', () => {
   });
 
   describe('voting', () => {
-    beforeEach(() => {
-      return Promise.delay(2000);
+    beforeEach(async () => {
+      return await delay(2000);
     });
 
     it('works', async () => {
@@ -120,8 +120,8 @@ describe.skip('golos.broadcast:', () => {
   });
 
   describe('customJson', () => {
-    before(() => {
-      return Promise.delay(2000);
+    before(async () => {
+      return await delay(2000);
     });
 
     it('works', async () => {

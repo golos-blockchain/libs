@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import newDebug from 'debug';
 import config from '../../config';
 import fetch from 'cross-fetch';
@@ -56,7 +55,6 @@ export default class HttpTransport extends Transport {
   constructor(options = {}) {
     super(Object.assign({id: 0}, options));
 
-    this.currentP = Promise.fulfilled();
     this._requests = new Map();
   }
 
@@ -76,7 +74,8 @@ export default class HttpTransport extends Transport {
           delete this._requests[err.resid];
         })
       })
-      .nodeify(callback);
+      .then(res => callback(null, res))
+      .catch(err => callback(err, null));
     return this.currentP;
   }
 }

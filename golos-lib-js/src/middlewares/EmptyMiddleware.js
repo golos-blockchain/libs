@@ -1,6 +1,6 @@
 class EmptyMiddleware {
-    broadcast({ tx, privKeys, orig, }) {
-        return orig(tx);
+    async broadcast({ tx, privKeys, orig, }) {
+        return await orig(tx);
     }
 }
 

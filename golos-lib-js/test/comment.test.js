@@ -1,6 +1,6 @@
-import Promise from 'bluebird';
 import should from 'should';
 import golos from '../src';
+import { delay, } from '../src/utils';
 import pkg from '../package.json';
 
 const username = process.env.GOLOS_USERNAME || 'guest123';
@@ -12,8 +12,8 @@ const postingWif = password
 describe.skip('golos.broadcast:', () => {
 
   describe('comment with options', () => {
-    before(() => {
-      return Promise.delay(2000);
+    before(async () => {
+      return await delay(2000);
     });
 
     it('works', async () => {

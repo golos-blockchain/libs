@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import isNode from 'detect-node';
 import newDebug from 'debug';
 import config from '../../config';
@@ -28,7 +27,6 @@ export default class WsTransport extends Transport {
 
     this._requests = new Map();
     this.isOpen = false;
-    this.currentP = Promise.fulfilled();
   }
 
   start() {
@@ -50,12 +48,13 @@ export default class WsTransport extends Transport {
 
       const releaseClose = this.listenTo(this.ws, 'close', () => {
         debugWs('Closed WS connection with', url);
+        const wasOpen = this.isOpen;
         this.isOpen = false;
         delete this.ws;
         this.stop();
 
         const err = new Error('The WS connection was closed before this operation was made');
-        if (startP.isPending()) {
+        if (!wasOpen) {
           reject(err);
         }
 
@@ -163,7 +162,8 @@ export default class WsTransport extends Transport {
 
         this.ws.send(payload);
       }))
-      .nodeify(callback);
+      .then(res => callback(null, res))
+      .catch(err => callback(err, null))
 
     return this.currentP;
   }
