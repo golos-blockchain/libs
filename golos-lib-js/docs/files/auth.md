@@ -27,13 +27,10 @@ golos.config.set('oauth.client', 'hotdog-website');
 golos.config.set('oauth.host', API_HOST);
 golos.config.set('websocket', API_HOST + '/api/oauth/sign');
 golos.config.set('credentials', 'include');
+golos.use(new golos.middlewares.OAuthMiddleware());
 ```
 
 Подробнее: https://github.com/golos-blockchain/ui-auth/blob/master/API.md#%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-golos-lib-js-%D0%B4%D0%BB%D1%8F-oauth
-
-#### Права
-
-Когда пользователь авторизуется в приложении, пользова
 
 #### Вход
 
@@ -66,7 +63,7 @@ golos.oauth.waitForLogin((res) => {
 
 Примеры:  
 [jQuery](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/jquery/main.js)  
-[React](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/react/src/App.jsx)
+[React](https://github.com/golos-blockchain/ui-auth/tree/master/oauth_examples/)
 
 #### Проверка, что пользователь авторизован
 
@@ -97,7 +94,7 @@ init();
 
 Примеры:  
 [jQuery](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/jquery/main.js)  
-[React](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/react/src/App.jsx)
+[React](https://github.com/golos-blockchain/ui-auth/tree/master/oauth_examples/)
 
 #### Кнопка Выйти
 
@@ -107,6 +104,50 @@ $('.logout').click(async (e) => {
     window.location.reload();
 });
 ```
+
+Примеры:  
+[jQuery](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/jquery/main.js)  
+[React](https://github.com/golos-blockchain/ui-auth/tree/master/oauth_examples/)
+
+#### Отправка операций
+
+При авторизации через OAuth следует отправлять транзакции, не указывая каких-либо ключей, то есть первый параметр - пустая строка.
+```js
+try {
+    let res = await broadcast.transferAsync('', 'cyberfounder', 'alice',
+        '0.001 GOLOS', 'Buy a coffee with caramel :)');
+} catch (err) {
+    console.error(err);
+    alert(err);
+    return;
+}
+alert('Success!');
+```
+
+Если при авторизации вы запрашивали соответствующее разрешение, то сервис OAuth сам подпишет операцию, отправит ее в блокчейн и она пройдет как обычно, без дополнительных действий со стороны пользователя.  
+Если нет (или наша схема разрешений изменилась с момента авторизации пользователя в вашем приложении), то будет открыта новая вкладка с вопросом пользователю - разрешать ли эту транзакцию или нет. Также пользователь может сохранить это разрешение (как если бы оно было выдано при авторизации). Если же пользователь запретит операцию или просто закроет окно, то спустя некоторое время будет выполнена ветка `catch` с соответствующей ошибкой.
+
+Примеры:  
+[jQuery](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/jquery/main.js)  
+[React](https://github.com/golos-blockchain/ui-auth/tree/master/oauth_examples/)
+
+#### Отправка операций, которым требуется особое разрешение
+
+При отправке без ключей сервис подписывает транзакцию ключом по умолчанию. Например, одни операции всегда подписываются ключом posting, другие - ключом active. Но есть операции, которые можно подписывать разными ключами. Например, custom_json по умолчанию подписывается ключом posting:
+https://github.com/golos-blockchain/libs/blob/master/golos-lib-js/src/broadcast/operations.js (см. операцию custom_json - там в roles первый элемент - это 'posting'). Но там же видно, что операцию иногда нужно подписывать ключом active. Сервис OAuth не в состоянии сам определить, в каком случае каким ключом подписывать операцию. Поэтому если нужен не ключ по умолчанию, то нужно принудительно задать это при вызове:
+```js
+try {
+    let res = await broadcast.customJsonAsync(
+        '(active)', ['cyberfounder'], [], 'test_active', '{"alice":"bob"}');
+} catch (err) {
+    console.error(err);
+    alert(err);
+    return;
+}
+```
+
+Или, если нужен наоборот posting-ключ: `'(posting)'`.  
+Или, если нужно несколько ключей: `'(posting,active)'`.
 
 ### Вход с паролем (клиентская авторизация без OAuth)
 
