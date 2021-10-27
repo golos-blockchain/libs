@@ -360,6 +360,10 @@ module.exports = [
     "roles": ["posting", "active", "owner"],
     "operation": "custom_binary",
     "params": [
+      "required_owner_auths",
+      "required_active_auths",
+      "required_posting_auths",
+      "required_auths",
       "id",
       "data"
     ]

@@ -1,6 +1,7 @@
 import fetch from 'cross-fetch';
 import newDebug from 'debug';
 import config from '../config';
+import { hash, } from '../auth/ecc';
 
 let _apiHost;
 let _uiHost;
@@ -54,11 +55,21 @@ function clientId() {
     return _clientId;
 }
 
-async function check() {
-    let url = new URL('/api/oauth/check/' + clientId(), apiHost());
-    const res = await fetch(url.toString(), {
+function _callApi(url, data, getHost = apiHost) {
+    let request = {
+        method: data ? 'post' : 'get',
         credentials: 'include',
-    });
+        headers: {
+            Accept: 'application/json',
+            'Content-type': data ? 'application/json' : undefined,
+        },
+        body: data ? JSON.stringify(data) : undefined,
+    };
+    return fetch(new URL(url, getHost()), request);
+}
+
+async function check() {
+    const res = await _callApi('/api/oauth/check/' + clientId());
     return await res.json();
 }
 
@@ -100,27 +111,32 @@ async function waitForLogin(onFinish, onFail, retries = 180, onRetry = undefined
     }
 }
 
-function login() {
+function login(permissions = [], extraParams = '') {
     if (typeof(window) === 'undefined') {
         throw new Error('OAuth works only in browser environment (window should be defined)');
     }
-    window.open(uiHost() + '/oauth/' + clientId());
+    return window.open(uiHost() + '/oauth/' + clientId() + '/' + permissions.join(',') + extraParams);
 }
 
 async function logout() {
-    let url = new URL('/api/oauth/logout/' + clientId(), apiHost());
-    const res = await fetch(url.toString(), {
-        credentials: 'include',
-    });
+    const res = await _callApi('/api/oauth/logout/' + clientId());
+}
+
+function _hashOps(operations) {
+    let json = JSON.stringify(operations);
+    const idHash = hash.sha256(json, 'hex');
+    return idHash;
 }
 
 module.exports = {
     clientId,
     apiHost,
     uiHost,
+    _callApi,
     check,
     checkReliable,
     login,
     waitForLogin,
     logout,
+    _hashOps,
 };

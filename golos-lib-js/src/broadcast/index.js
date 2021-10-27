@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import newDebug from 'debug';
 import noop from 'lodash/noop';
 
@@ -8,7 +7,9 @@ import operations from './operations';
 import steemApi from '../api';
 import steemAuth from '../auth';
 import { camelCase } from '../utils';
-import config from '../config'
+import { promisifyAll, } from '../promisify';
+import { mw, } from '../middlewares';
+import config from '../config';
 
 const debug = newDebug('golos:broadcast');
 const formatter = formatterFactory(steemApi);
@@ -21,71 +22,77 @@ const steemBroadcast = {};
  * Sign and broadcast transactions on the steem network
  */
 
-steemBroadcast.send = function steemBroadcast$send(tx, privKeys, callback) {
-  let noKeys = true;
-  if (privKeys) {
-    for (let role in privKeys) {
-      if (privKeys[role]) {
-        noKeys = false;
-        break;
-      }
+steemBroadcast.send = async function steemBroadcast$send(tx, privKeys, callback) {
+    let keyMeta = new Set();
+    if (privKeys) {
+        for (let role in privKeys) {
+            if (privKeys[role]) {
+                const str = privKeys[role].toString();
+                if (!str.startsWith('(')) {
+                    keyMeta = null;
+                    break;
+                } else {
+                    const keys = str.slice(1, -1).split(',');
+                    keys.forEach(keyMeta.add, keyMeta);
+                }
+            }
+        }
     }
-  }
-  const broadcast = (signedTransaction) => {
-      return config.get('broadcast_transaction_with_callback') 
-        ? steemApi.broadcastTransactionWithCallbackAsync(() => {}, signedTransaction).then(() => signedTransaction)
-        : steemApi.broadcastTransactionAsync(signedTransaction).then(() => signedTransaction)
-  };
-  let resultP = null;
-  if (noKeys) {
-    debug(
-      'Broadcasting transaction without signing (transaction, transaction.operations)',
-      tx, tx.operations
-    );
-    resultP = broadcast(tx);
-  } else {
-    resultP = steemBroadcast._prepareTransaction(tx)
-      .then((transaction) => {
-        debug(
-          'Signing transaction (transaction, transaction.operations)',
-          transaction, transaction.operations
-        );
-        return Promise.join(
-          transaction,
-          steemAuth.signTransaction(transaction, privKeys)
-        );
-      })
-      .spread((transaction, signedTransaction) => {
-        debug(
-          'Broadcasting transaction (transaction, transaction.operations)',
-          transaction, transaction.operations
-        );
-        return broadcast(signedTransaction);
-      });
-  }
-
-  resultP.nodeify(callback || noop);
+    const broadcast = async (signedTransaction) => {
+        const res = config.get('broadcast_transaction_with_callback') 
+            ? await steemApi.broadcastTransactionWithCallbackAsync(() => {}, signedTransaction)
+            : await steemApi.broadcastTransactionAsync(signedTransaction);
+        if (res.ref_block_num && res.operations)
+            return res;
+        return signedTransaction;
+    };
+    try {
+        let res = null;
+        if (keyMeta) {
+            tx._meta = {
+                _keys: Array.from(keyMeta),
+            };
+            debug(
+                'Broadcasting transaction without signing (transaction, transaction.operations, transaction._meta)',
+                tx, tx.operations, tx._meta
+            );
+            res = await mw().broadcast({ tx, privKeys, orig: broadcast, });
+        } else {
+            const transaction = await steemBroadcast._prepareTransaction(tx);
+            debug(
+                'Signing transaction (transaction, transaction.operations)',
+                transaction, transaction.operations
+            );
+            const signedTransaction = steemAuth.signTransaction(transaction, privKeys);
+            debug(
+                'Broadcasting transaction (transaction, transaction.operations)',
+                transaction, transaction.operations
+            );
+            res = await mw().broadcast({ tx: signedTransaction,
+                privKeys, orig: broadcast, });
+        }
+        if (callback) callback(null, res);
+    } catch (err) {
+        if (callback) callback(err, null);
+    }
 };
 
-steemBroadcast._prepareTransaction = function steemBroadcast$_prepareTransaction(tx) {
-  const propertiesP = steemApi.getDynamicGlobalPropertiesAsync()
-  return propertiesP
-    .then((properties) => {
-      // Set defaults on the transaction
-      const chainDate = new Date(properties.time + 'Z');
-      const refBlockNum = (properties.head_block_number - 3) & 0xFFFF;
-      return steemApi.getBlockAsync(properties.head_block_number - 2).then((block) => {
-        const headBlockId = block.previous;
-        return Object.assign({
-          ref_block_num: refBlockNum,
-          ref_block_prefix: new Buffer(headBlockId, 'hex').readUInt32LE(4),
-          expiration: new Date(
+steemBroadcast._prepareTransaction = async function steemBroadcast$_prepareTransaction(tx) {
+    const props = await steemApi.getDynamicGlobalPropertiesAsync();
+    // Set defaults on the transaction
+    const chainDate = new Date(props.time + 'Z');
+    const refBlockNum = (props.head_block_number - 3) & 0xFFFF;
+
+    const block = await steemApi.getBlockAsync(props.head_block_number - 2);
+    const headBlockId = block.previous;
+    return Object.assign({
+        ref_block_num: refBlockNum,
+        ref_block_prefix: new Buffer(headBlockId, 'hex').readUInt32LE(4),
+        expiration: new Date(
             chainDate.getTime() +
             60 * 1000
-          ),
-        }, tx);
-      });
-    });
+        ),
+    }, tx);
 };
 
 steemBroadcast._operations = {};
@@ -140,6 +147,6 @@ operations.forEach((operation) => {
 const toString = obj => typeof obj === 'object' ? JSON.stringify(obj) : obj;
 broadcastHelpers(steemBroadcast);
 
-Promise.promisifyAll(steemBroadcast);
+promisifyAll(steemBroadcast);
 
 exports = module.exports = steemBroadcast;

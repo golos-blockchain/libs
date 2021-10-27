@@ -1,3 +1,5 @@
+import { PrivateKey, } from './ecc';
+
 function toWif(key) {
     return key.toWif ? key.toWif() : key;
 };
@@ -40,9 +42,14 @@ class PageSession extends Session {
         if (typeof(sessionStorage) === 'undefined')
             throw new Error('Browser should support sessionStorage.');
     }
-    save(str) {
+    save(password, username, authType = 'active') {
         this.ensure();
-        const data = Date.now().toString() + '\t' + new Buffer(str).toString('hex');
+        try {
+            PrivateKey.fromWif(password);
+        } catch (e) {
+            password = PrivateKey.fromSeed(username + authType + password).toString();
+        }
+        const data = Date.now().toString() + '\t' + new Buffer(password).toString('hex');
         sessionStorage.setItem(this.key, data);
     }
     load() {

@@ -1,9 +1,9 @@
-import Promise from 'bluebird';
 import assert from 'assert';
 import makeStub from 'mocha-make-stub'
 import should from 'should';
 
 import golos, { Golos } from '../src/api/index';
+import { delay, } from '../src/utils';
 import config from '../src/config';
 import testPost from './test-post.json';
 
@@ -185,7 +185,7 @@ describe.skip('golos.api:', function () {
       await golos.getFollowersAsync('cyberfounder', 0, 'blog', followersCount);
       assert(golos.ws, 'There was no websocket connection after a call?');
       // console.log('RECONNECT TEST wait 1s');
-      await Promise.delay(1000);
+      await delay(1000);
       // console.log('RECONNECT TEST simulate close event');
       assert(!golos.stop.calledOnce, 'Golos::stop was already called before disconnect?');
       golos.ws.emit('close');

@@ -1,5 +1,12 @@
 import { Asset, } from './core';
 
+export async function delay(msec, getTimeoutId = undefined) {
+    await new Promise((resolve, reject) => {
+        const id = setTimeout(resolve, msec);
+        if (getTimeoutId) getTimeoutId(id);
+    });
+}
+
 const snakeCaseRe = /_([a-z])/g;
 export function camelCase(str) {
   return str.replace(snakeCaseRe, function(_m, l) {

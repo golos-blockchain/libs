@@ -1,8 +1,8 @@
-import Promise from 'bluebird';
 import isNode from 'detect-node';
 import newDebug from 'debug';
 import config from '../../config';
 import Transport from './base';
+import { nodeify, } from '../../promisify';
 
 const cbMethods = [
   'set_block_applied_callback',
@@ -28,7 +28,6 @@ export default class WsTransport extends Transport {
 
     this._requests = new Map();
     this.isOpen = false;
-    this.currentP = Promise.fulfilled();
   }
 
   start() {
@@ -50,12 +49,13 @@ export default class WsTransport extends Transport {
 
       const releaseClose = this.listenTo(this.ws, 'close', () => {
         debugWs('Closed WS connection with', url);
+        const wasOpen = this.isOpen;
         this.isOpen = false;
         delete this.ws;
         this.stop();
 
         const err = new Error('The WS connection was closed before this operation was made');
-        if (startP.isPending()) {
+        if (!wasOpen) {
           reject(err);
         }
 
@@ -162,8 +162,9 @@ export default class WsTransport extends Transport {
         }
 
         this.ws.send(payload);
-      }))
-      .nodeify(callback);
+      }));
+
+    this.currentP = nodeify(this.currentP, callback);
 
     return this.currentP;
   }

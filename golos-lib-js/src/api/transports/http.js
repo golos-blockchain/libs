@@ -1,8 +1,8 @@
-import Promise from 'bluebird';
 import newDebug from 'debug';
 import config from '../../config';
 import fetch from 'cross-fetch';
 import Transport from './base';
+import { nodeify, } from '../../promisify';
 
 const cbMethods = [
   'set_block_applied_callback',
@@ -13,7 +13,7 @@ const cbMethods = [
 const debugProtocol = newDebug('golos:protocol');
 const debugHttp = newDebug('golos:http');
 
-class RPCError extends Error {
+export class RPCError extends Error {
   constructor(rpcError, rpcRes) {
     super(rpcError.message);
     this.name = 'RPCError';
@@ -56,7 +56,6 @@ export default class HttpTransport extends Transport {
   constructor(options = {}) {
     super(Object.assign({id: 0}, options));
 
-    this.currentP = Promise.fulfilled();
     this._requests = new Map();
   }
 
@@ -76,7 +75,9 @@ export default class HttpTransport extends Transport {
           delete this._requests[err.resid];
         })
       })
-      .nodeify(callback);
+
+    this.currentP = nodeify(this.currentP, callback);
+
     return this.currentP;
   }
 }

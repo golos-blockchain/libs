@@ -1,6 +1,7 @@
 const api = require('./api');
 const auth = require('./auth');
 const oauth = require('./oauth');
+const middlewares = require('./middlewares');
 const broadcast = require('./broadcast');
 const config = require('./config');
 const formatter = require('./formatter')(api);
@@ -23,7 +24,9 @@ const golos = {
     formatter,
     memo,
     messages,
-    utils
+    middlewares,
+    use: middlewares.use,
+    utils,
 };
 
 if (typeof window !== 'undefined') {
