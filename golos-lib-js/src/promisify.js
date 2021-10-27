@@ -14,7 +14,7 @@ export function promisify(fn) {
         return new Promise((resolve, reject) => {
             fn.call(this, ...args, (err, res) => {
                 if (err) reject(err);
-                else if (res) resolve(res); 
+                else resolve(res); 
             });
         })
     };
@@ -34,4 +34,18 @@ export function promisifyAll(obj, suffix = 'Async') {
     for (let key of ret) {
         obj[key + suffix] = promisify(obj[key]);
     }
+}
+
+export function nodeify(promise, callback) {
+    return promise
+      .then(res => {
+        if (callback) callback(null, res);
+        return res;
+      })
+      .catch(err => {
+        if (callback)
+            callback(err, null);
+        else
+            throw err;
+      });
 }

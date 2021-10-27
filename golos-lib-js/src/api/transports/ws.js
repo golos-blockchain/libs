@@ -2,6 +2,7 @@ import isNode from 'detect-node';
 import newDebug from 'debug';
 import config from '../../config';
 import Transport from './base';
+import { nodeify, } from '../../promisify';
 
 const cbMethods = [
   'set_block_applied_callback',
@@ -161,9 +162,9 @@ export default class WsTransport extends Transport {
         }
 
         this.ws.send(payload);
-      }))
-      .then(res => callback(null, res))
-      .catch(err => callback(err, null))
+      }));
+
+    this.currentP = nodeify(this.currentP, callback);
 
     return this.currentP;
   }
