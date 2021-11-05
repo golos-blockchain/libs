@@ -118,7 +118,7 @@ class Golos extends EventEmitter {
           }
           startBlock = currentBlock + 1;
 
-          setTiemout(() => {
+          setTimeout(() => {
             update();
           }, 1000);
         }, (err) => {

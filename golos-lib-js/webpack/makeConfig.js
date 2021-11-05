@@ -18,6 +18,10 @@ function makePlugins(options) {
       reportFilename: 'stats.html',
       openAnalyzer: false,
     }),
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+      process: 'process/browser',
+    }),
   ];
 
   if (!isDevelopment) {
@@ -43,7 +47,6 @@ function makeConfig(options) {
       'golos-tests': path.join(options.baseDir, 'test/api.test.js'),
     },
     output: {
-      path: path.join(options.baseDir, 'dist'),
       filename: '[name].min.js',
     },
     plugins: makePlugins(options),
@@ -55,6 +58,12 @@ function makeConfig(options) {
           loader: 'babel-loader',
         },
       ],
+    },
+    resolve: {
+      fallback: {
+        assert: require.resolve('assert'),
+        stream: require.resolve('stream-browserify'),
+      }
     },
   };
 }
