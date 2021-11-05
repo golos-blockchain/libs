@@ -50,7 +50,7 @@
     "lodash": "^4.17.21",
     "regenerator-runtime": "^0.13.9",
     "secure-random": "^1.1.1",
-    "ws": "^1.1.1"
+    "ws": "^8.2.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.15.4",
