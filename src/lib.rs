@@ -26,7 +26,7 @@ impl _Asset {
         let symbol = amount_str.split_off(space_idx + 1);
         amount_str.pop();
 
-        let amount_float: f64 = amount_str.parse().unwrap();
+        let amount_float: f64 = fast_float::parse(amount_str.clone()).unwrap();
 
         let mut precision: u32 = 0;
         let precision_idx0 = amount_str.find('.');
@@ -90,7 +90,7 @@ impl _Asset {
 
     #[wasm_bindgen(js_name = toString)]
     pub fn to_string(&self, _dec_places: Option<i32>) -> String {
-        let mut amount_str = self.amount().to_string();
+        let mut amount_str = self.amount.to_string();
         let amount_len = amount_str.chars().count() as u32;
         if amount_len <= self.precision {
             for _ in amount_len..=self.precision {

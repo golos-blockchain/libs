@@ -93,25 +93,25 @@ describe('golos.utils.Asset', function() {
         assert.equal(asset.amount, 9223372036854776000);
         assert.equal(asset.precision, 3);
         assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '9223372036854776.000 GBG');
+        assert.equal(asset.toString(), '9223372036854775.807 GBG');
 
         var asset = Asset('92233720368.54775808 GBG');
         assert.equal(asset.amount, 9223372036854776000);
         assert.equal(asset.precision, 8);
         assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '92233720368.54776000 GBG');
+        assert.equal(asset.toString(), '92233720368.54775807 GBG');
 
         var asset = Asset('-9223372036854775.808 GBG');
         assert.equal(asset.amount, -9223372036854776000);
         assert.equal(asset.precision, 3);
         assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '-9223372036854776.000 GBG');
+        assert.equal(asset.toString(), '-9223372036854775.808 GBG');
 
         var asset = Asset('-92233720368.54775808 GBG');
         assert.equal(asset.amount, -9223372036854776000);
         assert.equal(asset.precision, 8);
         assert.equal(asset.symbol, 'GBG');
-        assert.equal(asset.toString(), '-92233720368.54776000 GBG');
+        assert.equal(asset.toString(), '-92233720368.54775808 GBG');
     })
 
     it('full constructor', async function() {
