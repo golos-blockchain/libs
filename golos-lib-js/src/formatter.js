@@ -162,7 +162,7 @@ module.exports = steemAPI => {
       if (isNaN(out)) out = 0;
       out = Math.max(out - 9, 0);
       out = (neg ? -1 : 1) * out;
-      out = out * 9 + 25;
+      out = out * 9 + (neg ? 0 : 25);
       if (!withDecimal) {
         out = parseInt(out);
       }
