@@ -163,6 +163,7 @@ module.exports = steemAPI => {
       out = Math.max(out - 9, 0);
       out = (neg ? -1 : 1) * out;
       out = out * 9 + (neg ? 0 : 25);
+      if (neg && out === 0) out = -1;
       if (!withDecimal) {
         out = parseInt(out);
       }
