@@ -415,7 +415,13 @@ module.exports = [
     "api": "database_api",
     "method": "get_assets",
     "has_default_values": true,
-    "params": [`creator=${EMPTY_STRING}`, `symbols=${EMPTY_ARRAY}`, `from=${EMPTY_STRING}`, `limit=${DEFAULT_ASSETS_LIMIT}`]
+    "params": [
+      `creator=${EMPTY_STRING}`,
+      `symbols=${EMPTY_ARRAY}`,
+      `from=${EMPTY_STRING}`,
+      `limit=${DEFAULT_ASSETS_LIMIT}`,
+      `sort="by_symbol_name"`
+    ]
   },
   {
     "api": "database_api",
