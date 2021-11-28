@@ -38,6 +38,16 @@ module.exports = [
   },
   {
     "api": "witness_api",
+    "method": "get_witness_votes",
+    "has_default_values": true,
+    "params": [
+      "witnessIds",
+      `limit=20`,
+      `offset=0`
+    ]
+  },
+  {
+    "api": "witness_api",
     "method": "get_witnesses_by_vote",
     "params": ["from", "limit"]
   },
