@@ -42,9 +42,7 @@ steemBroadcast.send = async function steemBroadcast$send(tx, privKeys, callback)
         const res = config.get('broadcast_transaction_with_callback') 
             ? await steemApi.broadcastTransactionWithCallbackAsync(() => {}, signedTransaction)
             : await steemApi.broadcastTransactionAsync(signedTransaction);
-        if (res.ref_block_num && res.operations)
-            return res;
-        return signedTransaction;
+        return Object.assign(res, signedTransaction);
     };
     try {
         let res = null;
