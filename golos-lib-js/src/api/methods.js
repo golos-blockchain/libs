@@ -43,7 +43,8 @@ module.exports = [
     "params": [
       "witnessIds",
       `limit=20`,
-      `offset=0`
+      `offset=0`,
+      `min_rshares_to_show="0.000000 GESTS"`
     ]
   },
   {
