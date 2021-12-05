@@ -77,6 +77,7 @@ export const methods_0_25_3 = [
     "get_vesting_delegations",
     "get_withdraw_routes",
     "get_witness_by_account",
+    "get_witness_votes",
     "get_witness_count",
     "get_witness_schedule",
     "get_witnesses",

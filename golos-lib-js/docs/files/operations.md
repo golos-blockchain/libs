@@ -1,31 +1,104 @@
-## Операции
+# Документация
 
-### Отправка операций
+- [Операции. Отправка транзакций](./operations.md#операции-отправка-операций)
+- [Упрощенный способ отправки операций](./operations.md#упрощенный-способ-отправки-операций)
+- [Результат отправки транзакции](./operations.md#результат-отправки-транзакции)
+- [Примеры отправки операций](./operations.md#примеры-отправки-операций)
+- [Низкоуровневые способы отправки операций](./operations.md#низкоуровневые-способы-отправки-операций)
 
-#### Отправка транзакции
+### Операции. Отправка транзакций
+
+В golos-lib-js есть конструктор транзакций, который автоматически подпишет транзакцию нужным приватным ключом (wif) и отправит ее.
+
+Просто создайте массив операций - это и будет транзакция. В данном примере создадим транзакцию из 1 операции, которая переведет 1 копейку с баланса пользователя cyberfounder пользователю lex:
+
 ```js
-golos.api.broadcastTransaction(trx, (err, result) => {
-  console.log(err, result);
+let operations = [];
+operations.push(['transfer', {
+     from: 'cyberfounder',
+     to: 'lex',
+     amount: '0.001 GOLOS',
+     memo: '',
+}]);
+```
+
+Затем отправьте операцию следующим кодом. Вместо 5J... укажите приватный ключ, в данном случае active-ключ аккаунта cyberfounder.
+
+```js
+let res;
+try {
+    res = await golos.broadcast.sendAsync(
+    {
+        extensions: [], 
+        operations,
+    }, ['5J...']);
+    console.log(res);
+} catch (err) {
+    console.error(err);
+}
+```
+
+Или без использования async-await:
+
+```js
+golos.broadcast.send(
+    {
+        extensions: [], 
+        operations,
+    }, ['5J...'], (err, res) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log(res);
+    });
+```
+
+#### Упрощенный способ отправки операций
+
+Если вам нужно отправить всего одну операцию, а не транзакцию из нескольких, то вы можете использовать готовый шаблон:
+
+```js
+let res;
+try {
+    res = await golos.broadcast.transfer('5J...', 'cyberfounder', 'lex', '0.001 GOLOS', '');
+    console.log(res);
+} catch (err) {
+    console.error(err);
+}
+```
+
+Или без async-await:
+
+```js
+golos.broadcast.transfer('5J...', 'cyberfounder', 'lex', '0.001 GOLOS', '', (err, res) => {
+    console.log(err, res);
 });
 ```
-#### Синхронная отправка транзакции
+
+Такие шаблоны существуют под все операции.
+
+Примеры отправки разных операций с помощью шаблонов см. в разделе [Примеры отправки операций](./operations.md#примеры-отправки-операций).
+
+#### Результат отправки транзакции
+
+(или Что такое res)
+
+Во всех вышеприведенных примерах само наличие res как не-null означает, что операция отправилась успешно. Однако сам res не имеет какой-либо ценной информации об отправленной операции. Он имеет разве что:
+- поле `operations` (если вы отправили операцию шаблоном, то с помощью этого поля можно увидеть, какую транзакцию создал конструктор без шаблона, и понять, как включить такую операцию в транзакцию при отправке без шаблона)
+- поле `signatures` (подписи транзакции)
+- `ref_block_num`, `ref_block_prefix`, `expiration` - технические поля, которые нужны редко.
+
+Но можно получить и дополнительные данные. Для этого укажите:
 ```js
-golos.api.broadcastTransactionSynchronous(trx, (err, result) => {
-  console.log(err, result);
-});
+golos.config.set('broadcast_transaction_with_callback', true);
 ```
-#### Отправка блока
-```js
-golos.api.broadcastBlock(b, (err, result) => {
-  console.log(err, result);
-});
-```
-#### Отправка транзакции с callback'ом
-```js
-golos.api.broadcastTransactionWithCallback(confirmationCallback, trx, (err, result) => {
-  console.log(err, result);
-});
-```
+Тогда все транзакции будут отправляться чуть медленнее, но зато с более подробным res, в который добавятся поля:
+- `block_num` - номер блока, в который попадет транзакция (этот блок можно получить в дальнейшем с помощью `golos.api.getBlock`, а если при отправке операции отправились евенты с дополнительной информацией, то их можно извлечь с помощью 'golos.api.getEventsInBlock`)
+- `id` - txid транзакции
+- и пара других полей.
+
+Если же требуется мгновенное получение данных об операциях, отправленных и другими пользователями (например, чтобы сделать уведомления), нужно использовать стриминг событий.
 
 ### Стриминг событий от операций
 
@@ -481,5 +554,34 @@ golos.broadcast.inviteClaim(
     'cyberfounder', 'cyberfounder', '5JFZC7AtEe1wF2ce6vPAUxDeevzYkPgmtR14z9ZVgvCCtrFAaLw',
     [], (err, result) => {
     console.log(err, result);
+});
+```
+
+### Низкоуровневые способы отправки операций
+
+Эти способы не используют конструктор транзакций и не будут сами подписывать вашу транзакцию. Это придется делать вам вручную.
+
+#### Отправка транзакции
+```js
+golos.api.broadcastTransaction(trx, (err, result) => {
+  console.log(err, result);
+});
+```
+#### Синхронная отправка транзакции
+```js
+golos.api.broadcastTransactionSynchronous(trx, (err, result) => {
+  console.log(err, result);
+});
+```
+#### Отправка блока
+```js
+golos.api.broadcastBlock(b, (err, result) => {
+  console.log(err, result);
+});
+```
+#### Отправка транзакции с callback'ом
+```js
+golos.api.broadcastTransactionWithCallback(confirmationCallback, trx, (err, result) => {
+  console.log(err, result);
 });
 ```
