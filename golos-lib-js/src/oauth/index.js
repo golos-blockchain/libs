@@ -2,6 +2,7 @@ import fetch from 'cross-fetch';
 import newDebug from 'debug';
 import config from '../config';
 import { hash, } from '../auth/ecc';
+import { createPopup, } from './loginPopup';
 
 let _apiHost;
 let _uiHost;
@@ -115,7 +116,20 @@ function login(permissions = [], extraParams = '') {
     if (typeof(window) === 'undefined') {
         throw new Error('OAuth works only in browser environment (window should be defined)');
     }
-    return window.open(uiHost() + '/oauth/' + clientId() + '/' + permissions.join(',') + extraParams);
+    const client = clientId();
+    createPopup(async () => {
+        let res = await _callApi('/api/oauth/get_client/' + client);
+        res = await res.json();
+        // TODO: what if no client?
+        return {
+            title: res.client.title,
+        };
+    }, ({ closePopup, }) => {
+        const win = window.open(uiHost() + '/oauth/' + client + '/' + permissions.join(',') + extraParams);
+        closePopup();
+    }, ({ closePopup, }) => {
+        closePopup();
+    })
 }
 
 async function logout() {
