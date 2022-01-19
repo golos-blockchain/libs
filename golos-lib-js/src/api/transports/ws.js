@@ -26,7 +26,6 @@ export default class WsTransport extends Transport {
   constructor(options = {}) {
     super(Object.assign({id: 0}, options));
 
-    this._requests = new Map();
     this.isOpen = false;
   }
 
@@ -57,6 +56,11 @@ export default class WsTransport extends Transport {
         const err = new Error('The WS connection was closed before this operation was made');
         if (!wasOpen) {
           reject(err);
+        }
+
+        for (let [id, val] of Object.entries(this.requests)) {
+          delete this.requests[id];
+          val.reject(err);
         }
 
         for (let [id, val] of Object.entries(this.callbacks)) {
