@@ -46,8 +46,7 @@ export default class WsTransport extends Transport {
         resolve();
       });
 
-      const releaseClose = this.listenTo(this.ws, 'close', () => {
-        debugWs('Closed WS connection with', url);
+      const errHandler = () => {
         const wasOpen = this.isOpen;
         this.isOpen = false;
         delete this.ws;
@@ -67,6 +66,16 @@ export default class WsTransport extends Transport {
           delete this.callbacks[id];
           val.cb(err, null);
         }
+      }
+
+      const releaseClose = this.listenTo(this.ws, 'close', () => {
+        debugWs('Closed WS connection with', url);
+        errHandler();
+      });
+
+      const releaseError = this.listenTo(this.ws, 'error', (error) => {
+        debugWs('Closed WS connection with', url, 'error is', error);
+        errHandler();
       });
 
       const releaseMessage = this.listenTo(this.ws, 'message', (message) => {
@@ -85,6 +94,7 @@ export default class WsTransport extends Transport {
       this.releases = this.releases.concat([
         releaseOpen,
         releaseClose,
+        releaseError,
         releaseMessage,
       ]);
     });
