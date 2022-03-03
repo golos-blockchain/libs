@@ -32,9 +32,13 @@ $ npm install golos-lib-js --save
 Полная документация здесь:
 https://github.com/golos-blockchain/libs/tree/master/golos-lib-js/docs
 
+#### React и Webpack 5
+
+В этом случае есть свои важные нюансы, описано [здесь](./files/webpack5.md).
+
 ## Использование без npm/yarn
 
-Библиотека доступна на [jsDelivr CND](https://cdn.jsdelivr.net/npm/golos-lib-js@latest/dist/golos.min.js) и [Unpkg CDN](https://unpkg.com/golos-lib-js@latest/dist/golos.min.js), и позволяет использовать библиотеку в любом проекте, даже не использующем Node.js. Все, что нужно, - это браузер.
+Библиотека доступна на [jsDelivr CDN](https://cdn.jsdelivr.net/npm/golos-lib-js@latest/dist/golos.min.js) и [Unpkg CDN](https://unpkg.com/golos-lib-js@latest/dist/golos.min.js), и позволяет использовать библиотеку в любом проекте, даже не использующем Node.js. Все, что нужно, - это браузер.
 
 ```html 
 <script src="./golos.min.js"></script>
