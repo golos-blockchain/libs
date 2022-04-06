@@ -45,9 +45,16 @@ Types.asset = {
     },
 
     appendByteBuffer(b, object){
-        object = object.trim()
-        if( ! /^[0-9]+\.?[0-9]* [A-Za-z0-9]+\.?[A-Za-z0-9]*$/.test(object))
-            throw new Error("Expecting amount like '99.000 SYMBOL' or '99.000 SYMBOL.SUBSYM', instead got '" + object + "'")
+        if (object.asset) { // golos.utils.AssetEditor
+            object = object.asset.toString()
+        } else if (object.symbol) { // golos.utils.Asset
+            object = object.toString()
+        } else {
+            object = object.trim()
+
+            if( ! /^[0-9]+\.?[0-9]* [A-Za-z0-9]+\.?[A-Za-z0-9]*$/.test(object))
+                throw new Error("Expecting amount like '99.000 SYMBOL' or '99.000 SYMBOL.SUBSYM', instead got '" + object + "'")
+        }
 
         let [ amount, symbol ] = object.split(" ")
         if(symbol.length > 14)

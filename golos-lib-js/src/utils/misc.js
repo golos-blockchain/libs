@@ -1,5 +1,3 @@
-import { Asset, } from './core';
-
 export async function delay(msec, getTimeoutId = undefined) {
     await new Promise((resolve, reject) => {
         const id = setTimeout(resolve, msec);
@@ -13,8 +11,6 @@ export function camelCase(str) {
     return l.toUpperCase();
   });
 }
-
-export { Asset, };
 
 export function validateAccountName(value) {
   let i, label, len, suffix;
