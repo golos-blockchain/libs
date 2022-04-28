@@ -72,8 +72,8 @@ function addHeapObject(obj) {
     heap[idx] = obj;
     return idx;
 }
-function __wbg_adapter_8(arg0, arg1, arg2) {
-    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hd59827e89d48352c(arg0, arg1, addHeapObject(arg2));
+function __wbg_adapter_10(arg0, arg1, arg2) {
+    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hce2ed387aa1c2b69(arg0, arg1, addHeapObject(arg2));
 }
 
 let WASM_VECTOR_LEN = 0;
@@ -271,6 +271,13 @@ class _Asset {
         return _Asset.__wrap(ret);
     }
     /**
+    * @returns {_Asset}
+    */
+    clone() {
+        var ret = wasm._asset_clone(this.ptr);
+        return _Asset.__wrap(ret);
+    }
+    /**
     * @returns {number}
     */
     get amount() {
@@ -284,17 +291,45 @@ class _Asset {
         wasm._asset_set_amount(this.ptr, value);
     }
     /**
-    * @returns {number}
+    * @returns {string}
     */
     get amountFloat() {
-        var ret = wasm._asset_amountFloat(this.ptr);
-        return ret;
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm._asset_amount_float(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
     }
     /**
-    * @param {number} value
+    * @param {string} amount_str
     */
-    set amountFloat(value) {
-        wasm._asset_set_amountFloat(this.ptr, value);
+    set amountFloat(amount_str) {
+        var ptr0 = passStringToWasm0(amount_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm._asset_set_amount_float(this.ptr, ptr0, len0);
+    }
+    /**
+    * @param {string} amount_str
+    * @returns {string}
+    */
+    updateAmountFloat(amount_str) {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            var ptr0 = passStringToWasm0(amount_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len0 = WASM_VECTOR_LEN;
+            wasm._asset_updateAmountFloat(retptr, this.ptr, ptr0, len0);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
     }
     /**
     * @returns {number}
@@ -335,18 +370,33 @@ class _Asset {
     /**
     * @returns {boolean}
     */
-    isUIA() {
-        var ret = wasm._asset_isUIA(this.ptr);
+    get isUIA() {
+        var ret = wasm._asset_is_uia(this.ptr);
         return ret !== 0;
     }
     /**
-    * @param {number | undefined} _dec_places
+    * @param {number | undefined} dec_places
     * @returns {string}
     */
-    toString(_dec_places) {
+    toString(dec_places) {
         try {
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm._asset_toString(retptr, this.ptr, !isLikeNone(_dec_places), isLikeNone(_dec_places) ? 0 : _dec_places);
+            wasm._asset_toString(retptr, this.ptr, !isLikeNone(dec_places), isLikeNone(dec_places) ? 0 : dec_places);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @returns {string}
+    */
+    get floatString() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm._asset_float_string(retptr, this.ptr);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
             return getStringFromWasm0(r0, r1);
@@ -424,6 +474,34 @@ class _Asset {
         return _Asset.__wrap(ret);
     }
     /**
+    * @param {number} num
+    * @returns {_Asset}
+    */
+    _mod_num(num) {
+        var ret = wasm._asset__mod_num(this.ptr, num);
+        return _Asset.__wrap(ret);
+    }
+    /**
+    * @param {_Asset} a
+    * @returns {_Asset}
+    */
+    _mod(a) {
+        _assertClass(a, _Asset);
+        var ret = wasm._asset__mod(this.ptr, a.ptr);
+        return _Asset.__wrap(ret);
+    }
+    /**
+    * @param {_Price} p
+    * @param {_Asset} remain
+    * @returns {_Asset}
+    */
+    _mul_price(p, remain) {
+        _assertClass(p, _Price);
+        _assertClass(remain, _Asset);
+        var ret = wasm._asset__mul_price(this.ptr, p.ptr, remain.ptr);
+        return _Asset.__wrap(ret);
+    }
+    /**
     * @param {_Asset} a
     * @returns {boolean}
     */
@@ -477,8 +555,190 @@ class _Asset {
         var ret = wasm._asset_gte(this.ptr, a.ptr);
         return ret !== 0;
     }
+    /**
+    * @param {_Asset} a
+    * @returns {_Asset}
+    */
+    min(a) {
+        _assertClass(a, _Asset);
+        var ret = wasm._asset_min(this.ptr, a.ptr);
+        return _Asset.__wrap(ret);
+    }
+    /**
+    * @param {_Asset} a
+    * @returns {_Asset}
+    */
+    max(a) {
+        _assertClass(a, _Asset);
+        var ret = wasm._asset_max(this.ptr, a.ptr);
+        return _Asset.__wrap(ret);
+    }
 }
 __exports._Asset = _Asset;
+/**
+*/
+class _AssetEditor {
+
+    static __wrap(ptr) {
+        const obj = Object.create(_AssetEditor.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg__asseteditor_free(ptr);
+    }
+    /**
+    * @param {_Asset} asset
+    * @returns {_AssetEditor}
+    */
+    static fromAsset(asset) {
+        _assertClass(asset, _Asset);
+        var ret = wasm._asseteditor_fromAsset(asset.ptr);
+        return _AssetEditor.__wrap(ret);
+    }
+    /**
+    * @param {string} value
+    * @returns {_AssetEditor}
+    */
+    static fromString(value) {
+        var ptr0 = passStringToWasm0(value, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm._asseteditor_fromString(ptr0, len0);
+        return _AssetEditor.__wrap(ret);
+    }
+    /**
+    * @param {number} amount
+    * @param {number} precision
+    * @param {string} symbol
+    * @returns {_AssetEditor}
+    */
+    static new(amount, precision, symbol) {
+        var ptr0 = passStringToWasm0(symbol, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm._asseteditor_new(amount, precision, ptr0, len0);
+        return _AssetEditor.__wrap(ret);
+    }
+    /**
+    * @param {string} str
+    * @returns {_AssetEditor}
+    */
+    withChange(str) {
+        var ptr0 = passStringToWasm0(str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm._asseteditor_withChange(this.ptr, ptr0, len0);
+        return _AssetEditor.__wrap(ret);
+    }
+    /**
+    * @returns {_Asset}
+    */
+    get asset() {
+        var ret = wasm._asseteditor_asset(this.ptr);
+        return _Asset.__wrap(ret);
+    }
+    /**
+    * @returns {string}
+    */
+    get amountStr() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm._asseteditor_amount_str(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @returns {boolean}
+    */
+    get hasChange() {
+        var ret = wasm._asseteditor_has_change(this.ptr);
+        return ret !== 0;
+    }
+}
+__exports._AssetEditor = _AssetEditor;
+/**
+*/
+class _Price {
+
+    static __wrap(ptr) {
+        const obj = Object.create(_Price.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg__price_free(ptr);
+    }
+    /**
+    * @param {_Asset} base
+    * @param {_Asset} quote
+    * @returns {_Price}
+    */
+    static new(base, quote) {
+        _assertClass(base, _Asset);
+        _assertClass(quote, _Asset);
+        var ret = wasm._price_new(base.ptr, quote.ptr);
+        return _Price.__wrap(ret);
+    }
+    /**
+    * @returns {_Price}
+    */
+    clone() {
+        var ret = wasm._price_clone(this.ptr);
+        return _Price.__wrap(ret);
+    }
+    /**
+    * @returns {_Asset}
+    */
+    get base() {
+        var ret = wasm._price_base(this.ptr);
+        return _Asset.__wrap(ret);
+    }
+    /**
+    * @param {_Asset} value
+    */
+    set base(value) {
+        _assertClass(value, _Asset);
+        wasm._price_set_base(this.ptr, value.ptr);
+    }
+    /**
+    * @returns {_Asset}
+    */
+    get quote() {
+        var ret = wasm._price_quote(this.ptr);
+        return _Asset.__wrap(ret);
+    }
+    /**
+    * @param {_Asset} value
+    */
+    set quote(value) {
+        _assertClass(value, _Asset);
+        wasm._price_set_quote(this.ptr, value.ptr);
+    }
+}
+__exports._Price = _Price;
 
 async function load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
@@ -539,6 +799,10 @@ async function init(input) {
         var ret = getObject(arg0).call(getObject(arg1));
         return addHeapObject(ret);
     }, arguments) };
+    imports.wbg.__wbg_new_80811dcb66d1b53f = function(arg0, arg1) {
+        var ret = new Error(getStringFromWasm0(arg0, arg1));
+        return addHeapObject(ret);
+    };
     imports.wbg.__wbg_call_e3c72355d091d5d4 = function() { return handleError(function (arg0, arg1, arg2) {
         var ret = getObject(arg0).call(getObject(arg1), getObject(arg2));
         return addHeapObject(ret);
@@ -554,8 +818,11 @@ async function init(input) {
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
-    imports.wbg.__wbindgen_closure_wrapper76 = function(arg0, arg1, arg2) {
-        var ret = makeMutClosure(arg0, arg1, 17, __wbg_adapter_8);
+    imports.wbg.__wbindgen_rethrow = function(arg0) {
+        throw takeObject(arg0);
+    };
+    imports.wbg.__wbindgen_closure_wrapper113 = function(arg0, arg1, arg2) {
+        var ret = makeMutClosure(arg0, arg1, 7, __wbg_adapter_10);
         return addHeapObject(ret);
     };
 

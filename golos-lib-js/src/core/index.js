@@ -2,7 +2,7 @@ import code from './code';
 import init from './golos_lib';
 
 const {
-    _Asset, aes256_decrypt,
+    _Asset, _AssetEditor, _Price, aes256_decrypt,
 } = init;
 
 export class NativeLibContext {
@@ -84,10 +84,65 @@ export let Asset = wrapNative((amount, precision, symbol) => {
     };
     _Asset.prototype.plus = wrapBinOp('plus');
     _Asset.prototype.minus = wrapBinOp('minus');
-    _Asset.prototype.mul = wrapBinOp('mul');
+    _Asset.prototype.mul = function(price, remainderAsset) {
+        if (price instanceof _Price) {
+            if (!remainderAsset) {
+                remainderAsset = this.clone()
+            }
+            return this._mul_price(price, remainderAsset)
+        }
+        const asset2 = price
+        if (!(asset2 instanceof _Asset))
+            return this._mul_num(asset2)
+        return this._mul(asset2)
+    };
     _Asset.prototype.div = wrapBinOp('div');
+    _Asset.prototype.mod = wrapBinOp('mod')
+    _Asset.prototype.toJSON = function() {
+        return this.toString()
+    }
     return a;
 });
+
+export let AssetEditor = wrapNative((amount, precision, symbol) => {
+    let ae = null
+    if (amount instanceof _Asset) {
+        ae = _AssetEditor.fromAsset(amount)
+    } else if (precision !== undefined && symbol) {
+        ae = _AssetEditor.new(amount, precision, symbol)
+    } else {
+        const str = amount
+        ae = _AssetEditor.fromString(str)
+    }
+    _AssetEditor.prototype.toJSON = function() {
+        return this.asset.toString()
+    }
+    _AssetEditor.prototype.toString = function() {
+        return JSON.stringify({
+            asset: this.asset,
+            amount_str: this.amountStr
+        })
+    }
+    return ae
+});
+
+export let Price = wrapNative((base, quote) => {
+    let pr = null
+    if (!quote) {
+        pr = _Price.new(Asset(base.base), Asset(base.quote))
+    } else {
+        pr = _Price.new(base, quote)
+    }
+    _Price.prototype.toJSON = function() {
+        return { base: this.base.toJSON(), quote: this.quote.toJSON() }
+    }
+    _Price.prototype.toString = function() {
+        return this.toJSON().toString()
+    }
+    return pr
+});
+
+export { _Asset, _AssetEditor, _Price }
 
 export let aes_decrypt = wrapNative((key, iv, data) => {
     return aes256_decrypt(key, iv, data);
