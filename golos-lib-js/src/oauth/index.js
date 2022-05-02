@@ -1,7 +1,8 @@
-import fetch from 'cross-fetch';
 import newDebug from 'debug';
+
 import config from '../config';
 import { hash, } from '../auth/ecc';
+import fetchEx from '../utils/fetchEx'
 
 let _apiHost;
 let _uiHost;
@@ -65,7 +66,7 @@ function _callApi(url, data, getHost = apiHost) {
         },
         body: data ? JSON.stringify(data) : undefined,
     };
-    return fetch(new URL(url, getHost()), request);
+    return fetchEx(new URL(url, getHost()), request);
 }
 
 async function check() {

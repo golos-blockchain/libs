@@ -23,6 +23,7 @@
     - [Валидация имен аккаунтов](./files/utils/validate_account_name.md)
     - [Asset для финансовых расчетов](./files/utils/asset.md)
     - [Formatter](./files/utils/formatter.md)
+    - [fetchEx, AbortController и тайм-ауты](./files/utils/fetchEx.md)
 
 ## Установка
 ```

@@ -1,8 +1,9 @@
 import newDebug from 'debug';
-import fetch from 'cross-fetch';
+
 import config from '../../config';
 import Transport from './base';
 import { nodeify, } from '../../promisify';
+import fetchEx from '../../utils/fetchEx'
 
 const cbMethods = [
     'set_block_applied_callback',
@@ -33,10 +34,11 @@ export function jsonRpc(uri, {method, id, params}) {
             Accept: 'application/json, text/plain, */*',
             'Content-Type': 'application/json',
         },
+        timeout: config.get('node_timeout')
     };
     req.credentials = config.get('credentials');
     if (!req.credentials) delete req.credentials;
-    return fetch(uri, req).then(res => {
+    return fetchEx(uri, req).then(res => {
         if (!res.ok) {
             throw new Error(`HTTP ${ res.status }: ${ res.statusText }`);
         }
