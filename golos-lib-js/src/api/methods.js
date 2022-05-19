@@ -330,6 +330,11 @@ module.exports = [
   },
   {
     "api": "database_api",
+    "method": "get_recovery_info",
+    "params": ["query"]
+  },
+  {
+    "api": "database_api",
     "method": "get_escrow",
     "params": ["from", "escrowId"]
   },
