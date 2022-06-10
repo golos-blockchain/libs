@@ -107,6 +107,12 @@ const account_referral = new Serializer(
     }
 );
 
+const interest_direction = new Serializer(
+    0, {
+        is_emission: bool
+    }
+);
+
 const transaction = new Serializer( 
     "transaction", {
         ref_block_num: uint16,
@@ -951,7 +957,9 @@ let delegate_vesting_shares_with_interest = new Serializer(
         delegatee: string,
         vesting_shares: asset,
         interest_rate: uint16,
-        extensions: set(future_extensions)
+        extensions: set(static_variant([
+            interest_direction
+        ]))
     }
 );
   
