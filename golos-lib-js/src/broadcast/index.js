@@ -54,7 +54,8 @@ steemBroadcast.send = async function steemBroadcast$send(tx, privKeys, callback)
                 'Broadcasting transaction without signing (transaction, transaction.operations, transaction._meta)',
                 tx, tx.operations, tx._meta
             );
-            res = await mw().broadcast({ tx, privKeys, orig: broadcast, });
+            res = await mw().broadcast({ tx, privKeys, orig: broadcast,
+                prepareTx: steemBroadcast._prepareTransaction });
         } else {
             const transaction = await steemBroadcast._prepareTransaction(tx);
             debug(

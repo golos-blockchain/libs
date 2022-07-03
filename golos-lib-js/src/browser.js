@@ -1,6 +1,6 @@
 const api = require('./api');
 const auth = require('./auth');
-const oauth = require('./oauth');
+const multiauth = require('./multiauth');
 const middlewares = require('./middlewares');
 const broadcast = require('./broadcast');
 const config = require('./config');
@@ -18,7 +18,7 @@ const golos = {
     assertNativeLib,
     api,
     auth,
-    oauth,
+    multiauth,
     broadcast,
     config,
     formatter,
