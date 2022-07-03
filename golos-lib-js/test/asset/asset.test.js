@@ -271,29 +271,49 @@ describe('golos.utils.Asset', function() {
         var a5 = Asset('0.99999999 GESTS');
 
         assert.isTrue(a1.eq(a4));
+        assert.isTrue(a1.eq(100000000))
         assert.isTrue(!a1.eq(a3));
+        assert.isTrue(!a1.eq(100000001))
         assert.isTrue(!a1.eq(a5));
+        assert.isTrue(!a1.eq(99999999))
 
         assert.isTrue(a1.lt(a3));
+        assert.isTrue(a1.lt(100000001))
         assert.isTrue(a3.gt(a1));
+        assert.isTrue(a3.gt(100000000))
         assert.isTrue(a1.gt(a5));
+        assert.isTrue(a1.gt(99999999))
         assert.isTrue(a5.lt(a1));
+        assert.isTrue(a5.lt(100000000))
         assert.isTrue(!a5.gt(a1));
+        assert.isTrue(!a5.gt(100000000))
         assert.isTrue(!a4.gt(a1));
+        assert.isTrue(!a4.gt(100000000))
         assert.isTrue(!a4.lt(a1));
+        assert.isTrue(!a4.lt(100000000))
 
         assert.isTrue(a1.lte(a3));
+        assert.isTrue(a1.lte(100000001))
         assert.isTrue(a3.gte(a1));
+        assert.isTrue(a3.gte(100000000))
         assert.isTrue(a1.gte(a5));
+        assert.isTrue(a1.gte(99999999))
         assert.isTrue(a5.lte(a1));
+        assert.isTrue(a5.lte(100000000))
 
         assert.isTrue(a1.min(a2).eq(a1))
+        assert.isTrue(a1.min(100000000).eq(100000000))
         assert.isTrue(a1.min(a3).eq(a1))
+        assert.isTrue(a1.min(100000001).eq(100000000))
         assert.isTrue(a3.min(a1).eq(a1))
+        assert.isTrue(a3.min(100000000).eq(100000000))
 
         assert.isTrue(a1.max(a2).eq(a1))
+        assert.isTrue(a1.max(100000000).eq(100000000))
         assert.isTrue(a1.max(a3).eq(a3))
+        assert.isTrue(a1.max(100000001).eq(100000001))
         assert.isTrue(a3.max(a1).eq(a3))
+        assert.isTrue(a3.max(100000000).eq(100000001))
     })
 
     it('arithmetics: +', async function() {

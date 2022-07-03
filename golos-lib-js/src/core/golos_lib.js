@@ -73,7 +73,7 @@ function addHeapObject(obj) {
     return idx;
 }
 function __wbg_adapter_10(arg0, arg1, arg2) {
-    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hce2ed387aa1c2b69(arg0, arg1, addHeapObject(arg2));
+    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h7555aee392ff2ae8(arg0, arg1, addHeapObject(arg2));
 }
 
 let WASM_VECTOR_LEN = 0;
@@ -505,72 +505,136 @@ class _Asset {
     * @param {_Asset} a
     * @returns {boolean}
     */
-    eq(a) {
+    _eq(a) {
         _assertClass(a, _Asset);
-        var ret = wasm._asset_eq(this.ptr, a.ptr);
+        var ret = wasm._asset__eq(this.ptr, a.ptr);
+        return ret !== 0;
+    }
+    /**
+    * @param {number} num
+    * @returns {boolean}
+    */
+    _eq_num(num) {
+        var ret = wasm._asset__eq_num(this.ptr, num);
         return ret !== 0;
     }
     /**
     * @param {_Asset} a
     * @returns {boolean}
     */
-    ne(a) {
+    _ne(a) {
         _assertClass(a, _Asset);
-        var ret = wasm._asset_ne(this.ptr, a.ptr);
+        var ret = wasm._asset__ne(this.ptr, a.ptr);
+        return ret !== 0;
+    }
+    /**
+    * @param {number} num
+    * @returns {boolean}
+    */
+    _ne_num(num) {
+        var ret = wasm._asset__ne_num(this.ptr, num);
         return ret !== 0;
     }
     /**
     * @param {_Asset} a
     * @returns {boolean}
     */
-    lt(a) {
+    _lt(a) {
         _assertClass(a, _Asset);
-        var ret = wasm._asset_lt(this.ptr, a.ptr);
+        var ret = wasm._asset__lt(this.ptr, a.ptr);
+        return ret !== 0;
+    }
+    /**
+    * @param {number} num
+    * @returns {boolean}
+    */
+    _lt_num(num) {
+        var ret = wasm._asset__lt_num(this.ptr, num);
         return ret !== 0;
     }
     /**
     * @param {_Asset} a
     * @returns {boolean}
     */
-    lte(a) {
+    _lte(a) {
         _assertClass(a, _Asset);
-        var ret = wasm._asset_lte(this.ptr, a.ptr);
+        var ret = wasm._asset__lte(this.ptr, a.ptr);
+        return ret !== 0;
+    }
+    /**
+    * @param {number} num
+    * @returns {boolean}
+    */
+    _lte_num(num) {
+        var ret = wasm._asset__lte_num(this.ptr, num);
         return ret !== 0;
     }
     /**
     * @param {_Asset} a
     * @returns {boolean}
     */
-    gt(a) {
+    _gt(a) {
         _assertClass(a, _Asset);
-        var ret = wasm._asset_gt(this.ptr, a.ptr);
+        var ret = wasm._asset__gt(this.ptr, a.ptr);
+        return ret !== 0;
+    }
+    /**
+    * @param {number} num
+    * @returns {boolean}
+    */
+    _gt_num(num) {
+        var ret = wasm._asset__gt_num(this.ptr, num);
         return ret !== 0;
     }
     /**
     * @param {_Asset} a
     * @returns {boolean}
     */
-    gte(a) {
+    _gte(a) {
         _assertClass(a, _Asset);
-        var ret = wasm._asset_gte(this.ptr, a.ptr);
+        var ret = wasm._asset__gte(this.ptr, a.ptr);
+        return ret !== 0;
+    }
+    /**
+    * @param {number} num
+    * @returns {boolean}
+    */
+    _gte_num(num) {
+        var ret = wasm._asset__gte_num(this.ptr, num);
         return ret !== 0;
     }
     /**
     * @param {_Asset} a
     * @returns {_Asset}
     */
-    min(a) {
+    _min(a) {
         _assertClass(a, _Asset);
-        var ret = wasm._asset_min(this.ptr, a.ptr);
+        var ret = wasm._asset__min(this.ptr, a.ptr);
+        return _Asset.__wrap(ret);
+    }
+    /**
+    * @param {number} num
+    * @returns {_Asset}
+    */
+    _min_num(num) {
+        var ret = wasm._asset__min_num(this.ptr, num);
         return _Asset.__wrap(ret);
     }
     /**
     * @param {_Asset} a
     * @returns {_Asset}
     */
-    max(a) {
+    _max(a) {
         _assertClass(a, _Asset);
-        var ret = wasm._asset_max(this.ptr, a.ptr);
+        var ret = wasm._asset__max(this.ptr, a.ptr);
+        return _Asset.__wrap(ret);
+    }
+    /**
+    * @param {number} num
+    * @returns {_Asset}
+    */
+    _max_num(num) {
+        var ret = wasm._asset__max_num(this.ptr, num);
         return _Asset.__wrap(ret);
     }
 }
@@ -821,8 +885,8 @@ async function init(input) {
     imports.wbg.__wbindgen_rethrow = function(arg0) {
         throw takeObject(arg0);
     };
-    imports.wbg.__wbindgen_closure_wrapper113 = function(arg0, arg1, arg2) {
-        var ret = makeMutClosure(arg0, arg1, 7, __wbg_adapter_10);
+    imports.wbg.__wbindgen_closure_wrapper119 = function(arg0, arg1, arg2) {
+        var ret = makeMutClosure(arg0, arg1, 8, __wbg_adapter_10);
         return addHeapObject(ret);
     };
 

@@ -176,35 +176,81 @@ impl _Asset {
 
     // Arithmetic eq, lte, gte, gt, lt, ne, min, max
 
-    pub fn eq(&self, a: &_Asset) -> bool {
+    pub fn _eq(&self, a: &_Asset) -> bool {
         self.amount == a.amount
     }
 
-    pub fn ne(&self, a: &_Asset) -> bool {
-        !self.eq(a)
+    pub fn _eq_num(&self, num: f64) -> bool {
+        self.amount == num as i64
     }
 
-    pub fn lt(&self, a: &_Asset) -> bool {
+    pub fn _ne(&self, a: &_Asset) -> bool {
+        !self._eq(a)
+    }
+
+    pub fn _ne_num(&self, num: f64) -> bool {
+        !self._eq_num(num)
+    }
+
+    pub fn _lt(&self, a: &_Asset) -> bool {
         self.amount < a.amount
     }
 
-    pub fn lte(&self, a: &_Asset) -> bool {
+    pub fn _lt_num(&self, num: f64) -> bool {
+        self.amount < num as i64
+    }
+
+    pub fn _lte(&self, a: &_Asset) -> bool {
         self.amount <= a.amount
     }
 
-    pub fn gt(&self, a: &_Asset) -> bool {
+    pub fn _lte_num(&self, num: f64) -> bool {
+        self.amount <= num as i64
+    }
+
+    pub fn _gt(&self, a: &_Asset) -> bool {
         self.amount > a.amount
     }
 
-    pub fn gte(&self, a: &_Asset) -> bool {
+    pub fn _gt_num(&self, num: f64) -> bool {
+        self.amount > num as i64
+    }
+
+    pub fn _gte(&self, a: &_Asset) -> bool {
         self.amount >= a.amount
     }
 
-    pub fn min(&self, a: &_Asset) -> _Asset {
-        if self.lte(a) { self.clone() } else { a.clone() }
+    pub fn _gte_num(&self, num: f64) -> bool {
+        self.amount >= num as i64
     }
 
-    pub fn max(&self, a: &_Asset) -> _Asset {
-        if self.gte(a) { self.clone() } else { a.clone() }
+    fn clone_with_amount(&self, amount: i64) -> _Asset {
+        let mut a = self.clone();
+        a.amount = amount;
+        a
+    }
+
+    pub fn _min(&self, a: &_Asset) -> _Asset {
+        if self._lte(a) { self.clone() } else { a.clone() }
+    }
+
+    pub fn _min_num(&self, num: f64) -> _Asset {
+        if self._lte_num(num) {
+            self.clone()
+        } else {
+            self.clone_with_amount(num as i64)
+        }
+    }
+
+    pub fn _max(&self, a: &_Asset) -> _Asset {
+        if self._gte(a) { self.clone() } else { a.clone() }
+    }
+
+    pub fn _max_num(&self, num: f64) -> _Asset {
+        if self._gte_num(num) {
+            self.clone()
+        } else {
+            self.clone_with_amount(num as i64)
+        }
     }
 }

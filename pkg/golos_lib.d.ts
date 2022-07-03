@@ -109,42 +109,82 @@ declare namespace wasm_bindgen {
 	* @param {_Asset} a
 	* @returns {boolean}
 	*/
-	  eq(a: _Asset): boolean;
+	  _eq(a: _Asset): boolean;
+	/**
+	* @param {number} num
+	* @returns {boolean}
+	*/
+	  _eq_num(num: number): boolean;
 	/**
 	* @param {_Asset} a
 	* @returns {boolean}
 	*/
-	  ne(a: _Asset): boolean;
+	  _ne(a: _Asset): boolean;
+	/**
+	* @param {number} num
+	* @returns {boolean}
+	*/
+	  _ne_num(num: number): boolean;
 	/**
 	* @param {_Asset} a
 	* @returns {boolean}
 	*/
-	  lt(a: _Asset): boolean;
+	  _lt(a: _Asset): boolean;
+	/**
+	* @param {number} num
+	* @returns {boolean}
+	*/
+	  _lt_num(num: number): boolean;
 	/**
 	* @param {_Asset} a
 	* @returns {boolean}
 	*/
-	  lte(a: _Asset): boolean;
+	  _lte(a: _Asset): boolean;
+	/**
+	* @param {number} num
+	* @returns {boolean}
+	*/
+	  _lte_num(num: number): boolean;
 	/**
 	* @param {_Asset} a
 	* @returns {boolean}
 	*/
-	  gt(a: _Asset): boolean;
+	  _gt(a: _Asset): boolean;
+	/**
+	* @param {number} num
+	* @returns {boolean}
+	*/
+	  _gt_num(num: number): boolean;
 	/**
 	* @param {_Asset} a
 	* @returns {boolean}
 	*/
-	  gte(a: _Asset): boolean;
+	  _gte(a: _Asset): boolean;
+	/**
+	* @param {number} num
+	* @returns {boolean}
+	*/
+	  _gte_num(num: number): boolean;
 	/**
 	* @param {_Asset} a
 	* @returns {_Asset}
 	*/
-	  min(a: _Asset): _Asset;
+	  _min(a: _Asset): _Asset;
+	/**
+	* @param {number} num
+	* @returns {_Asset}
+	*/
+	  _min_num(num: number): _Asset;
 	/**
 	* @param {_Asset} a
 	* @returns {_Asset}
 	*/
-	  max(a: _Asset): _Asset;
+	  _max(a: _Asset): _Asset;
+	/**
+	* @param {number} num
+	* @returns {_Asset}
+	*/
+	  _max_num(num: number): _Asset;
 	/**
 	* @returns {number}
 	*/
@@ -266,14 +306,22 @@ declare interface InitOutput {
   readonly _asset__mod_num: (a: number, b: number) => number;
   readonly _asset__mod: (a: number, b: number) => number;
   readonly _asset__mul_price: (a: number, b: number, c: number) => number;
-  readonly _asset_eq: (a: number, b: number) => number;
-  readonly _asset_ne: (a: number, b: number) => number;
-  readonly _asset_lt: (a: number, b: number) => number;
-  readonly _asset_lte: (a: number, b: number) => number;
-  readonly _asset_gt: (a: number, b: number) => number;
-  readonly _asset_gte: (a: number, b: number) => number;
-  readonly _asset_min: (a: number, b: number) => number;
-  readonly _asset_max: (a: number, b: number) => number;
+  readonly _asset__eq: (a: number, b: number) => number;
+  readonly _asset__eq_num: (a: number, b: number) => number;
+  readonly _asset__ne: (a: number, b: number) => number;
+  readonly _asset__ne_num: (a: number, b: number) => number;
+  readonly _asset__lt: (a: number, b: number) => number;
+  readonly _asset__lt_num: (a: number, b: number) => number;
+  readonly _asset__lte: (a: number, b: number) => number;
+  readonly _asset__lte_num: (a: number, b: number) => number;
+  readonly _asset__gt: (a: number, b: number) => number;
+  readonly _asset__gt_num: (a: number, b: number) => number;
+  readonly _asset__gte: (a: number, b: number) => number;
+  readonly _asset__gte_num: (a: number, b: number) => number;
+  readonly _asset__min: (a: number, b: number) => number;
+  readonly _asset__min_num: (a: number, b: number) => number;
+  readonly _asset__max: (a: number, b: number) => number;
+  readonly _asset__max_num: (a: number, b: number) => number;
   readonly __wbg__asseteditor_free: (a: number) => void;
   readonly _asseteditor_fromAsset: (a: number) => number;
   readonly _asseteditor_fromString: (a: number, b: number) => number;
@@ -293,7 +341,7 @@ declare interface InitOutput {
   readonly stream_block_number: (a: number, b: number) => number;
   readonly aes256_decrypt: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
   readonly __wbindgen_export_0: WebAssembly.Table;
-  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hce2ed387aa1c2b69: (a: number, b: number, c: number) => void;
+  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h7555aee392ff2ae8: (a: number, b: number, c: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
