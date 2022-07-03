@@ -392,6 +392,10 @@ describe('golos.utils.Asset', function() {
         var remain = Asset('0.000 GESTS')
         assert.equal(asset.mul(price, remain).toString(), '25.002 GOLOS')
         assert.equal(remain.toString(), '0.000 GESTS')
+
+        var asset = Asset('9223372036854775.807 GESTS')
+        assert.equal(asset.mul(price, remain).toString(), '9223372036854775.807 GOLOS')
+        assert.equal(remain.toString(), '0.000 GESTS')
     })
 
     it('arithmetics: chaining', async function() {

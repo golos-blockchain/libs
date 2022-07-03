@@ -166,11 +166,16 @@ impl _Asset {
             a = p.quote();
             b = p.base();
         }
-        let mul = self.amount * a.amount;
+
+        let safe = self.amount as i128;
+        let a_safe = a.amount as i128;
+        let b_safe = b.amount as i128;
+
+        let mul = safe * a_safe;
         *remain = self.clone();
-        (*remain).amount = mul % b.amount;
+        (*remain).amount = (mul % b_safe) as i64;
         let mut res = a.clone();
-        res.amount = mul / b.amount;
+        res.amount = (mul / b_safe) as i64;
         res
     }
 
