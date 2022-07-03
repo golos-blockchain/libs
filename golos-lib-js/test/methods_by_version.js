@@ -94,6 +94,7 @@ export const methods_0_25_3 = [
     "get_market_history",
     "get_market_history_buckets",
     "get_recent_trades",
+    "get_recovery_info",
     "get_ticker",
     "get_trade_history",
     "get_volume",
