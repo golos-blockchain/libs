@@ -1,5 +1,5 @@
 import React from 'react';
-import golos, { api, broadcast, oauth, middlewares, } from 'golos-lib-js';
+import golos, { api, broadcast, multiauth, middlewares, } from 'golos-lib-js';
 import ByteBuffer from 'bytebuffer';
 
 class App extends React.Component {
@@ -11,23 +11,23 @@ class App extends React.Component {
         golos.config.set('oauth.client', 'proposals');
         golos.config.set('oauth.host', API_HOST);
         golos.config.set('websocket', API_HOST + '/api/oauth/sign');
+        golos.config.set('signed.websocket', 'wss://apibeta.golos.today/ws');
         golos.config.set('credentials', 'include');
-        golos.use(new middlewares.OAuthMiddleware());
+        golos.use(new middlewares.MultiAuthMiddleware());
 
         this.state = {};
     }
 
     async componentDidMount() {
-        const res = await oauth.checkReliable();
+        const res = await multiauth.checkReliable();
         this.setState({
             account: res.authorized ? res.account : null,
             allowed: res.allowed,
         });
     }
 
-    login = () => {
-        oauth.login(['custom', 'proposal_delete', 'proposal_update']);
-        oauth.waitForLogin((res) => {
+    _waitForLogin = () => {
+        multiauth.waitForLogin((res) => {
             if (res.authorized) {
                 this.setState({
                     account: res.account,
@@ -37,6 +37,28 @@ class App extends React.Component {
         }, () => {
             alert('Waiting for login is timeouted. Try again please.');
         });
+    }
+
+    login = async () => {
+        try {
+            await multiauth.login(['custom', 'proposal_delete', 'proposal_update']);
+        } catch (err) {
+            console.error(err)
+            alert(err)
+            return
+        }
+        this._waitForLogin()
+    };
+
+    loginKeychain = async () => {
+        try {
+            await multiauth.login([], {type: multiauth.AuthType.KEYCHAIN});
+        } catch (err) {
+            console.error(err)
+            alert(err)
+            return
+        }
+        this._waitForLogin()
     };
 
     proposalCreate = async () => {
@@ -123,7 +145,7 @@ class App extends React.Component {
     };
 
     logout = async () => {
-        await oauth.logout();
+        await multiauth.logout();
         this.setState({
             account: null,
         });
@@ -135,6 +157,7 @@ class App extends React.Component {
             <div className='App'>
                 {account === null && <div>
                     <button onClick={this.login}>Login</button>
+                    <button onClick={this.loginKeychain}>Login with Keychain</button>
                 </div>}
                 {account && <div>
                     <div>
