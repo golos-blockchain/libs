@@ -49,6 +49,8 @@ export const methods_0_25_3 = [
     "get_invite",
     "get_assets",
     "get_accounts_balances",
+    "list_account_relations",
+    "get_account_relations",
     "get_feed_history",
     "get_hardfork_version",
     "get_key_references",

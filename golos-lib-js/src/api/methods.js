@@ -445,6 +445,16 @@ module.exports = [
     "params": ['account_names']
   },
   {
+    "api": "account_relations",
+    "method": "list_account_relations",
+    "params": ['query']
+  },
+  {
+    "api": "account_relations",
+    "method": "get_account_relations",
+    "params": ['query']
+  },
+  {
     "api": "follow",
     "method": "get_followers",
     "params": ["following", "startFollower", "followType", "limit"]

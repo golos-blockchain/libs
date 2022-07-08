@@ -785,5 +785,14 @@ module.exports = [
       "extensions"
     ]
   },
+  {
+    "roles": ["posting"],
+    "operation": "account_setup",
+    "params": [
+      "account",
+      "settings",
+      "extensions"
+    ]
+  },
 ]
 
