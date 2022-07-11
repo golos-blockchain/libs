@@ -203,6 +203,7 @@ module.exports = [
       `filterIds=${EMPTY_ARRAY}`,
       `filterAuthors=${EMPTY_ARRAY}`,
       `categoryPrefix=${EMPTY_STRING}`,
+      `prefs=${EMPTY_OPTIONAL}`,
     ]
   },
   {
@@ -228,6 +229,7 @@ module.exports = [
       `filterIds=${EMPTY_ARRAY}`,
       `filterAuthors=${EMPTY_ARRAY}`,
       `filterNegativeRepAuthors=false`,
+      `prefs=${EMPTY_OPTIONAL}`,
     ]
   },
   {
@@ -243,6 +245,7 @@ module.exports = [
       `filterAuthors=${EMPTY_ARRAY}`,
       `filterNegativeRepAuthors=false`,
       `sortByCreatedDesc=${EMPTY_OPTIONAL}`, // use strings: 'true', 'false'. Non-string false is null
+      `prefs=${EMPTY_OPTIONAL}`,
     ]
   },
   {
