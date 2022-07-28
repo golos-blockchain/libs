@@ -399,12 +399,14 @@ module.exports = [
   {
     "api": "database_api",
     "method": "lookup_account_names",
-    "params": ["accountNames"]
+    "has_default_values": true,
+    "params": ["accountNames", `includeFrozen=false`]
   },
   {
     "api": "database_api",
     "method": "lookup_accounts",
-    "params": ["lowerBoundName", "limit"]
+    "has_default_values": true,
+    "params": ["lowerBoundName", "limit", `includeFrozen=false`]
   },
   {
     "api": "database_api",
