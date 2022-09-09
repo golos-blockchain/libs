@@ -1,6 +1,6 @@
 const api = require('./api');
 const auth = require('./auth');
-const oauth = require('./oauth');
+const multiauth = require('./multiauth');
 const middlewares = require('./middlewares');
 const broadcast = require('./broadcast');
 const formatter = require('./formatter')(api);
@@ -19,12 +19,12 @@ module.exports = {
     assertNativeLib,
     api,
     auth,
-    oauth,
     broadcast,
     formatter,
     memo,
     messages,
     middlewares,
+    multiauth,
     config,
     use: middlewares.use,
     utils,

@@ -107,6 +107,12 @@ const account_referral = new Serializer(
     }
 );
 
+const interest_direction = new Serializer(
+    0, {
+        is_emission: bool
+    }
+);
+
 const transaction = new Serializer( 
     "transaction", {
         ref_block_num: uint16,
@@ -923,6 +929,58 @@ let chain_properties_26 = new Serializer(
   }
 );
 
+let chain_properties_27 = new Serializer(
+  7, {
+        account_creation_fee: asset,
+        maximum_block_size: uint32,
+        sbd_interest_rate: uint16,
+        create_account_min_golos_fee: asset,
+        create_account_min_delegation: asset,
+        create_account_delegation_time: uint32,
+        min_delegation: asset,
+        max_referral_interest_rate: uint16,
+        max_referral_term_sec: uint32,
+        min_referral_break_fee: asset,
+        max_referral_break_fee: asset,
+        posts_window: uint16,
+        posts_per_window: uint16,
+        comments_window: uint16,
+        comments_per_window: uint16,
+        votes_window: uint16,
+        votes_per_window: uint16,
+        auction_window_size: uint16,
+        max_delegated_vesting_interest_rate: uint16,
+        custom_ops_bandwidth_multiplier: uint16,
+        min_curation_percent: uint16,
+        max_curation_percent: uint16,
+        curation_reward_curve: uint64,
+        allow_distribute_auction_reward: bool,
+        allow_return_auction_reward_to_fund: bool,
+        worker_reward_percent: uint16,
+        witness_reward_percent: uint16,
+        vesting_reward_percent: uint16,
+        worker_request_creation_fee: asset,
+        worker_request_approve_min_percent: uint16,
+        sbd_debt_convert_rate: uint16,
+        vote_regeneration_per_day: uint32,
+        witness_skipping_reset_time: uint32,
+        witness_idleness_time: uint32,
+        account_idleness_time: uint32,
+        claim_idleness_time: uint32,
+        min_invite_balance: asset,
+        asset_creation_fee: asset,
+        invite_transfer_interval_sec: uint32,
+        convert_fee_percent: uint16,
+        min_golos_power_to_curate: asset,
+        worker_emission_percent: uint16,
+        vesting_of_remain_percent: uint16,
+        negrep_posting_window: uint16,
+        negrep_posting_per_window: uint16,
+        unwanted_operation_cost: asset,
+        unlimit_operation_cost: asset,
+  }
+);
+
 let chain_properties_update = new Serializer(
     "chain_properties_update", {
         owner: string,
@@ -934,6 +992,7 @@ let chain_properties_update = new Serializer(
             chain_properties_23,
             chain_properties_24,
             chain_properties_26,
+            chain_properties_27,
         ])
   }
 );
@@ -951,7 +1010,9 @@ let delegate_vesting_shares_with_interest = new Serializer(
         delegatee: string,
         vesting_shares: asset,
         interest_rate: uint16,
-        extensions: set(future_extensions)
+        extensions: set(static_variant([
+            interest_direction
+        ]))
     }
 );
   
@@ -1165,6 +1226,30 @@ let limit_order_cancel_ex = new Serializer(
     }
 );
 
+const account_block_setting = new Serializer(
+    0, {
+        account: string,
+        block: bool,
+    }
+);
+
+const do_not_bother_setting = new Serializer(
+    1, {
+        do_not_bother: bool,
+    }
+);
+
+let account_setup = new Serializer(
+    "account_setup", {
+        account: string,
+        settings: set(static_variant([
+            account_block_setting,
+            do_not_bother_setting
+        ])),
+        extensions: set(future_extensions)
+    }
+);
+
 let fill_convert_request = new Serializer(
     "fill_convert_request", {
         owner: string,
@@ -1353,6 +1438,7 @@ operation.st_operations = [
     invite_donate,
     invite_transfer,
     limit_order_cancel_ex,
+    account_setup,
 
     fill_convert_request,
     author_reward,

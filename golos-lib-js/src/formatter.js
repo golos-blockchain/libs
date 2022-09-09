@@ -1,5 +1,6 @@
 import get from "lodash/get";
 import { key_utils } from "./auth/ecc";
+import { Asset, _Asset, Price } from './utils'
 
 module.exports = steemAPI => {
   function numberWithCommas(x) {
@@ -147,6 +148,31 @@ module.exports = steemAPI => {
     return privateKey.toWif().substring(3, 3 + PASSWORD_LENGTH);
   }
 
+  function _assetArgs(...args) {
+    for (let arg of arguments) {
+      if (arg instanceof _Asset) return true
+    }
+    return false
+  }
+
+  function _forceAsset(val, prec, sym) {
+    if (val instanceof _Asset) {
+      return val
+    } else if (val.toFixed) {
+      let a = Asset(0, prec, sym)
+      a.amountFloat = val.toFixed(prec)
+      return a
+    }
+    return Asset(val.toString())
+  }
+
+  function _assetVestGolos(vestOrGolosAsset, totalVesting, totalVestingGolos) {
+    totalVesting = _forceAsset(totalVesting, 6, 'GESTS')
+    totalVestingGolos = _forceAsset(totalVestingGolos, 3, 'GOLOS')
+    const price = Price(totalVesting, totalVestingGolos)
+    return vestOrGolosAsset.mul(price)
+  }
+
   return {
     reputation: function(reputation, withDecimal = false) {
       if (reputation == null) return reputation;
@@ -171,13 +197,28 @@ module.exports = steemAPI => {
     },
 
     vestToGolos: function(
-      vestingShares,
-      totalVestingShares,
-      totalVestingFundGolos
+      vestingShares, totalVesting, totalVestingGolos
     ) {
+      if (_assetArgs(vestingShares, totalVesting, totalVestingGolos)) {
+        vestingShares = _forceAsset(vestingShares, 6, 'GESTS')
+        return _assetVestGolos(vestingShares, totalVesting, totalVestingGolos)
+      }
       return (
-        parseFloat(totalVestingFundGolos) *
-        (parseFloat(vestingShares) / parseFloat(totalVestingShares))
+        parseFloat(totalVestingGolos) *
+        (parseFloat(vestingShares) / parseFloat(totalVesting))
+      );
+    },
+
+    golosToVest: function(
+      golosAmount, totalVesting, totalVestingGolos
+    ) {
+      if (_assetArgs(golosAmount, totalVesting, totalVestingGolos)) {
+        golosAmount = _forceAsset(golosAmount, 3, 'GOLOS')
+        return _assetVestGolos(golosAmount, totalVesting, totalVestingGolos)
+      }
+      return (
+        parseFloat(totalVesting) *
+        (parseFloat(golosAmount) / parseFloat(totalVestingGolos))
       );
     },
 

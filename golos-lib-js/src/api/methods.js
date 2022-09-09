@@ -186,6 +186,7 @@ module.exports = [
       `voteLimit=${DEFAULT_VOTES_LIMIT}`,
       `voteOffset=${DEFAULT_VOTES_OFFSET}`,
       `filterTagMasks=${EMPTY_ARRAY}`,
+      `prefs=${EMPTY_OPTIONAL}`,
     ]
   },
   {
@@ -203,6 +204,7 @@ module.exports = [
       `filterIds=${EMPTY_ARRAY}`,
       `filterAuthors=${EMPTY_ARRAY}`,
       `categoryPrefix=${EMPTY_STRING}`,
+      `prefs=${EMPTY_OPTIONAL}`,
     ]
   },
   {
@@ -228,6 +230,7 @@ module.exports = [
       `filterIds=${EMPTY_ARRAY}`,
       `filterAuthors=${EMPTY_ARRAY}`,
       `filterNegativeRepAuthors=false`,
+      `prefs=${EMPTY_OPTIONAL}`,
     ]
   },
   {
@@ -243,6 +246,7 @@ module.exports = [
       `filterAuthors=${EMPTY_ARRAY}`,
       `filterNegativeRepAuthors=false`,
       `sortByCreatedDesc=${EMPTY_OPTIONAL}`, // use strings: 'true', 'false'. Non-string false is null
+      `prefs=${EMPTY_OPTIONAL}`,
     ]
   },
   {
@@ -396,12 +400,14 @@ module.exports = [
   {
     "api": "database_api",
     "method": "lookup_account_names",
-    "params": ["accountNames"]
+    "has_default_values": true,
+    "params": ["accountNames", `includeFrozen=false`]
   },
   {
     "api": "database_api",
     "method": "lookup_accounts",
-    "params": ["lowerBoundName", "limit"]
+    "has_default_values": true,
+    "params": ["lowerBoundName", "limit", `includeFrozen=false`]
   },
   {
     "api": "database_api",
@@ -443,6 +449,16 @@ module.exports = [
     "api": "database_api",
     "method": "get_accounts_balances",
     "params": ['account_names']
+  },
+  {
+    "api": "account_relations",
+    "method": "list_account_relations",
+    "params": ['query']
+  },
+  {
+    "api": "account_relations",
+    "method": "get_account_relations",
+    "params": ['query']
   },
   {
     "api": "follow",

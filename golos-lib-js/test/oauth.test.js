@@ -1,10 +1,10 @@
 import { assert } from 'chai';
-import { check, } from '../src/oauth';
+import { check, } from '../src/multiauth';
 import th from './test_helper';
-import { clientId, apiHost, uiHost, login, logout, } from '../src/oauth';
+import { clientId, apiHost, uiHost, login, logout, } from '../src/multiauth';
 import config from '../src/config';
 
-describe('golos.oauth: check', function() {
+describe('golos.multiauth: check', function() {
     it('clientId()', async function() {
         assert.throws(() => clientId(), 'oauth.client is not set in golos.config');
         assert.isRejected(logout(), 'oauth.client is not set in golos.config');
@@ -25,6 +25,11 @@ describe('golos.oauth: check', function() {
     it('login', async function() {
         config.set('oauth.client', 'alicenet');
         config.set('oauth.host', 'golos.app');
-        assert.throws(() => login(), 'OAuth works only in browser environment (window should be defined)');
+        try {
+            await login()
+            assert.isTrue(false)
+        } catch (err) {
+            assert.equal(err.message, 'MultiAuth works only in browser environment (window should be defined)')
+        }
     });
 });

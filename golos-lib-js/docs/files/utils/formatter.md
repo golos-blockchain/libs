@@ -24,9 +24,17 @@ console.log(reputation);
 // => 56
 ```
 
-### Отображение Силы Голоса в GOLOS
-Использует текущий курс.
+### Отображение Силы Голоса в GOLOS и наоборот
+Позволяет отображать Силу Голоса в удобном для людей виде.
+
+Использует текущий курс (из `getDynamicGlobalProperties`).
 ```js
 var golosPower = golos.formatter.vestToGolos(vestingShares, totalVestingShares, totalVestingFundGolos);
 console.log(golosPower);
+
+var vestingShares = golos.formatter.golosToVest(golosPower, totalVestingShares, totalVestingFundGolos);
+console.log(vestingShares);
 ```
+Параметры функции могут быть `Asset`, десятичными дробями или строками в формате блокчейна (пример: `'0.001 GOLOS'`).
+
+Если хотя бы один из параметров является `Asset`, то функция возвращает `Asset`. Иначе - возвращает десятичную дробь.

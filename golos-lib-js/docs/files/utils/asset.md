@@ -42,6 +42,7 @@ asset.amountFloat = '-5'; // получится -5.000 GOLOS
 let asset1 = golos.utils.Asset('1.000 GOLOS');
 let asset2 = golos.utils.Asset('2.000 GOLOS');
 console.log(asset1.eq(asset2)); // ==
+console.log(asset1.eq(2000)); // ==
 console.log(asset1.lt(asset2)); // <
 console.log(asset1.gt(asset2)); // >
 console.log(asset1.lte(asset2)); // <=
@@ -49,6 +50,7 @@ console.log(asset1.gte(asset2)); // >=
 
 console.log(asset1.min(asset2).amount); // 1000
 console.log(asset1.max(asset2).amount); // 2000
+console.log(asset1.max(2000).amount); // 2000
 ```
 
 ### Операторы арифметики

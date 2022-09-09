@@ -1,5 +1,5 @@
 const EmptyMiddleware = require('./EmptyMiddleware');
-const OAuthMiddleware = require('./OAuthMiddleware');
+const MultiAuthMiddleware = require('./MultiAuthMiddleware');
 
 let current = new EmptyMiddleware();
 
@@ -13,7 +13,7 @@ function mw() {
 
 module.exports = {
     EmptyMiddleware,
-    OAuthMiddleware,
+    MultiAuthMiddleware,
     use,
     mw,
 }

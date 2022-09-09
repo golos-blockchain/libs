@@ -8,15 +8,27 @@
 
 Для этого в библиотеке есть готовая функция `golos.auth.login` - которая по сути просто проверяет, что пользователь ввел правильный ключ\пароль, чтобы не было такого, что пользователь думает, что он авторизован, а на самом деле БЧ не принимает операции, подписанные его ключами.
 
-Но что делать, если ваш сайт или приложение достаточно новые? Многие пользователи будут бояться вводить на ваших страницах ключи и пароли, опасаясь, что ваши скрипты их каким-то образом украдут. Чтобы такого не было, следует использовать [наш сервис OAuth](https://github.com/golos-blockchain/ui-auth/blob/master/API.md#%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-oauth).
+Но что делать, если ваш сайт или приложение достаточно новые? Многие пользователи будут бояться вводить на ваших страницах ключи и пароли, опасаясь, что ваши скрипты их каким-то образом украдут. Чтобы такого не было, надо использовать один из наших сервисов: [OAuth](https://github.com/golos-blockchain/ui-auth/blob/master/API.md#%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-oauth) или (https://github.com/golos-blockchain/ui-keychain/blob/master/API.md)[Golos KeyChain].
 
-- [Вход пользователя с помощью OAuth](#вход-пользователя-с-помощью-oauth)
+- [Вход пользователя с помощью OAuth/KeyChain](#вход-пользователя-с-помощью-oauth-keychain)
 - [Вход с паролем (клиентская авторизация без OAuth)](#вход-с-паролем-клиентская-авторизация-без-oauth)
 - [Сохранение сессии при авторизации без OAuth](#сохранение-сессии-при-авторизации-без-oauth)
 - [Серверная авторизация](#серверная-авторизация)
 - [Вспомогательные функции](#вспомогательные-функции)
 
-### Вход пользователя с помощью OAuth
+### Вход пользователя с помощью OAuth/KeyChain
+
+[OAuth (Golos Signer)](https://github.com/golos-blockchain/ui-auth/blob/master/API.md#%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-oauth) - это сервис, который авторизует пользователей по принципу OAuth. Ваше приложение сможет отправлять транзакции не на одну из нод GOLOS, а на сервер [golos.app](golos.app). Сначала пользователь нажмет кнопку "Войти" в вашем приложении, и откроется окно Golos Signer с просьбой разрешить доступ. Он будет видеть, какие виды действий вы собираетесь делать. И если разрешит, то все будет работать. При этом ваше приложение не получит никаких ключей или паролей, так что пользователь будет больше вам доверять.
+
+- Чтобы это работало, вы должны сперва [обратиться к нам для регистрации вашего приложения](https://github.com/golos-blockchain/ui-auth/blob/master/API.md#%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-oauth) Обращения рассматриваются в течение 1-3 дней.
+- Вы сможете отправлять не любые операции, а только те, которые поддерживает OAuth.
+
+[Golos KeyChain](https://github.com/golos-blockchain/ui-keychain) - расширение для браузеров. Пользователь может установить расширение и сохранить туда пароль или ключи. Дальше все как в OAuth. Отличие в том, что расширение не отправляет операций (поскольку оно позиционируется как особо защищенный способ авторизации). Оно только будет их подписывать, а отправлять их на одну из нод - вам.
+
+- Обращаться к нам в этом случае не нужно. Вы можете все сделать сами.
+- Вы сможете отправлять любые операции (по крайней мере пока мы не собираемся вводить в KeyChain какие-то ограничения).
+
+Вы можете совмещать OAuth и KeyChain в своем приложении, чтобы у пользователя был выбор. Так будет даже лучше.
 
 #### Настройка golos-lib-js для OAuth
 
@@ -27,19 +39,23 @@ golos.config.set('oauth.client', 'hotdog-website');
 golos.config.set('oauth.host', API_HOST);
 golos.config.set('websocket', API_HOST + '/api/oauth/sign');
 golos.config.set('credentials', 'include');
-golos.use(new golos.middlewares.OAuthMiddleware());
+golos.use(new golos.middlewares.MultiAuthMiddleware());
+```
+А чтобы поддерживать **KeyChain**, добавьте к этому еще и:
+```
+golos.config.set('signed.websocket', 'любая из нод - https или wss');
 ```
 
-Подробнее: https://github.com/golos-blockchain/ui-auth/blob/master/API.md#%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-golos-lib-js-%D0%B4%D0%BB%D1%8F-oauth
+Подробнее про OAuth: https://github.com/golos-blockchain/ui-auth/blob/master/API.md#%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-golos-lib-js-%D0%B4%D0%BB%D1%8F-oauth
 
 #### Вход
 
-В вашем приложении должна быть кнопка "Войти", при нажатии на которую:
+Чтобы поддерживать **OAuth**, в вашем приложении должна быть кнопка "Войти", при нажатии на которую:
 1. Открывать нашу страницу авторизации, где пользователь разрешит (или не разрешит) доступ вашему приложению:
 
 ```js
 const permissions = ['transfer', 'account_create_with_delegation', 'private_message'];
-golos.oauth.login(permissions);
+await golos.multiauth.login(permissions); // обработчик клика должен быть async
 ```
 permissions - это набор разрешений, которые надо предоставить вашему приложению. Большинство из них - это непосредственно операции, которые ваше приложение будет отправлять от имени пользователя. Но в некоторых случаях нужны особые разрешения. И некоторые операции вообще не поддерживаются в OAuth. Весь список возможных разрешений [здесь](https://github.com/golos-blockchain/ui-auth/blob/master/server/utils/oauthPermissions.js).
 
@@ -61,9 +77,15 @@ golos.oauth.waitForLogin((res) => {
 });
 ```
 
+Чтобы поддерживать **KeyChain**, сделайте еще одну кнопку - "Войти через GolosKeyChain". Там все точно так же, за исключением пункта 1:
+```js
+// permissions в KeyChain нет
+await golos.multiauth.login([], { type: golos.multiauth.AuthType.KEYCHAIN});
+```
+
 Примеры:  
-[jQuery](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/jquery/main.js)  
-[React](https://github.com/golos-blockchain/ui-auth/tree/master/oauth_examples/)
+[jQuery](https://github.com/golos-blockchain/libs/blob/examples-oauth-and-keychain/jquery/main.js)  
+[React](https://github.com/golos-blockchain/libs/tree/examples-oauth-and-keychain/)
 
 #### Проверка, что пользователь авторизован
 
@@ -80,21 +102,22 @@ async function init() {
         // разблокировать кнопки отправляющие операции,
         // из res.account взять имя пользователя и отобразить, что пользователь авторизован под этим именем
         alert('Вы авторизованы как ' + res.account);
-        // а res.allowed содержит список полученных разрешений
+        // res.authType позволяет определить - KeyChain или OAuth
+        // а res.allowed содержит список полученных разрешений (в случае OAuth)
     } else {
         // Скрыть кнопку Выйти,
         // показать кнопку Войти,
         // заблокировать кнопки отправляющие операции
     }
-    // Кроме того, если используете анимацию или надпись "загрузка...", чтобы показать, что данные авторизации загружаются, то здесь следует ее скрывать.
-    // Например, чтобы не блокировать кнопки, вы можете просто вместо всего UI отображать экран "Загрузка...", и здесь его прятать, отображая форму входа, либо основной интерфейс.
+    // Кроме того, если используете анимацию или надпись "загрузка...", чтобы показать, что данные авторизации загружаются, то в этот момент следует ее скрывать.
+    // Например, чтобы не блокировать кнопки, вы можете просто вместо всего UI отображать экран "Загрузка...", а в данный момент прятать его, и отображать форму входа, либо основной интерфейс.
 }
 init();
 ```
 
 Примеры:  
-[jQuery](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/jquery/main.js)  
-[React](https://github.com/golos-blockchain/ui-auth/tree/master/oauth_examples/)
+[jQuery](https://github.com/golos-blockchain/libs/blob/examples-oauth-and-keychain/jquery/main.js)  
+[React](https://github.com/golos-blockchain/libs/tree/examples-oauth-and-keychain/)
 
 #### Кнопка Выйти
 
@@ -106,12 +129,12 @@ $('.logout').click(async (e) => {
 ```
 
 Примеры:  
-[jQuery](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/jquery/main.js)  
-[React](https://github.com/golos-blockchain/ui-auth/tree/master/oauth_examples/)
+[jQuery](https://github.com/golos-blockchain/libs/blob/examples-oauth-and-keychain/jquery/main.js)  
+[React](https://github.com/golos-blockchain/libs/tree/examples-oauth-and-keychain/)
 
 #### Отправка операций
 
-При авторизации через OAuth следует отправлять транзакции, не указывая каких-либо ключей, то есть первый параметр - пустая строка.
+При авторизации через OAuth/KeyChain следует отправлять транзакции, не указывая каких-либо ключей, то есть первый параметр - пустая строка.
 ```js
 try {
     let res = await broadcast.transferAsync('', 'cyberfounder', 'alice',
@@ -127,14 +150,16 @@ alert('Success!');
 Если при авторизации вы запрашивали соответствующее разрешение, то сервис OAuth сам подпишет операцию, отправит ее в блокчейн и она пройдет как обычно, без дополнительных действий со стороны пользователя.  
 Если нет (или наша схема разрешений изменилась с момента авторизации пользователя в вашем приложении), то будет открыта новая вкладка с вопросом пользователю - разрешать ли эту транзакцию или нет. Также пользователь может сохранить это разрешение (как если бы оно было выдано при авторизации). Если же пользователь запретит операцию или просто закроет окно, то спустя некоторое время будет выполнена ветка `catch` с соответствующей ошибкой.
 
+KeyChain всегда использует второй способ (разовых подтверждений).
+
 Примеры:  
-[jQuery](https://github.com/golos-blockchain/ui-auth/blob/master/oauth_examples/jquery/main.js)  
-[React](https://github.com/golos-blockchain/ui-auth/tree/master/oauth_examples/)
+[jQuery](https://github.com/golos-blockchain/libs/blob/examples-oauth-and-keychain/jquery/main.js)  
+[React](https://github.com/golos-blockchain/libs/tree/examples-oauth-and-keychain/)
 
 #### Отправка операций, которым требуется особое разрешение
 
 При отправке без ключей сервис подписывает транзакцию ключом по умолчанию. Например, одни операции всегда подписываются ключом posting, другие - ключом active. Но есть операции, которые можно подписывать разными ключами. Например, custom_json по умолчанию подписывается ключом posting:
-https://github.com/golos-blockchain/libs/blob/master/golos-lib-js/src/broadcast/operations.js (см. операцию custom_json - там в roles первый элемент - это 'posting'). Но там же видно, что операцию иногда нужно подписывать ключом active. Сервис OAuth не в состоянии сам определить, в каком случае каким ключом подписывать операцию. Поэтому если нужен не ключ по умолчанию, то нужно принудительно задать это при вызове:
+https://github.com/golos-blockchain/libs/blob/master/golos-lib-js/src/broadcast/operations.js (см. операцию custom_json - там в roles первый элемент - это 'posting'). Но там же видно, что операцию иногда нужно подписывать ключом active. Сервис OAuth или KeyChain не в состоянии сам определить, в каком случае каким ключом подписывать операцию. Поэтому если нужен не ключ по умолчанию, то нужно принудительно задать это при вызове:
 ```js
 try {
     let res = await broadcast.customJsonAsync(
@@ -159,7 +184,7 @@ golos.config.set('broadcast_transaction_with_callback', true);
 
 ### Вход с паролем (клиентская авторизация без OAuth)
 
-Для того, чтобы пользователь мог войти в приложение без OAuth, в приложении должна быть форма входа, где он введет свое имя и свой пароль или приватный ключ (как правило, posting). 
+Для того, чтобы пользователь мог войти в приложение без OAuth/Keychain, в приложении должна быть форма входа, где он введет свое имя и свой пароль или приватный ключ (как правило, posting). 
 
 Примечание: чтобы пользователь согласился вводить свой пароль или ключ, он должен доверять приложению. Если вы в этом не уверены, лучше использовать OAuth.
 

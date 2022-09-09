@@ -105,6 +105,10 @@ Auth.loginAsync = function (name, password, callback) {
                 callback('No such account', null);
                 return;
             }
+            if (res[0].frozen) {
+                callback('Account is frozen', null)
+                return
+            }
             roles.slice(0, 3).map(role => {
                 let key_auths = res[0][role].key_auths;
                 for (let i = 0; i < key_auths.length; i++) {

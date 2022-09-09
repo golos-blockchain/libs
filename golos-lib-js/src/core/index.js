@@ -98,6 +98,14 @@ export let Asset = wrapNative((amount, precision, symbol) => {
     };
     _Asset.prototype.div = wrapBinOp('div');
     _Asset.prototype.mod = wrapBinOp('mod')
+    _Asset.prototype.eq = wrapBinOp('eq')
+    _Asset.prototype.ne = wrapBinOp('ne')
+    _Asset.prototype.lt = wrapBinOp('lt')
+    _Asset.prototype.gt = wrapBinOp('gt')
+    _Asset.prototype.lte = wrapBinOp('lte')
+    _Asset.prototype.gte = wrapBinOp('gte')
+    _Asset.prototype.min = wrapBinOp('min')
+    _Asset.prototype.max = wrapBinOp('max')
     _Asset.prototype.toJSON = function() {
         return this.toString()
     }

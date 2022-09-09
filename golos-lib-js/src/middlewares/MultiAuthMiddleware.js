@@ -1,11 +1,12 @@
 const EmptyMiddleware = require('./EmptyMiddleware');
-const oauth = require('../oauth');
+const multiauth = require('../multiauth');
+const { kcLoggedIn, kcSign } = require('../multiauth/keychain')
 const { delay, } = require('../utils');
 const { RPCError, } = require('../api/transports/http');
 
-class OAuthMiddleware extends EmptyMiddleware {
-    _checkPendingAllowed(tx) {
-        let url = new URL('/api/oauth/check/' + oauth.clientId(), oauth.apiHost());
+class MultiAuthMiddleware extends EmptyMiddleware {
+    async _checkPendingAllowed(tx) {
+        let url = new URL('/api/oauth/check/' + multiauth.clientId(), multiauth.apiHost());
         let xhr = new XMLHttpRequest();
         xhr.open('POST', url.toString(), false);
         xhr.withCredentials = true;
@@ -17,14 +18,16 @@ class OAuthMiddleware extends EmptyMiddleware {
         let ret = { allowed: true, };
         if (requiredPerms && requiredPerms.length) {
             ret.allowed = false;
-            ret.txHash = oauth._hashOps(tx.operations);
-            ret.win = oauth.login([], '?ops_hash=' + ret.txHash);
+            ret.txHash = multiauth._hashOps(tx.operations);
+            ret.win = await multiauth.login([], {
+                extraParams: '?ops_hash=' + ret.txHash,
+            })
         }
         return ret;
     }
 
     async _preparePending(tx, txHash) {
-        let res = await oauth._callApi('/api/oauth/prepare_pending', {
+        let res = await multiauth._callApi('/api/oauth/prepare_pending', {
             tx,
             txHash,
         });
@@ -43,7 +46,7 @@ class OAuthMiddleware extends EmptyMiddleware {
         const max = interval * 30;
         const loop = async (waited = 0) => {
             await delay(interval);
-            let res = await oauth._callApi('/api/oauth/wait_for_pending/' + txHash)
+            let res = await multiauth._callApi('/api/oauth/wait_for_pending/' + txHash)
             let json = await res.json();
             if (json.status === 'ok') {
                 let { forbidden, err, res, } = json;
@@ -65,7 +68,7 @@ class OAuthMiddleware extends EmptyMiddleware {
 
     async _processPending(tx) {
         let { allowed, win, txHash, } =
-            this._checkPendingAllowed(tx);
+            await this._checkPendingAllowed(tx);
         if (!allowed) {
             const closeWin = () => {
                 if (win && !win.closed) {
@@ -95,10 +98,20 @@ class OAuthMiddleware extends EmptyMiddleware {
         }
     }
 
-    async broadcast({ tx, privKeys, orig, }) {
+    async broadcast({ tx, privKeys, orig, prepareTx, }) {
         let result = { broadcast: true, };
         if (tx._meta && tx._meta._keys) {
-            result = await this._processPending(tx);
+            const kcState = await kcLoggedIn()
+            if (kcState && kcState.authorized) {
+                tx = await prepareTx(tx)
+                tx = await kcSign({ tx })
+                if (!tx) {
+                    result.broadcast = false
+                    result.err = new Error('Forbidden by KeyChain user')
+                }
+            } else {
+                result = await this._processPending(tx)
+            }
         }
         if (result.broadcast) {
             return await super.broadcast({ tx, privKeys, orig, });
@@ -115,9 +128,9 @@ class OAuthMiddleware extends EmptyMiddleware {
                 t.payload = err.payload;
                 throw t;
             }
-            console.error('OAuthMiddleware broadcast', err);
+            console.error('MultiAuthMiddleware broadcast', err);
         }
     }
 }
 
-module.exports = OAuthMiddleware;
+module.exports = MultiAuthMiddleware;
