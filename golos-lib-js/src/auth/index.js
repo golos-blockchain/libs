@@ -9,6 +9,7 @@ var bigi = require('bigi'),
     PrivateKey = require('./ecc/src/key_private'),
     PublicKey = require('./ecc/src/key_public'),
     session = require('./session'),
+    multiSession = require('./multiSession'),
     api = require('../api'),
   hash = require('./ecc/src/hash');
 
@@ -213,6 +214,6 @@ Auth.verifySignedData = function(data, signatures, account, authTypes) {
     return auth;
 };
 
-Auth = {...Auth, ...session};
+Auth = {...Auth, ...session, ...multiSession};
 
 module.exports = Auth;
