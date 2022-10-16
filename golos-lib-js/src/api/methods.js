@@ -220,6 +220,13 @@ module.exports = [
   },
   {
     "api": "social_network",
+    "method": "get_content_previews",
+    "params": [
+      "ids"
+    ]
+  },
+  {
+    "api": "social_network",
     "method": "get_content_replies",
     "has_default_values": true,
     "params": [
