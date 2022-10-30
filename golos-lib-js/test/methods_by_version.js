@@ -25,6 +25,7 @@ export const methods_0_25_3 = [
     "get_chain_properties",
     "get_config",
     "get_content",
+    "get_content_previews",
     "get_content_replies",
     "get_conversion_requests",
     "get_current_median_history_price",
