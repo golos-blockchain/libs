@@ -629,6 +629,11 @@ module.exports = [
   },
   {
     "api": "market_history",
+    "method": "get_orders",
+    "params": ["order_ids"]
+  },
+  {
+    "api": "market_history",
     "method": "get_fillable_orders",
     "params": ["market_price"]
   },

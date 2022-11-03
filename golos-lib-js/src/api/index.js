@@ -328,6 +328,18 @@ Golos.prototype['setPendingTransactionCallback'] =
    );
 };
 
+ Golos.prototype['subscribeToMarket'] =
+ function Golos$setCallback(query, callback) {
+   return this.send(
+     'market_history',
+     {
+       method: 'subscribe_to_market',
+       params: [query],
+     },
+     callback
+   );
+};
+
 // Export singleton instance
 const golos = new Golos();
 exports = module.exports = golos;
