@@ -1,5 +1,62 @@
 ### UIA
 
+#### Получить информацию о токенах (supply, владелец и т.п.)
+
+Все UIA-токены в системе:
+
+```js
+// creator: ''
+// symbols: []
+// start symbol: '' // для получения следующей страницы используйте symbol последнего UIA из прошлой выдачи, например: YMDASH
+// limit: 20 // макс. кол-во UIA за 1 запрос
+const res = await golos.api.getAssetsAsync('', [], '', 20)
+console.log(res);
+```
+
+Все токены в системе, как UIA, так и GOLOS и GBG в том же унифицированном формате:
+
+```js
+const res = await golos.api.getAssetsAsync('', [], '', 20, 'by_symbol_name', { system: true })
+console.log(res);
+```
+
+Конкретные токены:
+
+```js
+const res = await golos.api.getAssetsAsync('', ['GOLOS', 'GBG'])
+console.log(res);
+```
+
+Токены, созданные конкретным владельцем:
+
+```js
+const res = await golos.api.getAssetsAsync('ecurrex-ru')
+console.log(res);
+```
+
+#### Получить информацию о UIA-балансах
+
+Все UIA-балансы данного пользователя:
+
+```js
+const res = await golos.api.getAccountsBalancesAsync(['your_name'])
+console.log(res);
+```
+
+Все балансы данного пользователя, в том числе GOLOS и GBG в том же формате:
+
+```js
+const res = await golos.api.getAccountsBalancesAsync(['your_name'], { system: true })
+console.log(res);
+```
+
+Балансы данного пользователя в указанных токенах:
+
+```js
+const res = await golos.api.getAccountsBalancesAsync(['your_name'], { symbols: ['YMDASH', 'GOLOS', 'GBG'] })
+console.log(res);
+```
+
 #### Создание своего токена
 ```js
 golos.broadcast.assetCreate(
