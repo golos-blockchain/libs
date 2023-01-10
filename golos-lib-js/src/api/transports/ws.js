@@ -7,7 +7,8 @@ import { nodeify, } from '../../promisify';
 const cbMethods = [
   'set_block_applied_callback',
   'set_pending_transaction_callback',
-  'set_callback'
+  'set_callback',
+  'subscribe_to_market'
 ];
 
 let WebSocket;

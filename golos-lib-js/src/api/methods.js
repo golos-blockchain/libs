@@ -7,6 +7,7 @@ const DEFAULT_ASSETS_LIMIT = 20;
 const DEFAULT_BLOG_FEED_LIMIT = 500;
 const EMPTY_STRING = '';
 const EMPTY_ARRAY = '[]';
+const EMPTY_OBJECT = '{}';
 const EMPTY_OPTIONAL = null;
 
 module.exports = [
@@ -451,13 +452,18 @@ module.exports = [
       `symbols=${EMPTY_ARRAY}`,
       `from=${EMPTY_STRING}`,
       `limit=${DEFAULT_ASSETS_LIMIT}`,
-      `sort="by_symbol_name"`
+      `sort="by_symbol_name"`,
+      `query=${EMPTY_OBJECT}`
     ]
   },
   {
     "api": "database_api",
     "method": "get_accounts_balances",
-    "params": ['account_names']
+    "has_default_values": true,
+    "params": [
+      'account_names',
+      `query=${EMPTY_OBJECT}`
+    ]
   },
   {
     "api": "account_relations",
@@ -626,6 +632,11 @@ module.exports = [
     "method": "get_open_orders",
     "has_default_values": true,
     "params": ["owner", `pair=${DEFAULT_MARKET_PAIR}`]
+  },
+  {
+    "api": "market_history",
+    "method": "get_orders",
+    "params": ["order_ids"]
   },
   {
     "api": "market_history",
