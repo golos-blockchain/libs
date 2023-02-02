@@ -268,12 +268,16 @@ methods.forEach((method) => {
   Golos.prototype[methodName] =
     function Golos$specializedSend(...args) {
       let options =  {};
+      let callback
       if (hasDefaultValues) {
-        const argsWithoutCb = args.slice(0, args.length - 1);
+        callback = args.pop()
+        if (typeof callback !== 'function') {
+          args = [...args, callback]
+        }
         methodParams.forEach((param, i) => {
           const [p, value] = param.split('=');
-          if (argsWithoutCb[i]) {
-            options[p] = argsWithoutCb[i];
+          if (args[i]) {
+            options[p] = args[i];
           }
         })
         options = Object.assign({}, defaultParms, options);
@@ -283,8 +287,8 @@ methods.forEach((method) => {
           return memo;
         }, {});
         options = Object.assign({}, opt);
+        callback = args[methodParams.length]
       }
-      const callback = args[hasDefaultValues ? args.length - 1: methodParams.length];
 
       return this[`${methodName}With`](options, callback);
     };

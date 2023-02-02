@@ -37,13 +37,14 @@ export function promisifyAll(obj, suffix = 'Async') {
 }
 
 export function nodeify(promise, callback) {
+    const isCallback = typeof callback === 'function'
     return promise
       .then(res => {
-        if (callback) callback(null, res);
+        if (isCallback) callback(null, res);
         return res;
       })
       .catch(err => {
-        if (callback)
+        if (isCallback)
             callback(err, null);
         else
             throw err;
