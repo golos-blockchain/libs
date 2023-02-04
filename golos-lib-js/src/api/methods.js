@@ -499,6 +499,7 @@ module.exports = [
       "entryId=0",
       `limit=${DEFAULT_BLOG_FEED_LIMIT}`,
       `filterTagMasks=${EMPTY_ARRAY}`,
+      `prefs=${EMPTY_OBJECT}`,
     ]
   },
   {
@@ -521,6 +522,7 @@ module.exports = [
       "entryId=0",
       `limit=${DEFAULT_BLOG_FEED_LIMIT}`,
       `filterTagMasks=${EMPTY_ARRAY}`,
+      `prefs=${EMPTY_OBJECT}`,
     ]
   },
   {
