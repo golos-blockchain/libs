@@ -1,6 +1,5 @@
 import isNode from 'detect-node';
 import newDebug from 'debug';
-import config from '../../config';
 import Transport from './base';
 import { nodeify, } from '../../promisify';
 
@@ -37,7 +36,7 @@ export default class WsTransport extends Transport {
 
     const startP = new Promise((resolve, reject) => {
       if (startP !== this.startP) return;
-      const url = config.get('websocket');
+      const url = this.getURL();
       this.ws = new WebSocket(url);
 
       const releaseOpen = this.listenTo(this.ws, 'open', () => {
