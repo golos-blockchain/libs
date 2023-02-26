@@ -1,4 +1,6 @@
 import EventEmitter from 'events';
+
+import config from '../../config'
 import { promisifyAll, } from '../../promisify';
 
 export default class Transport extends EventEmitter {
@@ -14,6 +16,11 @@ export default class Transport extends EventEmitter {
   setOptions(options) {
     Object.assign(this.options, options);
     this.stop();
+  }
+
+  getURL() {
+    const url = this.options && this.options.url
+    return url || config.get('websocket')
   }
 
   listenTo(target, eventName, callback) {

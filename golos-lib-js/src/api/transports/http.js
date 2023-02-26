@@ -65,7 +65,7 @@ export default class HttpTransport extends Transport {
 
         this.currentP = new Promise((resolve, reject) => {
             const params = [ api, data.method, data.params, ];
-            const url = config.get('websocket');
+            const url = this.getURL()
             jsonRpc(url, { method: 'call', id, params, })
                 .then(res => {
                     resolve(res.result);

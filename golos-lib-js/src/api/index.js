@@ -28,10 +28,10 @@ class Golos extends EventEmitter {
   }
   _setTransport(url) {
       if (url && url.match('^((http|https)?:\/\/)')) {
-        this.transport = new transports.http();
+        this.transport = new transports.http({ url })
         this.url = url;
       } else if (url && url.match('^((ws|wss)?:\/\/)')) {
-        this.transport = new transports.ws();
+        this.transport = new transports.ws({ url })
         this.url = url;
       } else {
       throw Error("unknown transport! [" + url + "]");
@@ -39,16 +39,18 @@ class Golos extends EventEmitter {
   }
 
   setWebSocket(url) {
-    console.warn("golos.api.setWebSocket(url) is now deprecated instead use golos.config.set('websocket',url)");
+    this.customUrl = !!url
+    url = url || config.get('websocket');
     debugSetup('Setting WS', url);
-    config.set('websocket', url);
     this._setTransport(url);
     this.stop();
   }
 
   start() {
-    const url = config.get('websocket');
-    this._setTransport(url);
+    if (!this.transport) {
+      const url = this.url || config.get('websocket');
+      this._setTransport(url);
+    }
     return this.transport.start();
   }
 
@@ -56,7 +58,6 @@ class Golos extends EventEmitter {
     debugSetup('Stopping...');
     const ret = this.transport.stop();
     this.transport = null;
-    this.url = null;
     return ret;
   }
 
@@ -65,8 +66,7 @@ class Golos extends EventEmitter {
     if (!this.transport) {
       this.start();
     } else {
-      let url = config.get('websocket');
-      if (url !== this.url) {
+      if (!this.customUrl && this.url !== config.get('websocket')) {
         debugSetup('websocket URL changed, restarting transport...');
         this.stop();
         this.start();
@@ -268,12 +268,16 @@ methods.forEach((method) => {
   Golos.prototype[methodName] =
     function Golos$specializedSend(...args) {
       let options =  {};
+      let callback
       if (hasDefaultValues) {
-        const argsWithoutCb = args.slice(0, args.length - 1);
+        callback = args.pop()
+        if (typeof callback !== 'function') {
+          args = [...args, callback]
+        }
         methodParams.forEach((param, i) => {
           const [p, value] = param.split('=');
-          if (argsWithoutCb[i]) {
-            options[p] = argsWithoutCb[i];
+          if (args[i]) {
+            options[p] = args[i];
           }
         })
         options = Object.assign({}, defaultParms, options);
@@ -283,8 +287,8 @@ methods.forEach((method) => {
           return memo;
         }, {});
         options = Object.assign({}, opt);
+        callback = args[methodParams.length]
       }
-      const callback = args[hasDefaultValues ? args.length - 1: methodParams.length];
 
       return this[`${methodName}With`](options, callback);
     };
