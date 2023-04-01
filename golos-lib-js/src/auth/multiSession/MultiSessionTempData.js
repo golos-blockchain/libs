@@ -25,6 +25,9 @@ class MultiSessionTempData {
         }
         return this.setVal(account, authType, val)
     }
+    addMultiAuth(account) {
+        return this.setVal(account, 'multiauth', true)
+    }
     clearExpired(expirationMsec = 3600000, nowMsec = undefined, onClear = undefined) {
         nowMsec = nowMsec || Date.now()
         const cleared = (acc, deltaMsec) => {
