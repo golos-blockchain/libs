@@ -794,5 +794,64 @@ module.exports = [
       "extensions"
     ]
   },
+  {
+    "roles": ["posting"],
+    "operation": "paid_subscription_create",
+    "params": [
+      "author",
+      "oid",
+      "cost",
+      "tip_cost",
+      "allow_prepaid",
+      "interval",
+      "executions",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting"],
+    "operation": "paid_subscription_update",
+    "params": [
+      "author",
+      "oid",
+      "cost",
+      "tip_cost",
+      "interval",
+      "executions",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting"],
+    "operation": "paid_subscription_delete",
+    "params": [
+      "author",
+      "oid",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting", "active"],
+    "operation": "paid_subscription_transfer",
+    "params": [
+      "from",
+      "to",
+      "oid",
+      "amount",
+      "memo",
+      "from_tip",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting"],
+    "operation": "paid_subscription_cancel",
+    "params": [
+      "subscriber",
+      "author",
+      "oid",
+      "extensions"
+    ]
+  }
 ]
 

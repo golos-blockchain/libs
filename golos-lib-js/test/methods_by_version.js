@@ -65,7 +65,6 @@ export const methods_0_25_3 = [
     "get_orders",
     "get_open_orders",
     "get_owner_history",
-    "get_fillable_orders",
     "get_potential_signatures",
     "get_proposed_transactions",
     "get_recovery_request",
@@ -97,6 +96,7 @@ export const methods_0_25_3 = [
     "broadcast_transaction_with_callback",
     "get_market_history",
     "get_market_history_buckets",
+    "get_market_pairs",
     "get_recent_trades",
     "get_recovery_info",
     "get_ticker",
@@ -118,5 +118,10 @@ export const methods_0_25_3 = [
     "get_worker_request_votes",
     "get_values",
     "get_values_settings",
-    "get_events_in_block"
+    "get_events_in_block",
+    "get_paid_subscriptions_by_author",
+    "get_paid_subscription_options",
+    "get_paid_subscribers",
+    "get_paid_subscriptions",
+    "get_paid_subscribe"
 ]

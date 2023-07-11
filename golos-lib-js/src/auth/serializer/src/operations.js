@@ -1304,6 +1304,68 @@ let account_setup = new Serializer(
     }
 );
 
+let paid_subscription_id = new Serializer(
+    "paid_subscription_id", {
+        app: string,
+        name: string,
+        version: uint16,
+    }
+);
+
+let paid_subscription_create = new Serializer(
+    "paid_subscription_create", {
+        author: string,
+        oid: paid_subscription_id,
+        cost: asset,
+        tip_cost: bool,
+        allow_prepaid: bool,
+        interval: uint32,
+        executions: uint32,
+        extensions: set(future_extensions)
+    }
+);
+
+let paid_subscription_update = new Serializer(
+    "paid_subscription_update", {
+        author: string,
+        oid: paid_subscription_id,
+        cost: asset,
+        tip_cost: bool,
+        interval: uint32,
+        executions: uint32,
+        extensions: set(future_extensions)
+    }
+);
+
+let paid_subscription_delete = new Serializer(
+    "paid_subscription_delete", {
+        author: string,
+        oid: paid_subscription_id,
+        extensions: set(future_extensions)
+    }
+);
+
+let paid_subscription_transfer = new Serializer(
+    "paid_subscription_transfer", {
+        from: string,
+        to: string,
+        oid: paid_subscription_id,
+        amount: asset,
+        memo: string,
+        from_tip: bool,
+        extensions: set(future_extensions)
+    }
+);
+
+let paid_subscription_cancel = new Serializer(
+    "paid_subscription_cancel", {
+        subscriber: string,
+        author: string,
+        oid: paid_subscription_id,
+        extensions: set(future_extensions)
+    }
+);
+
 let fill_convert_request = new Serializer(
     "fill_convert_request", {
         owner: string,
@@ -1493,6 +1555,11 @@ operation.st_operations = [
     invite_transfer,
     limit_order_cancel_ex,
     account_setup,
+    paid_subscription_create,
+    paid_subscription_update,
+    paid_subscription_delete,
+    paid_subscription_transfer,
+    paid_subscription_cancel,
 
     fill_convert_request,
     author_reward,

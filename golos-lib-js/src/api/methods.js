@@ -706,5 +706,30 @@ module.exports = [
     "api": "event_plugin",
     "method": "get_events_in_block",
     "params": ["blockNum", "onlyVirtual"]
-  }
+  },
+  {
+    "api": "paid_subscription_api",
+    "method": "get_paid_subscriptions_by_author",
+    "params": ["query"]
+  },
+  {
+    "api": "paid_subscription_api",
+    "method": "get_paid_subscription_options",
+    "params": ["query"]
+  },
+  {
+    "api": "paid_subscription_api",
+    "method": "get_paid_subscribers",
+    "params": ["query"]
+  },
+  {
+    "api": "paid_subscription_api",
+    "method": "get_paid_subscriptions",
+    "params": ["query"]
+  },
+  {
+    "api": "paid_subscription_api",
+    "method": "get_paid_subscribe",
+    "params": ["query"]
+  },
 ]
