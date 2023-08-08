@@ -225,7 +225,8 @@ module.exports = [
     "has_default_values": true,
     "params": [
       "ids",
-      "truncate_body=1024"
+      "truncate_body=1024",
+      "truncate_special=true"
     ]
   },
   {
