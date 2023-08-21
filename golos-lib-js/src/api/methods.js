@@ -642,8 +642,8 @@ module.exports = [
   },
   {
     "api": "market_history",
-    "method": "get_fillable_orders",
-    "params": ["market_price"]
+    "method": "get_market_pairs",
+    "params": ["query"]
   },
   {
     "api": "private_message",

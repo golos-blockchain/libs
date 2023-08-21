@@ -25,6 +25,9 @@ class MultiSessionData {
         }
         return this.setVal(account, authType, val)
 	}
+	addMultiAuth(account) {
+        return this.setVal(account, 'multiauth', true)
+	}
 	setCurrent(account) {
 		if (!this.accounts[account])
 			throw new Error('Cannot set current account to: ' + account + ' because it does not saved')
