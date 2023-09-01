@@ -733,4 +733,19 @@ module.exports = [
     "method": "get_paid_subscribe",
     "params": ["query"]
   },
+  {
+    "api": "nft_api",
+    "method": "get_nft_collections",
+    "params": ["query"]
+  },
+  {
+    "api": "nft_api",
+    "method": "get_nft_tokens",
+    "params": ["query"]
+  },
+  {
+    "api": "nft_api",
+    "method": "get_nft_orders",
+    "params": ["query"]
+  }
 ]

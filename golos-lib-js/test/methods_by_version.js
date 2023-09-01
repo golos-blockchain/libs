@@ -123,5 +123,8 @@ export const methods_0_25_3 = [
     "get_paid_subscription_options",
     "get_paid_subscribers",
     "get_paid_subscriptions",
-    "get_paid_subscribe"
+    "get_paid_subscribe",
+    "get_nft_collections",
+    "get_nft_tokens",
+    "get_nft_orders"
 ]

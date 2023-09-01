@@ -1034,6 +1034,60 @@ let chain_properties_28 = new Serializer(
   }
 );
 
+let chain_properties_29 = new Serializer(
+  9, {
+        account_creation_fee: asset,
+        maximum_block_size: uint32,
+        sbd_interest_rate: uint16,
+        create_account_min_golos_fee: asset,
+        create_account_min_delegation: asset,
+        create_account_delegation_time: uint32,
+        min_delegation: asset,
+        max_referral_interest_rate: uint16,
+        max_referral_term_sec: uint32,
+        min_referral_break_fee: asset,
+        max_referral_break_fee: asset,
+        posts_window: uint16,
+        posts_per_window: uint16,
+        comments_window: uint16,
+        comments_per_window: uint16,
+        votes_window: uint16,
+        votes_per_window: uint16,
+        auction_window_size: uint16,
+        max_delegated_vesting_interest_rate: uint16,
+        custom_ops_bandwidth_multiplier: uint16,
+        min_curation_percent: uint16,
+        max_curation_percent: uint16,
+        curation_reward_curve: uint64,
+        allow_distribute_auction_reward: bool,
+        allow_return_auction_reward_to_fund: bool,
+        worker_reward_percent: uint16,
+        witness_reward_percent: uint16,
+        vesting_reward_percent: uint16,
+        worker_request_creation_fee: asset,
+        worker_request_approve_min_percent: uint16,
+        sbd_debt_convert_rate: uint16,
+        vote_regeneration_per_day: uint32,
+        witness_skipping_reset_time: uint32,
+        witness_idleness_time: uint32,
+        account_idleness_time: uint32,
+        claim_idleness_time: uint32,
+        min_invite_balance: asset,
+        asset_creation_fee: asset,
+        invite_transfer_interval_sec: uint32,
+        convert_fee_percent: uint16,
+        min_golos_power_to_curate: asset,
+        worker_emission_percent: uint16,
+        vesting_of_remain_percent: uint16,
+        negrep_posting_window: uint16,
+        negrep_posting_per_window: uint16,
+        unwanted_operation_cost: asset,
+        unlimit_operation_cost: asset,
+        min_golos_power_to_emission: asset,
+        nft_issue_cost: asset,
+  }
+);
+
 let chain_properties_update = new Serializer(
     "chain_properties_update", {
         owner: string,
@@ -1047,6 +1101,7 @@ let chain_properties_update = new Serializer(
             chain_properties_26,
             chain_properties_27,
             chain_properties_28,
+            chain_properties_29,
         ])
   }
 );
@@ -1366,6 +1421,74 @@ let paid_subscription_cancel = new Serializer(
     }
 );
 
+let nft_collection = new Serializer(
+    "nft_collection", {
+        creator: string,
+        name: string,
+        json_metadata: string,
+        max_token_count: uint32,
+        extensions: set(future_extensions)
+    }
+);
+
+let nft_collection_delete = new Serializer(
+    "nft_collection_delete", {
+        creator: string,
+        name: string,
+        extensions: set(future_extensions)
+    }
+);
+
+let nft_issue = new Serializer(
+    "nft_issue", {
+        creator: string,
+        name: string,
+        to: string,
+        json_metadata: string,
+        extensions: set(future_extensions)
+    }
+);
+
+let nft_transfer = new Serializer(
+    "nft_transfer", {
+        token_id: uint32,
+        from: string,
+        to: string,
+        memo: string,
+        extensions: set(future_extensions)
+    }
+);
+
+let nft_sell = new Serializer(
+    "nft_sell", {
+        seller: string,
+        token_id: uint32,
+        buyer: string,
+        order_id: uint32,
+        price: asset,
+        extensions: set(future_extensions)
+    }
+);
+
+let nft_buy = new Serializer(
+    "nft_buy", {
+        buyer: string,
+        name: string,
+        token_id: uint32,
+        order_id: uint32,
+        price: asset,
+        extensions: set(future_extensions)
+    }
+);
+
+let nft_cancel_order = new Serializer(
+    "nft_cancel_order", {
+        seller: string,
+        order_id: uint32,
+        extensions: set(future_extensions)
+    }
+);
+
 let fill_convert_request = new Serializer(
     "fill_convert_request", {
         owner: string,
@@ -1560,6 +1683,13 @@ operation.st_operations = [
     paid_subscription_delete,
     paid_subscription_transfer,
     paid_subscription_cancel,
+    nft_collection,
+    nft_collection_delete,
+    nft_issue,
+    nft_transfer,
+    nft_sell,
+    nft_buy,
+    nft_cancel_order,
 
     fill_convert_request,
     author_reward,

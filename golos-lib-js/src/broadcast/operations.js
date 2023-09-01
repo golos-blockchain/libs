@@ -852,6 +852,81 @@ module.exports = [
       "oid",
       "extensions"
     ]
+  },
+  {
+    "roles": ["posting"],
+    "operation": "nft_collection",
+    "params": [
+      "creator",
+      "name",
+      "json_metadata",
+      "max_token_count",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting"],
+    "operation": "nft_collection_delete",
+    "params": [
+      "creator",
+      "name",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_issue",
+    "params": [
+      "creator",
+      "name",
+      "to",
+      "json_metadata",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_transfer",
+    "params": [
+      "token_id",
+      "from",
+      "to",
+      "memo",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_sell",
+    "params": [
+      "seller",
+      "token_id",
+      "buyer",
+      "order_id",
+      "price",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_buy",
+    "params": [
+      "buyer",
+      "name",
+      "token_id",
+      "order_id",
+      "price",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_cancel_order",
+    "params": [
+      "seller",
+      "order_id",
+      "extensions"
+    ]
   }
 ]
 
