@@ -42,7 +42,44 @@ golos.broadcast.nftIssue(activeKey, 'cyberfounder', 'COOLGAME',
 - `to` - аккаунт, который станет владельцем токена. Это может быть аккаунт владельца, или игрока, или любой другой.
 - `json_metadata` - метаданные, которые будут храниться в токене. Они публичны и не шифруются. JSON, Не более 512 символов. Можно оставить пустым.
 
-За выпуск токена с владельца взымается плата в GBG - см. делегатский параметр `nft_issue_cost` в chain_properties. 
+За выпуск токена с владельца взымается плата в GBG - см. делегатский параметр `nft_issue_cost` в chain_properties.
+
+С помощью специального евента вы можете получить `token_id` - идентификатор выпущенного токена:
+```js
+const { api, broadcast } = golos
+
+async function issueIt() {
+    const activeKey = '5JVFFWRLwz6JoP9kguuRFfytToGU6cLgBVTL9t6NB3D3BQLbUBS'
+    const to = 'oauth'
+    const json_metadata = JSON.stringify({ "health": 10, "strength": 50 })
+
+    let res
+    try {
+        res = await broadcast.nftIssueAsync(activeKey, 'cyberfounder', 'COOLGAMEG',
+            to, json_metadata, [])
+    } catch (err) {
+        console.error('Cannot issue:', err)
+        return
+    }
+
+    console.log('Issued:', res, 'Waiting for event with token_id...')
+
+    let token_id
+    try {
+        token_id = await api.waitEventAsync((event) => {
+            if (event[0] === 'nft_token') return event[1].token_id
+            return undefined
+        }, res.ref_block_num)
+    } catch (err) {
+        console.error('Cannot obtain token_id:', err)
+        return
+    }
+
+    console.log('token_id is', token_id)
+}
+
+issueIt()
+```
 
 ### Удаление NFT-коллекции
 
