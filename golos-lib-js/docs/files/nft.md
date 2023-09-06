@@ -17,8 +17,8 @@ const json_metadata = '{}'
 const max_token_count = 10
 
 golos.broadcast.nftCollection(postingKey, 'cyberfounder', 'COOLGAME',
-    json_metadata, max_token_count, [], (err, res) => {
-        console.log(err, res)
+        json_metadata, max_token_count, [], (err, res) => {
+    console.log(err, res)
 })
 ```
 - `COOLGAME` - уникальный идентификатор коллекции. Правила те же, что и для UIA: только латинские буквы и `.`, до 15 символов.
@@ -35,8 +35,8 @@ const to = 'cyberfounder'
 const json_metadata = JSON.stringify({ "health": 10, "strength": 50 })
 
 golos.broadcast.nftIssue(activeKey, 'cyberfounder', 'COOLGAME',
-    to, json_metadata,  [], (err, res) => {
-        console.log(err, res)
+        to, json_metadata,  [], (err, res) => {
+    console.log(err, res)
 })
 ```
 - `to` - аккаунт, который станет владельцем токена. Это может быть аккаунт владельца, или игрока, или любой другой.
@@ -68,7 +68,7 @@ const order_id = 10
 const json_metadata = JSON.stringify({ "health": 10, "strength": 50 })
 
 golos.broadcast.nftSell(activeKey, 'alice', token_id, buyer, order_id, '10.000 GOLOS', [], (err, res) => {
-        console.log(err, res)
+    console.log(err, res)
 })
 ```
 
@@ -90,7 +90,7 @@ const buyer = ''
 const order_id = 1
 
 golos.broadcast.nftBuy(activeKey, 'cyberfounder', collectionName, token_id, order_id, '11.000 GOLOS', [], (err, res) => {
-        console.log(err, res)
+    console.log(err, res)
 })
 ```
 
@@ -121,6 +121,7 @@ golos.broadcast.nftCancelSell(activeKey, 'alice', order_id, [], (err, res) => {
 
 ```js
 const activeKey = '5K67PNheLkmxkgJ5UjvR8Nyt3GVPoLEN1dMZjFuNETzrNyMecPG'
+const token_id = 1
 const memo = ''
 
 golos.broadcast.nftTransfer(activeKey, token_id, 'alice', 'bob', memo, [], (err, res) => {
