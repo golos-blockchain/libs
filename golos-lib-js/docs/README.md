@@ -20,6 +20,7 @@
 - [Примеры отправки операций](./files/operations.md#примеры-отправки-операций)
 - [Golos Messenger](./files/msgs.md)
 - [Платные подписки](./files/paid_subscriptions.md)
+- [NFT](./files/nft.md)
 - [Утилиты, ускоряющие разработку клиентов](./files/utils)
     - [Валидация имен аккаунтов](./files/utils/validate_account_name.md)
     - [Asset для финансовых расчетов](./files/utils/asset.md)
