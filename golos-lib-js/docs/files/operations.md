@@ -106,7 +106,7 @@ golos.config.set('broadcast_transaction_with_callback', true);
 
 Пример:
 
-```
+```js
 let res
     try {
         res = await broadcast.nftIssueAsync(activeKey, 'cyberfounder', 'COOLGAME',
