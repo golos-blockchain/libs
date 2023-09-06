@@ -117,6 +117,17 @@ golos.broadcast.nftCancelSell(activeKey, 'alice', order_id, [], (err, res) => {
 - `'alice'` - владелец ордера.
 - `order_id` - идентификатор ордера.
 
+### Подарить (передать) NFT-токен
+
+```js
+const activeKey = '5K67PNheLkmxkgJ5UjvR8Nyt3GVPoLEN1dMZjFuNETzrNyMecPG'
+const memo = ''
+
+golos.broadcast.nftTransfer(activeKey, token_id, 'alice', 'bob', memo, [], (err, res) => {
+    console.log(err, res)
+})
+```
+
 ### Получение NFT-коллекций через API
 
 Получить первые 20 коллекций владельца `cyberfounder`:
