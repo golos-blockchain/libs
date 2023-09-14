@@ -222,6 +222,9 @@ golos.api.getNftTokens({
     start_token_id: 0,
     limit: 20, // принцип работы пагинации описан на примере getNftCollections
 
+//  select_collections: [], // выбирает токены из заданных коллекций
+//  collection_limit: 1, // Например - чтобы в списке коллекций (getNftCollections) добавить к каждой коллекции информацию о первом токене в ней
+
 //  select_token_ids: [], // выборка конкретных токенов
 //  filter_creators: [],
 //  filter_token_ids: [],
@@ -248,6 +251,9 @@ golos.api.getNftOrders({
     owner: 'alice',
     start_order_id: 0,
     limit: 20, // принцип работы пагинации описан на примере getNftCollections
+
+//  select_collections: [], // выбирает ордеры из заданных коллекций
+//  collection_limit: 1, // Например - чтобы в списке коллекций (getNftCollections) добавить к каждой коллекции информацию о первом ордере в ней
 
 //  filter_creators: [],
 //  filter_owners: [],
