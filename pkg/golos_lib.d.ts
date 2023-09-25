@@ -286,7 +286,7 @@ declare interface InitOutput {
   readonly _asset_amount: (a: number) => number;
   readonly _asset_set_amount: (a: number, b: number) => void;
   readonly _asset_amount_float: (a: number, b: number) => void;
-  readonly _asset_set_amount_float: (a: number, b: number, c: number) => void;
+  readonly _asset_set_amount_float: (a: number, b: number, c: number) => number;
   readonly _asset_updateAmountFloat: (a: number, b: number, c: number, d: number) => void;
   readonly _asset_precision: (a: number) => number;
   readonly _asset_set_precision: (a: number, b: number) => void;
@@ -330,6 +330,9 @@ declare interface InitOutput {
   readonly _asseteditor_asset: (a: number) => number;
   readonly _asseteditor_amount_str: (a: number, b: number) => void;
   readonly _asseteditor_has_change: (a: number) => number;
+  readonly __wbg_streaminghandle_free: (a: number) => void;
+  readonly stream_block_number: (a: number, b: number) => number;
+  readonly aes256_decrypt: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
   readonly __wbg__price_free: (a: number) => void;
   readonly _price_new: (a: number, b: number) => number;
   readonly _price_clone: (a: number) => number;
@@ -337,11 +340,8 @@ declare interface InitOutput {
   readonly _price_set_base: (a: number, b: number) => void;
   readonly _price_quote: (a: number) => number;
   readonly _price_set_quote: (a: number, b: number) => void;
-  readonly __wbg_streaminghandle_free: (a: number) => void;
-  readonly stream_block_number: (a: number, b: number) => number;
-  readonly aes256_decrypt: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
   readonly __wbindgen_export_0: WebAssembly.Table;
-  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h7555aee392ff2ae8: (a: number, b: number, c: number) => void;
+  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h91614dc100c4b690: (a: number, b: number, c: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;

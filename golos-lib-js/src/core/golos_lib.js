@@ -73,7 +73,7 @@ function addHeapObject(obj) {
     return idx;
 }
 function __wbg_adapter_10(arg0, arg1, arg2) {
-    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h7555aee392ff2ae8(arg0, arg1, addHeapObject(arg2));
+    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h91614dc100c4b690(arg0, arg1, addHeapObject(arg2));
 }
 
 let WASM_VECTOR_LEN = 0;
@@ -307,11 +307,13 @@ class _Asset {
     }
     /**
     * @param {string} amount_str
+    * @returns {number}
     */
     set amountFloat(amount_str) {
         var ptr0 = passStringToWasm0(amount_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
-        wasm._asset_set_amount_float(this.ptr, ptr0, len0);
+        var ret = wasm._asset_set_amount_float(this.ptr, ptr0, len0);
+        return ret;
     }
     /**
     * @param {string} amount_str
@@ -885,8 +887,8 @@ async function init(input) {
     imports.wbg.__wbindgen_rethrow = function(arg0) {
         throw takeObject(arg0);
     };
-    imports.wbg.__wbindgen_closure_wrapper119 = function(arg0, arg1, arg2) {
-        var ret = makeMutClosure(arg0, arg1, 8, __wbg_adapter_10);
+    imports.wbg.__wbindgen_closure_wrapper109 = function(arg0, arg1, arg2) {
+        var ret = makeMutClosure(arg0, arg1, 6, __wbg_adapter_10);
         return addHeapObject(ret);
     };
 

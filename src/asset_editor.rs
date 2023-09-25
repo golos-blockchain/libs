@@ -26,10 +26,18 @@ impl _AssetEditor {
     }
 
     #[wasm_bindgen(js_name = fromString)]
-    pub fn from_string(value: String) -> _AssetEditor {
-        let asset = _Asset::from_string(value);
+    pub fn from_string(value: String) -> Result<_AssetEditor, JsValue> {
+        let asset: _Asset;
+        match _Asset::from_string(value) {
+            Ok(a) => {
+                asset = a;
+            },
+            Err(err) => {
+                return Err(err)
+            }
+        }
         let amount_str = Self::get_str(&asset);
-        _AssetEditor { asset, amount_str, has_change: true }
+        Ok(_AssetEditor { asset, amount_str, has_change: true })
     }
 
     pub fn new(amount: f64, precision: u32, symbol: String) -> _AssetEditor {

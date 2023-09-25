@@ -40,10 +40,9 @@ class Golos extends EventEmitter {
 
   setWebSocket(url) {
     this.customUrl = !!url
-    url = url || config.get('websocket');
-    debugSetup('Setting WS', url);
-    this._setTransport(url);
-    this.stop();
+    if (this.transport) this.stop()
+    this.url = url || config.get('websocket');
+    debugSetup('Setting WS', this.url);
   }
 
   start() {
@@ -58,6 +57,8 @@ class Golos extends EventEmitter {
     debugSetup('Stopping...');
     const ret = this.transport.stop();
     this.transport = null;
+    this.url = null
+    this.customUrl = false
     return ret;
   }
 
