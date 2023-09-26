@@ -225,7 +225,8 @@ module.exports = [
     "has_default_values": true,
     "params": [
       "ids",
-      "truncate_body=1024"
+      "truncate_body=1024",
+      "truncate_special=true"
     ]
   },
   {
@@ -706,5 +707,45 @@ module.exports = [
     "api": "event_plugin",
     "method": "get_events_in_block",
     "params": ["blockNum", "onlyVirtual"]
+  },
+  {
+    "api": "paid_subscription_api",
+    "method": "get_paid_subscriptions_by_author",
+    "params": ["query"]
+  },
+  {
+    "api": "paid_subscription_api",
+    "method": "get_paid_subscription_options",
+    "params": ["query"]
+  },
+  {
+    "api": "paid_subscription_api",
+    "method": "get_paid_subscribers",
+    "params": ["query"]
+  },
+  {
+    "api": "paid_subscription_api",
+    "method": "get_paid_subscriptions",
+    "params": ["query"]
+  },
+  {
+    "api": "paid_subscription_api",
+    "method": "get_paid_subscribe",
+    "params": ["query"]
+  },
+  {
+    "api": "nft_api",
+    "method": "get_nft_collections",
+    "params": ["query"]
+  },
+  {
+    "api": "nft_api",
+    "method": "get_nft_tokens",
+    "params": ["query"]
+  },
+  {
+    "api": "nft_api",
+    "method": "get_nft_orders",
+    "params": ["query"]
   }
 ]

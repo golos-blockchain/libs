@@ -794,5 +794,139 @@ module.exports = [
       "extensions"
     ]
   },
+  {
+    "roles": ["posting"],
+    "operation": "paid_subscription_create",
+    "params": [
+      "author",
+      "oid",
+      "cost",
+      "tip_cost",
+      "allow_prepaid",
+      "interval",
+      "executions",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting"],
+    "operation": "paid_subscription_update",
+    "params": [
+      "author",
+      "oid",
+      "cost",
+      "tip_cost",
+      "interval",
+      "executions",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting"],
+    "operation": "paid_subscription_delete",
+    "params": [
+      "author",
+      "oid",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting", "active"],
+    "operation": "paid_subscription_transfer",
+    "params": [
+      "from",
+      "to",
+      "oid",
+      "amount",
+      "memo",
+      "from_tip",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting"],
+    "operation": "paid_subscription_cancel",
+    "params": [
+      "subscriber",
+      "author",
+      "oid",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting"],
+    "operation": "nft_collection",
+    "params": [
+      "creator",
+      "name",
+      "json_metadata",
+      "max_token_count",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["posting"],
+    "operation": "nft_collection_delete",
+    "params": [
+      "creator",
+      "name",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_issue",
+    "params": [
+      "creator",
+      "name",
+      "to",
+      "json_metadata",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_transfer",
+    "params": [
+      "token_id",
+      "from",
+      "to",
+      "memo",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_sell",
+    "params": [
+      "seller",
+      "token_id",
+      "buyer",
+      "order_id",
+      "price",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_buy",
+    "params": [
+      "buyer",
+      "name",
+      "token_id",
+      "order_id",
+      "price",
+      "extensions"
+    ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_cancel_order",
+    "params": [
+      "seller",
+      "order_id",
+      "extensions"
+    ]
+  }
 ]
 

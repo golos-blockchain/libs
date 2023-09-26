@@ -40,10 +40,9 @@ class Golos extends EventEmitter {
 
   setWebSocket(url) {
     this.customUrl = !!url
-    url = url || config.get('websocket');
-    debugSetup('Setting WS', url);
-    this._setTransport(url);
-    this.stop();
+    if (this.transport) this.stop()
+    this.url = url || config.get('websocket');
+    debugSetup('Setting WS', this.url);
   }
 
   start() {
@@ -58,6 +57,8 @@ class Golos extends EventEmitter {
     debugSetup('Stopping...');
     const ret = this.transport.stop();
     this.transport = null;
+    this.url = null
+    this.customUrl = false
     return ret;
   }
 
@@ -342,6 +343,37 @@ Golos.prototype['setPendingTransactionCallback'] =
      },
      callback
    );
+};
+
+Golos.prototype['waitEventAsync'] = async function(getData, startBlock = null, waitBlocks = 4) {
+    if (!getData) throw new Error('waitEvent requires function/lambda as getData argument which will process event and return data')
+
+    const { head_block_number, time } = await this.getDynamicGlobalPropertiesAsync()
+    let data = undefined
+    let block = head_block_number
+
+    while (block < (head_block_number + waitBlocks)) {
+        const res = await this.getEventsInBlockAsync(block, true)
+        for (const op of res) {
+            data = await getData(op.op)
+            if (data !== undefined) break
+        }
+        if (data !== undefined) break
+
+        let interval = 3000
+        if (block === head_block_number) {
+            const now = Date.now()
+            const nowHB = +new Date(time)
+            interval -= (now - nowHB)
+            interval += 10
+        }
+        await new Promise(resolve => setTimeout(resolve, interval))
+        ++block
+    }
+    if (data === undefined) {
+      throw new Error('waitEvent timeouted - and still no event occured')
+    }
+    return data
 };
 
 // Export singleton instance

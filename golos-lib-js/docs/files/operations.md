@@ -98,6 +98,30 @@ golos.config.set('broadcast_transaction_with_callback', true);
 - `id` - txid транзакции
 - и пара других полей.
 
+### Получение event'ов
+
+Некоторые операции как бы возвращают некоторые значения, с помощью механизма евентов, реализованного в блокчейне в HF 27.
+
+В golos-lib-js есть функция `waitEventAsync`, которая позволяет дождаться евента и получить из него нужную информацию.
+
+Пример:
+
+```js
+let res
+    try {
+        res = await broadcast.nftIssueAsync(activeKey, 'cyberfounder', 'COOLGAME',
+            'cyberfounder', json_metadata, [])
+    } catch (err) {
+        console.error('Cannot issue:', err)
+        return
+    }
+
+token_id = await api.waitEventAsync((event) => {
+    if (event[0] === 'nft_token') return event[1].token_id
+    return undefined
+}, res.ref_block_num)
+```
+
 Если же требуется мгновенное получение данных об операциях, отправленных и другими пользователями (например, чтобы сделать уведомления), нужно использовать стриминг событий.
 
 ### Стриминг событий от операций

@@ -12,19 +12,41 @@ pub struct _Asset {
     symbol: String,
 }
 
+fn js_err(msg: &str, data: String) -> js_sys::Error {
+    let mut err = msg.to_string();
+    err.push_str(&data);
+    js_sys::Error::new(&err)
+}
+
 #[wasm_bindgen]
 impl _Asset {
     #[wasm_bindgen(js_name = fromString)]
-    pub fn from_string(value: String) -> _Asset {
+    pub fn from_string(value: String) -> Result<_Asset, JsValue> {
         let mut amount_str = value.clone();
-        let space_idx = amount_str.find(' ').unwrap();
+        let space_idx: usize;
+        match amount_str.find(' ') {
+            Some(idx) => {
+                space_idx = idx;
+            },
+            None => {
+                return Err(js_err("No space in string: ", amount_str).into())
+            }
+        }
         let symbol = amount_str.split_off(space_idx + 1);
         amount_str.pop();
 
         let mut precision = 0u32;
-        let amount = string2fixed(amount_str.clone(), None, &mut precision, None).unwrap();
+        let amount: i64;
+        match string2fixed(amount_str.clone(), None, &mut precision, None) {
+            Ok(val) => {
+                amount = val
+            },
+            Err(_) => {
+                return Err(js_err("Cannot parse number: ", amount_str).into())
+            }
+        }
 
-        _Asset{ amount, precision, symbol }
+        Ok(_Asset{ amount, precision, symbol })
     }
 
     pub fn new(amount: f64, precision: u32, symbol: String) -> _Asset {
@@ -52,9 +74,17 @@ impl _Asset {
     }
 
     #[wasm_bindgen(setter = amountFloat)]
-    pub fn set_amount_float(&mut self, amount_str: String) {
+    pub fn set_amount_float(&mut self, amount_str: String) -> Result<f64, JsValue> {
         let mut precision = 0u32;
-        self.amount = string2fixed(amount_str.clone(), Some(self.precision), &mut precision, None).unwrap();
+        match string2fixed(amount_str.clone(), Some(self.precision), &mut precision, None) {
+            Ok(val) => {
+                self.amount = val;
+                return Ok(self.amount())
+            },
+            Err(_) => {
+                return Err(js_err("Cannot parse number: ", amount_str).into())
+            }
+        }
     }
 
     #[wasm_bindgen(js_name = updateAmountFloat)]
