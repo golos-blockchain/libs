@@ -84,6 +84,11 @@ module.exports = [
   },
   {
     "api": "operation_history",
+    "method": "get_nft_token_ops",
+    "params": ["query"]
+  },
+  {
+    "api": "operation_history",
     "method": "get_transaction",
     "params": ["trxId"]
   },

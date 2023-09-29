@@ -12,11 +12,11 @@
 В приведенном выше примере коллекция создается аккаунтом-владельцем игры.
 
 ```js
-const postingKey = '5HwQScueMZdELZpjVBD4gm6xhiKiMqGx18g4WtQ6wVr4nBdSxY5'
+const activeKey = '5K67PNheLkmxkgJ5UjvR8Nyt3GVPoLEN1dMZjFuNETzrNyMecPG'
 const json_metadata = '{}'
 const max_token_count = 10
 
-golos.broadcast.nftCollection(postingKey, 'cyberfounder', 'COOLGAME',
+golos.broadcast.nftCollection(activeKey, 'cyberfounder', 'COOLGAME',
         json_metadata, max_token_count, [], (err, res) => {
     console.log(err, res)
 })
@@ -84,9 +84,9 @@ issueIt()
 ### Удаление NFT-коллекции
 
 ```js
-const postingKey = '5HwQScueMZdELZpjVBD4gm6xhiKiMqGx18g4WtQ6wVr4nBdSxY5'
+const activeKey = '5K67PNheLkmxkgJ5UjvR8Nyt3GVPoLEN1dMZjFuNETzrNyMecPG'
 
-golos.broadcast.nftCollectionDelete(postingKey, 'cyberfounder', 'ABC', [], (err, res) => {
+golos.broadcast.nftCollectionDelete(activeKey, 'cyberfounder', 'ABC', [], (err, res) => {
         console.log(err, res)
 })
 ```
@@ -229,7 +229,7 @@ golos.api.getNftTokens({
 //  filter_creators: [],
 //  filter_token_ids: [],
 //  filter_names: [], // игнорировать токены из этих коллекций
-//  state: 'any', // или 'selling_one' - только токены которые выставлены на продажу, или 'not_selling_one' - только которые не выставлены
+//  state: 'any_not_burnt', // 'selling_one' - только токены которые выставлены на продажу, или 'not_selling_one' - только которые не выставлены; 'burnt_only', 'any'
 
 //  sort: 'by_name', // by_issued, by_last_update, by_last_price
 //  reverse_sort: false

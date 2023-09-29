@@ -60,6 +60,7 @@ export const methods_0_25_3 = [
     "get_miner_queue",
     "get_next_scheduled_hardfork",
     "get_ops_in_block",
+    "get_nft_token_ops",
     "get_order_book",
     "get_order_book_extended",
     "get_orders",
