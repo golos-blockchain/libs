@@ -1483,7 +1483,7 @@ let nft_buy = new Serializer(
 
 let nft_cancel_order = new Serializer(
     "nft_cancel_order", {
-        seller: string,
+        owner: string,
         order_id: uint32,
         extensions: set(future_extensions)
     }

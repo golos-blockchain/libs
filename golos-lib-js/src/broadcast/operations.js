@@ -923,7 +923,7 @@ module.exports = [
     "roles": ["active"],
     "operation": "nft_cancel_order",
     "params": [
-      "seller",
+      "owner",
       "order_id",
       "extensions"
     ]
