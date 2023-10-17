@@ -232,7 +232,11 @@ golos.api.getNftTokens({
 //  state: 'any_not_burnt', // 'selling_one' - только токены которые выставлены на продажу, или 'not_selling_one' - только которые не выставлены; 'burnt_only', 'any'
 
 //  sort: 'by_name', // by_issued, by_last_update, by_last_price
-//  reverse_sort: false
+//  reverse_sort: false,
+
+//  illformed: 'sort_down',  // 'nothing', 'ignore' - what to do with tokens without title and/or image
+//  selling_sorting: 'nothing', // 'sort_up', 'sort_up_by_price'
+//  sorting_priority: 'selling' // 'illformed'
 }, (err, res) => {
     //alert(JSON.stringify(err) + ' ' + JSON.stringify(res))
     console.log(err, res)
