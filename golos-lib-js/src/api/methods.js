@@ -305,6 +305,16 @@ module.exports = [
     "params": ["targets", "limit", "offset", "join_froms"]
   },
   {
+    "api": "social_network",
+    "method": "get_referrals",
+    "params": ["query"]
+  },
+  {
+    "api": "social_network",
+    "method": "get_referrers",
+    "params": ["query"]
+  },
+  {
     "api": "database_api",
     "method": "get_block_header",
     "params": ["blockNum"]

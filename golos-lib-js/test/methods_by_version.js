@@ -20,6 +20,8 @@ export const methods_0_25_3 = [
     "get_active_witnesses",
     "get_all_content_replies",
     "get_all_discussions_by_active",
+    "get_referrals",
+    "get_referrers",
     "get_block",
     "get_block_header",
     "get_chain_properties",
