@@ -105,7 +105,12 @@ export default class WsTransport extends Transport {
   }
 
   stop() {
-    if (this.ws) this.ws.close();
+    if (this.ws) {
+      try {
+        this.listenTo(this.ws, 'error', (error) => {})
+        this.ws.close()
+      } catch (err) {}
+    }
     delete this.startP;
     delete this.ws;
     this.releases.forEach((release) => release());
