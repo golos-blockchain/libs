@@ -98,6 +98,12 @@ const comment_curation_rewards_percent = new Serializer(
     }
 );
 
+const comment_decrypt_fee = new Serializer(
+    3, {
+        fee: asset
+    }
+);
+
 const account_referral = new Serializer(
     0, {
         referrer: string,
@@ -415,6 +421,7 @@ let comment_options = new Serializer(
             comment_payout_beneficiaries,
             comment_auction_window_reward_destination,
             comment_curation_rewards_percent,
+            comment_decrypt_fee,
         ]))
     }
 );
