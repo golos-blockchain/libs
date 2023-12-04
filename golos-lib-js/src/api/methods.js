@@ -762,5 +762,15 @@ module.exports = [
     "api": "nft_api",
     "method": "get_nft_orders",
     "params": ["query={}"]
-  }
+  },
+  {
+    "api": "cryptor",
+    "method": "encrypt_body",
+    "params": ["query={}"]
+  },
+  {
+    "api": "cryptor",
+    "method": "decrypt_comments",
+    "params": ["query={}"]
+  },
 ]
