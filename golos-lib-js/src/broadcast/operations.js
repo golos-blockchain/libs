@@ -927,6 +927,17 @@ module.exports = [
       "order_id",
       "extensions"
     ]
+  },
+  {
+    "roles": ["active"],
+    "operation": "nft_auction",
+    "params": [
+      "owner",
+      "token_id",
+      "min_price",
+      "expiration",
+      "extensions"
+    ]
   }
 ]
 

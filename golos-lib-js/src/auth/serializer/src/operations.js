@@ -1496,6 +1496,16 @@ let nft_cancel_order = new Serializer(
     }
 );
 
+let nft_auction = new Serializer(
+    "nft_auction", {
+        owner: string,
+        token_id: uint32,
+        min_price: asset,
+        expiration: time_point_sec,
+        extensions: set(future_extensions)
+    }
+);
+
 let fill_convert_request = new Serializer(
     "fill_convert_request", {
         owner: string,
@@ -1697,6 +1707,7 @@ operation.st_operations = [
     nft_sell,
     nft_buy,
     nft_cancel_order,
+    nft_auction,
 
     fill_convert_request,
     author_reward,

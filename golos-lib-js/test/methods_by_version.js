@@ -130,6 +130,7 @@ export const methods_0_25_3 = [
     "get_nft_collections",
     "get_nft_tokens",
     "get_nft_orders",
+    "get_nft_bets",
     "encrypt_body",
     "decrypt_comments"
 ]
