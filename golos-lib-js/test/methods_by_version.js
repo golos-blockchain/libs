@@ -20,6 +20,8 @@ export const methods_0_25_3 = [
     "get_active_witnesses",
     "get_all_content_replies",
     "get_all_discussions_by_active",
+    "get_referrals",
+    "get_referrers",
     "get_block",
     "get_block_header",
     "get_chain_properties",
@@ -60,6 +62,7 @@ export const methods_0_25_3 = [
     "get_miner_queue",
     "get_next_scheduled_hardfork",
     "get_ops_in_block",
+    "get_nft_token_ops",
     "get_order_book",
     "get_order_book_extended",
     "get_orders",
@@ -126,5 +129,7 @@ export const methods_0_25_3 = [
     "get_paid_subscribe",
     "get_nft_collections",
     "get_nft_tokens",
-    "get_nft_orders"
+    "get_nft_orders",
+    "encrypt_body",
+    "decrypt_comments"
 ]

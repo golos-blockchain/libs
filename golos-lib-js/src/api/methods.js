@@ -84,6 +84,11 @@ module.exports = [
   },
   {
     "api": "operation_history",
+    "method": "get_nft_token_ops",
+    "params": ["query"]
+  },
+  {
+    "api": "operation_history",
     "method": "get_transaction",
     "params": ["trxId"]
   },
@@ -298,6 +303,16 @@ module.exports = [
     "api": "social_network",
     "method": "get_donates_for_targets",
     "params": ["targets", "limit", "offset", "join_froms"]
+  },
+  {
+    "api": "social_network",
+    "method": "get_referrals",
+    "params": ["query"]
+  },
+  {
+    "api": "social_network",
+    "method": "get_referrers",
+    "params": ["query"]
   },
   {
     "api": "database_api",
@@ -711,41 +726,51 @@ module.exports = [
   {
     "api": "paid_subscription_api",
     "method": "get_paid_subscriptions_by_author",
-    "params": ["query"]
+    "params": ["query={}"]
   },
   {
     "api": "paid_subscription_api",
     "method": "get_paid_subscription_options",
-    "params": ["query"]
+    "params": ["query={}"]
   },
   {
     "api": "paid_subscription_api",
     "method": "get_paid_subscribers",
-    "params": ["query"]
+    "params": ["query={}"]
   },
   {
     "api": "paid_subscription_api",
     "method": "get_paid_subscriptions",
-    "params": ["query"]
+    "params": ["query={}"]
   },
   {
     "api": "paid_subscription_api",
     "method": "get_paid_subscribe",
-    "params": ["query"]
+    "params": ["query={}"]
   },
   {
     "api": "nft_api",
     "method": "get_nft_collections",
-    "params": ["query"]
+    "params": ["query={}"]
   },
   {
     "api": "nft_api",
     "method": "get_nft_tokens",
-    "params": ["query"]
+    "params": ["query={}"]
   },
   {
     "api": "nft_api",
     "method": "get_nft_orders",
-    "params": ["query"]
-  }
+    "params": ["query={}"]
+  },
+  {
+    "api": "cryptor",
+    "method": "encrypt_body",
+    "params": ["query={}"]
+  },
+  {
+    "api": "cryptor",
+    "method": "decrypt_comments",
+    "params": ["query={}"]
+  },
 ]

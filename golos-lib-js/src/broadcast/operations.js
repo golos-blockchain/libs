@@ -854,7 +854,7 @@ module.exports = [
     ]
   },
   {
-    "roles": ["posting"],
+    "roles": ["active"],
     "operation": "nft_collection",
     "params": [
       "creator",
@@ -865,7 +865,7 @@ module.exports = [
     ]
   },
   {
-    "roles": ["posting"],
+    "roles": ["active"],
     "operation": "nft_collection_delete",
     "params": [
       "creator",
@@ -923,7 +923,7 @@ module.exports = [
     "roles": ["active"],
     "operation": "nft_cancel_order",
     "params": [
-      "seller",
+      "owner",
       "order_id",
       "extensions"
     ]
