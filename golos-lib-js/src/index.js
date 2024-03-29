@@ -4,7 +4,6 @@ const multiauth = require('./multiauth');
 const middlewares = require('./middlewares');
 const broadcast = require('./broadcast');
 const formatter = require('./formatter')(api);
-const dex = require('./dex')
 const memo = require('./auth/memo');
 const messages = require('./auth/messages');
 const config = require('./config');
@@ -21,7 +20,6 @@ module.exports = {
     api,
     auth,
     broadcast,
-    dex,
     formatter,
     memo,
     messages,

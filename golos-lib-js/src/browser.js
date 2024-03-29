@@ -4,7 +4,6 @@ const multiauth = require('./multiauth');
 const middlewares = require('./middlewares');
 const broadcast = require('./broadcast');
 const config = require('./config');
-const dex = require('./dex')
 const formatter = require('./formatter')(api);
 const memo = require('./auth/memo');
 const messages = require('./auth/messages');
@@ -22,7 +21,6 @@ const golos = {
     multiauth,
     broadcast,
     config,
-    dex,
     formatter,
     memo,
     messages,
