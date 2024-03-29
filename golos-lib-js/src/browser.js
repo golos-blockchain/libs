@@ -8,6 +8,7 @@ const formatter = require('./formatter')(api);
 const memo = require('./auth/memo');
 const messages = require('./auth/messages');
 const utils = require('./utils');
+const Libs = require('./libs')
 const { importNativeLibCtx, importNativeLib,
     isNativeLibLoaded, assertNativeLib, } = require('./core');
 
@@ -28,6 +29,8 @@ const golos = {
     use: middlewares.use,
     utils,
 };
+
+new Libs(golos)
 
 if (typeof window !== 'undefined') {
     window.golos = golos;

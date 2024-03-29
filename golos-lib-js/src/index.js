@@ -8,11 +8,12 @@ const memo = require('./auth/memo');
 const messages = require('./auth/messages');
 const config = require('./config');
 const utils = require('./utils');
+const Libs = require('./libs')
 const ecc = require('./auth/ecc/');
 const { importNativeLibCtx, importNativeLib,
     isNativeLibLoaded, assertNativeLib, } = require('./core');
 
-module.exports = {
+const rootObj = {
     importNativeLibCtx,
     importNativeLib,
     isNativeLibLoaded,
@@ -29,4 +30,8 @@ module.exports = {
     use: middlewares.use,
     utils,
     ecc,
-};
+}
+
+new Libs(rootObj)
+
+module.exports = rootObj
