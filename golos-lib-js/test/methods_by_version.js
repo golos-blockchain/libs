@@ -114,6 +114,8 @@ export const methods_0_25_3 = [
     "get_contacts_size",
     "get_contact_info",
     "get_contacts",
+    "get_groups",
+    "get_group_members",
     "setBlockAppliedCallback",
     "setPendingTransactionCallback",
     "setPrivateMessageCallback",

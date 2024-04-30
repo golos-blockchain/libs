@@ -703,6 +703,16 @@ module.exports = [
     "params": ["owner", "type", "limit", "offset"]
   },
   {
+    "api": "private_message",
+    "method": "get_groups",
+    "params": ["query"]
+  },
+  {
+    "api": "private_message",
+    "method": "get_group_members",
+    "params": ["query"]
+  },
+  {
     "api": "worker_api",
     "method": "get_worker_requests",
     "params": ["query", "sort", "fill_posts"]
