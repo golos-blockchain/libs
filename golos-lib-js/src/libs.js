@@ -1,3 +1,4 @@
+import { MY_HASH } from './my_hash.js'
 
 class Libs {
     constructor(rootObj) {
@@ -31,6 +32,10 @@ class Libs {
             return true
         }
         return false
+    }
+
+    libHash = () => {
+        return MY_HASH
     }
 }
 
