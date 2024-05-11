@@ -30,6 +30,12 @@ golos.api.getAccounts(['ned', 'dan'], (err, response) => {
 </script>
 ```
 
+## Сборка своей golos-lib-js (с загрузкой в npm)
+
+Вы можете собрать свою собственную копию golos-lib-js, чтобы дополнительно проаудировать ее, или, к примеру,  доработать для использования в специфических проектах\задачах.
+
+[См. здесь](https://github.com/golos-blockchain/libs/tree/master/golos-lib-js/docs/files/build.md).
+
 ## Загрузка модуля WebAssembly
 
 [См. здесь](https://github.com/golos-blockchain/libs/tree/master/golos-lib-js/docs/files/wasm.md).
