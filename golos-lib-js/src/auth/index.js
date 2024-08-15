@@ -10,7 +10,7 @@ var bigi = require('bigi'),
     PublicKey = require('./ecc/src/key_public'),
     session = require('./session'),
     multiSession = require('./multiSession'),
-    api = require('../api'),
+    golosApi = require('../api'),
   hash = require('./ecc/src/hash');
 
 var Auth = {};
@@ -97,7 +97,7 @@ Auth.loginAsync = function (name, password, callback) {
                 privateKeys[role] = PrivateKey.fromSeed(`${name}${role}${password}`).toString()
             );
         }
-        api.getAccountsAsync([name], (err, res) => {
+        golosApi.getAccountsAsync([name], (err, res) => {
             if (err) {
                 callback(err, null);
                 return;
@@ -127,6 +127,60 @@ Auth.loginAsync = function (name, password, callback) {
 };
 
 Auth.login = promisify(Auth.loginAsync);
+
+// `keys` is object like:
+// { posting: "private posting key" }
+Auth.withNodeLogin = async function ({ account, keys,
+    call, dgp, api, sessionName }) {
+    if (!sessionName) sessionName = 'node_login'
+    if (!api) {
+        api = golosApi
+    }
+
+    if (!dgp) {
+        dgp = await api.getDynamicGlobalPropertiesAsync()
+    }
+
+    let resp
+
+    const { MultiSession } = multiSession
+    const ms = new MultiSession(sessionName)
+    const sessionData = ms.load()
+    let loginData = sessionData.getVal(account, 'login_data')
+    if (loginData) {
+        let resp = await call(loginData)
+        if (!resp.login_error) {
+            return resp
+        }
+    }
+
+    const { head_block_number, witness } = dgp
+
+    console.time('withNodeLogin - signData')
+    const signed = this.signData(head_block_number.toString(), keys)
+    console.timeEnd('withNodeLogin - signData')
+
+    // TODO: only 1st, because node supports only 1 key
+    const signature = Object.values(signed)[0]
+
+    loginData = {
+        account,
+        signed_data:  {
+            head_block_number,
+            witness,
+        },
+        signature,
+    }
+
+    resp = await call(loginData)
+    if (resp.login_error) {
+        throw resp.login_error
+    }
+
+    sessionData.setVal(account, 'login_data', loginData).save()
+
+    return resp
+}
 
 Auth.toWif = function (name, password, role) {
     var seed = name + role + password;

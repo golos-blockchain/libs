@@ -679,7 +679,12 @@ module.exports = [
   {
     "api": "private_message",
     "method": "get_thread",
-    "params": ["from", "to", "query"]
+    "has_default_values": true,
+    "params": [
+      "from_or_query",
+      `to=${EMPTY_STRING}`,
+      `opts=${EMPTY_OBJECT}`,
+    ]
   },
   {
     "api": "private_message",

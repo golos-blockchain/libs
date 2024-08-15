@@ -123,7 +123,7 @@ function cryptoJsEncrypt(message, key, iv) {
 
 /** @return {string} unique 64 bit unsigned number string.  Being time based, this is careful to never choose the same nonce twice.  This value could be recorded in the blockchain for a long time.
 */
-function uniqueNonce() {
+export function uniqueNonce() {
     if(unique_nonce_entropy === null) {
         const b = secureRandom.randomUint8Array(2)
         unique_nonce_entropy = parseInt(b[0] << 8 | b[1], 10)

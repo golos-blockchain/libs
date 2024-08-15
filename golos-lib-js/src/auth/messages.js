@@ -5,8 +5,9 @@ import base58 from 'bs58'
 import truncate from 'lodash/truncate';
 import {Aes, PrivateKey, PublicKey} from './ecc'
 import {ops} from './serializer'
+import golosApi from '../api'
 import {fitImageToSize} from '../utils';
-import { promisify, } from '../promisify';
+import { promisify, } from '../promisify'
 const {isInteger} = Number
 
 /** @const {string} DEFAULT_APP 
@@ -217,6 +218,31 @@ function forEachMessage(message_objects, begin_idx, end_idx, callback) {
     }
 }
 
+function msgFromBuf(buf, lengthPrefixed = false) {
+    const toUTF8String = () => {
+        return new Buffer(buf.toString('binary'), 'binary').toString('utf-8')
+    }
+    if (!lengthPrefixed) { // Used in groups. Prefixed used in private chats
+        buf.mark()
+        return toUTF8String()
+    }
+    let rawMsg
+    try {
+        buf.mark()
+        rawMsg = buf.readVString()
+    } catch(e) {
+        buf.reset()
+        // Sender did not length-prefix the message
+        rawMsg = toUTF8String()
+    }
+    return rawMsg
+}
+
+function msgFromHex(hex, lengthPrefixed = false) {
+    const buf = ByteBuffer.fromHex(hex, ByteBuffer.LITTLE_ENDIAN)
+    return msgFromBuf(buf, lengthPrefixed)
+}
+
 /**
     Decodes messages of format used by golos.messages.encode(), which are length-prefixed, and also messages sent by another way (not length-prefixed).<br>
     Also, parses (JSON) and validates each message (app, version...). (Invalid messages are also added to result, it is need to mark them as read. To change it, use <code>on_error</code>).<br>
@@ -238,10 +264,9 @@ export function decode(private_memo_key, second_user_public_memo_key, message_ob
     assert(second_user_public_memo_key, 'second_user_public_memo_key is required');
     assert(message_objects, 'message_objects is required');
 
-    // Most "heavy" lines
     const private_key = toPrivateObj(private_memo_key);
     const public_key = toPublicObj(second_user_public_memo_key);
-    let shared_secret = private_key.get_shared_secret(public_key);
+    let shared_secret
 
     let results = [];
     forEachMessage(message_objects, begin_idx, end_idx, (message_object, i) => {
@@ -264,22 +289,17 @@ export function decode(private_memo_key, second_user_public_memo_key, message_ob
                 return true;
             }
 
+            // Most "heavy" line
+            if (!shared_secret) shared_secret = private_key.get_shared_secret(public_key)
+
             let decrypted = Aes.decrypt(shared_secret, null,
                 message_object.nonce.toString(),
                 Buffer.from(message_object.encrypted_message, 'hex'),
                 message_object.checksum);
 
             const mbuf = ByteBuffer.fromBinary(decrypted.toString('binary'), ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
-            try {
-                mbuf.mark()
-                decrypted = mbuf.readVString()
-            } catch(e) {
-                mbuf.reset()
-                // Sender did not length-prefix the memo
-                decrypted = new Buffer(mbuf.toString('binary'), 'binary').toString('utf-8')
-            }
+            decrypted = msgFromBuf(mbuf, true)
 
-            decrypted = decrypted.toString();
             message_object.raw_message = decrypted;
             if (!raw_messages) {
                 let msg = JSON.parse(message_object.raw_message);
@@ -305,6 +325,62 @@ export function decode(private_memo_key, second_user_public_memo_key, message_ob
         return true;
     });
     return results;
+}
+
+export async function decodeMsgs({ messages, for_each, on_error, raw_messages,
+    begin_idx, end_idx,
+}) {
+    let results = []
+    forEachMessage(messages, begin_idx, end_idx, (message, i) => {
+        // Return true if for_each should not be called
+        let processOnError = (exception) => {
+            if (on_error) {
+                if (!on_error(message, i, exception)) {
+                    results.push(message)
+                }
+                return true
+            }
+            return false
+        }
+
+        try {
+            let rawMsg = msgFromHex(message.encrypted_message)
+            const isEncrypted = rawMsg.startsWith('{"t":"em"')
+
+            if (isEncrypted) {
+                if (!message.decrypted || message.decrypt_date !== message.receive_date) {
+
+                }
+                rawMsg = msgFromHex(message.decrypted)
+            }
+
+            message.raw_message = rawMsg
+            if (!raw_messages) {
+                let msg = JSON.parse(message.raw_message)
+                msg.type = msg.type || 'text'
+                validateBody(msg.body)
+                if (msg.type === 'image')
+                    validateImageMsg(msg)
+                validateAppVersion(msg.app, msg.version)
+                validateMsgWithQuote(msg)
+                message.message = msg
+            }
+        } catch (exception) {
+            if (processOnError(exception))
+                return true
+        }
+        try {
+            if (!for_each || !for_each(message, i)) {
+                results.push(message);
+            }
+        } catch (exception) {
+            console.error(exception)
+            processOnError(exception)
+        }
+
+        return true
+    })
+    return results
 }
 
 /**
@@ -337,6 +413,42 @@ export function encode(from_private_memo_key, to_public_memo_key, message, nonce
         encrypted_message: data.message.toString('hex'),
         checksum: data.checksum,
     };
+}
+
+export async function encodeMsg({ group, message, nonce, api }) {
+    const msgToBuffer = (msg) => {
+        const mbuf = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
+        mbuf.writeUTF8String(JSON.stringify(msg));
+        msg = new Buffer(mbuf.copy(0, mbuf.offset).toBinary(), 'binary')
+        return msg
+    }
+
+    if (group.is_encrypted) {
+        if (!api) {
+            api = golosApi
+        }
+        const body = JSON.stringify(message)
+        console.time('eba')
+        const res = await api.encryptBodyAsync({ group: group.name, body })
+        console.timeEnd('eba')
+        if (res.error) {
+            throw new Error(res.error)
+        }
+
+        let newBody = {}
+        newBody.t = 'em'
+        newBody.c = res.encrypted
+        message = msgToBuffer(newBody)
+    } else {
+        message = msgToBuffer(message)
+    }
+
+    const encrypted_message = message.toString('hex')
+    return {
+        nonce: Aes.uniqueNonce().toString(),
+        encrypted_message,
+        checksum: 0,
+    }
 }
 
 /**
