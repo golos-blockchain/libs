@@ -6,6 +6,7 @@ import truncate from 'lodash/truncate';
 import {Aes, PrivateKey, PublicKey} from './ecc'
 import {ops} from './serializer'
 import golosApi from '../api'
+import auth from '.'
 import {fitImageToSize} from '../utils';
 import { promisify, } from '../promisify'
 const {isInteger} = Number
@@ -31,6 +32,8 @@ export const MAX_IMAGE_QUOTE_LENGTH = 2000;
 
 const toPrivateObj = o => (o ? o.d ? o : PrivateKey.fromWif(o) : o/*null or undefined*/)
 const toPublicObj = o => (o ? o.Q ? o : PublicKey.fromString(o) : o/*null or undefined*/)
+
+export const emptyPublicKey = 'GLS1111111111111111111111111111111114T1Anm'
 
 function validateAppVersion(app, version) {
     assert(typeof app === 'string' && app.length >= 1 && app.length <= 16,
@@ -243,6 +246,26 @@ function msgFromHex(hex, lengthPrefixed = false) {
     return msgFromBuf(buf, lengthPrefixed)
 }
 
+const parseMsg = (message, rawMsg, raw_messages = false) => {
+    message.raw_message = rawMsg
+    if (!raw_messages) {
+        let msg = JSON.parse(message.raw_message)
+        msg.type = msg.type || 'text'
+        validateBody(msg.body)
+        if (msg.type === 'image')
+            validateImageMsg(msg)
+        validateAppVersion(msg.app, msg.version)
+        validateMsgWithQuote(msg)
+        message.message = msg
+    }
+}
+
+const warnDeprecation = (oldMethod, newMethod) => {
+    console.warn(`golos.messages.${oldMethod} deprecated. ` +
+        `It is not async, not supports groups, etc. ` +
+        `Will be removed in future. Migrate to golos.messages.${newMethod}.`)
+}
+
 /**
     Decodes messages of format used by golos.messages.encode(), which are length-prefixed, and also messages sent by another way (not length-prefixed).<br>
     Also, parses (JSON) and validates each message (app, version...). (Invalid messages are also added to result, it is need to mark them as read. To change it, use <code>on_error</code>).<br>
@@ -260,6 +283,8 @@ function msgFromHex(hex, lengthPrefixed = false) {
     @return {array} - result array of message_objects. Each object has "message" and "raw_message" fields. If message is invalid, it has only "raw_message" field. And if message cannot be decoded at all, it hasn't any of these fields.
 */
 export function decode(private_memo_key, second_user_public_memo_key, message_objects, before_decode = undefined, for_each = undefined, on_error = undefined, begin_idx = undefined, end_idx = undefined, raw_messages = false) {
+    warnDeprecation('decode', 'decodeMsgs')
+
     assert(private_memo_key, 'private_memo_key is required');
     assert(second_user_public_memo_key, 'second_user_public_memo_key is required');
     assert(message_objects, 'message_objects is required');
@@ -300,17 +325,7 @@ export function decode(private_memo_key, second_user_public_memo_key, message_ob
             const mbuf = ByteBuffer.fromBinary(decrypted.toString('binary'), ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
             decrypted = msgFromBuf(mbuf, true)
 
-            message_object.raw_message = decrypted;
-            if (!raw_messages) {
-                let msg = JSON.parse(message_object.raw_message);
-                msg.type = msg.type || 'text';
-                validateBody(msg.body);
-                if (msg.type === 'image')
-                    validateImageMsg(msg);
-                validateAppVersion(msg.app, msg.version);
-                validateMsgWithQuote(msg);
-                message_object.message = msg;
-            }
+            parseMsg(message_object, decrypted, raw_messages)
         } catch (exception) {
             if (processOnError(exception))
                 return true;
@@ -327,11 +342,20 @@ export function decode(private_memo_key, second_user_public_memo_key, message_ob
     return results;
 }
 
-export async function decodeMsgs({ messages, for_each, on_error, raw_messages,
+export async function decodeMsgs({ msgs, before_decode, for_each, on_error,
+    raw_messages,
+    private_memo, // chats
+    api, login, // groups
     begin_idx, end_idx,
 }) {
+    let private_key = private_memo && toPrivateObj(private_memo)
+    const myPublic = private_key.toPublic().toString()
+    let shareds = {}
+
     let results = []
-    forEachMessage(messages, begin_idx, end_idx, (message, i) => {
+    let entriesDec = {}
+
+    forEachMessage(msgs, begin_idx, end_idx, (message, i) => {
         // Return true if for_each should not be called
         let processOnError = (exception) => {
             if (on_error) {
@@ -340,30 +364,49 @@ export async function decodeMsgs({ messages, for_each, on_error, raw_messages,
                 }
                 return true
             }
+            console.error('golos.messages.decodeMsgs', i, exception)
             return false
         }
 
         try {
-            let rawMsg = msgFromHex(message.encrypted_message)
-            const isEncrypted = rawMsg.startsWith('{"t":"em"')
-
-            if (isEncrypted) {
-                if (!message.decrypted || message.decrypt_date !== message.receive_date) {
-
-                }
-                rawMsg = msgFromHex(message.decrypted)
+            if (before_decode && before_decode(message, i, results)) {
+                return true
             }
 
-            message.raw_message = rawMsg
-            if (!raw_messages) {
-                let msg = JSON.parse(message.raw_message)
-                msg.type = msg.type || 'text'
-                validateBody(msg.body)
-                if (msg.type === 'image')
-                    validateImageMsg(msg)
-                validateAppVersion(msg.app, msg.version)
-                validateMsgWithQuote(msg)
-                message.message = msg
+            if (!message.group) {
+                const pubKey = message.from_memo_key === myPublic ?
+                    message.to_memo_key : message.from_memo_key
+                // Most "heavy" line (in private chats)
+                if (!shareds[pubKey]) {
+                    console.error(pubKey)
+                    console.error(message.from_memo_key)
+                    console.error(message.to_memo_key)
+                    shareds[pubKey] = private_key.get_shared_secret(toPublicObj(pubKey))
+                }
+
+                let decrypted = Aes.decrypt(shareds[pubKey], null,
+                    message.nonce.toString(),
+                    Buffer.from(message.encrypted_message, 'hex'),
+                    message.checksum)
+
+                const mbuf = ByteBuffer.fromBinary(decrypted.toString('binary'), ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
+                decrypted = msgFromBuf(mbuf, true)
+
+                parseMsg(message, decrypted, raw_messages)
+            } else {
+                let rawMsg = msgFromHex(message.encrypted_message)
+                const isEncrypted = rawMsg.startsWith('{"t":"em"')
+
+                if (isEncrypted) {
+                    if (!message.decrypted || message.decrypt_date !== message.receive_date) {
+                        entriesDec[i] = { group: message.group,
+                            encrypted_message: message.encrypted_message, }
+                        return true
+                    }
+                    rawMsg = msgFromHex(message.decrypted)
+                }
+
+                parseMsg(message, rawMsg, raw_messages)
             }
         } catch (exception) {
             if (processOnError(exception))
@@ -380,6 +423,39 @@ export async function decodeMsgs({ messages, for_each, on_error, raw_messages,
 
         return true
     })
+
+    const entries = Object.values(entriesDec)
+    if (entries.length) {
+        if (!api) {
+            api = golosApi
+        }
+        const { dgp, account, keys, sessionName } = login
+        const decRes = await auth.withNodeLogin({ account, keys, sessionName, dgp,
+            call: async (loginData) => {
+                const decRes = await api.decryptMessagesAsync({
+                    entries
+                })
+                return decRes
+            }
+        })
+        const idxs = Object.keys(entriesDec)
+        if (decRes.status !== 'ok') {
+
+        } else {
+            for (let i = 0; i < entries.length; ++i) {
+                const dec = decRes.results[i]
+                if (dec.body) {
+                    const msg = results[idxs[i]]
+                    dec.decrypted = dec.body // TODO: but `decrypted` should be hex
+                    parseMsg(msg, dec.decrypted, raw_messages)
+                    // for_each
+                } else {
+                    // on_error, for_each if not handled
+                }
+            }
+        }
+    }
+
     return results
 }
 
@@ -392,6 +468,8 @@ export async function decodeMsgs({ messages, for_each, on_error, raw_messages,
     @return {object} - Object with fields: nonce, checksum and message.
 */
 export function encode(from_private_memo_key, to_public_memo_key, message, nonce = undefined) {
+    warnDeprecation('encode', 'encodeMsg')
+
     assert(from_private_memo_key, 'from_private_memo_key is required');
     assert(to_public_memo_key, 'to_public_memo_key is required');
     assert(message, 'message is required');
@@ -415,14 +493,50 @@ export function encode(from_private_memo_key, to_public_memo_key, message, nonce
     };
 }
 
-export async function encodeMsg({ group, message, nonce, api }) {
+export async function encodeMsg({ group,
+    private_memo, to_public_memo,
+    msg, nonce,
+    api
+}) {
+    assert(msg, 'msg is required')
+
     const msgToBuffer = (msg) => {
         const mbuf = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
-        mbuf.writeUTF8String(JSON.stringify(msg));
+        if (group) {
+            mbuf.writeUTF8String(JSON.stringify(msg))
+        } else {
+            mbuf.writeVString(JSON.stringify(msg))
+        }
         msg = new Buffer(mbuf.copy(0, mbuf.offset).toBinary(), 'binary')
         return msg
     }
 
+    if (!group) {
+        assert(private_memo, 'private_memo is required in private chats')
+        assert(to_public_memo, 'to_public_memo is required in private chats')
+
+        const fromKey = toPrivateObj(private_memo)
+        const toKey = toPublicObj(to_public_memo)
+
+        msg = msgToBuffer(msg)
+
+        let data = Aes.encrypt(fromKey,
+            toKey,
+            msg,
+            nonce)
+
+        return {
+            nonce: data.nonce.toString(),
+            encrypted_message: data.message.toString('hex'),
+            checksum: data.checksum,
+            from_memo_key: fromKey.toPublic().toString(),
+            to_memo_key: to_public_memo,
+        }
+    }
+
+    assert(!private_memo, 'private_memo is for private messages, not groups')
+    assert(!to_public_memo, 'to_public_memo is for private messages, not groups')
+        
     if (group.is_encrypted) {
         if (!api) {
             api = golosApi
@@ -448,6 +562,8 @@ export async function encodeMsg({ group, message, nonce, api }) {
         nonce: Aes.uniqueNonce().toString(),
         encrypted_message,
         checksum: 0,
+        from_memo_key: emptyPublicKey,
+        to_memo_key: emptyPublicKey,
     }
 }
 
