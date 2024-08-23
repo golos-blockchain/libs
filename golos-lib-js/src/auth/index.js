@@ -97,7 +97,7 @@ Auth.loginAsync = function (name, password, callback) {
                 privateKeys[role] = PrivateKey.fromSeed(`${name}${role}${password}`).toString()
             );
         }
-        golosApi.getAccountsAsync([name], (err, res) => {
+        golosApi.getAccounts([name], (err, res) => {
             if (err) {
                 callback(err, null);
                 return;

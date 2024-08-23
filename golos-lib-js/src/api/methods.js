@@ -421,7 +421,8 @@ module.exports = [
   {
     "api": "database_api",
     "method": "get_accounts",
-    "params": ["accountNames"]
+    "has_default_values": true,
+    "params": ["accountNames", `query=${EMPTY_OBJECT}`]
   },
   {
     "api": "database_api",
@@ -700,12 +701,22 @@ module.exports = [
   {
     "api": "private_message",
     "method": "get_contact_info",
-    "params": ["owner", "contact"]
+    "has_default_values": true,
+    "params": [
+      "owner_or_query",
+      `contact=${EMPTY_STRING}`,
+    ]
   },
   {
     "api": "private_message",
     "method": "get_contacts",
-    "params": ["owner", "type", "limit", "offset"]
+    "has_default_values": true,
+    "params": [
+      "owner_or_query",
+      `type="unknown"`,
+      `limit=20`,
+      `offset=0`,
+    ]
   },
   {
     "api": "private_message",
