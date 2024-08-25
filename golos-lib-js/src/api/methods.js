@@ -809,4 +809,9 @@ module.exports = [
     "method": "decrypt_comments",
     "params": ["query={}"]
   },
+  {
+    "api": "cryptor",
+    "method": "decrypt_messages",
+    "params": ["query={}"]
+  },
 ]

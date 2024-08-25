@@ -2,6 +2,7 @@
 import ByteBuffer from 'bytebuffer'
 import assert from 'assert'
 import base58 from 'bs58'
+import newDebug from 'debug'
 import truncate from 'lodash/truncate';
 import {Aes, PrivateKey, PublicKey} from './ecc'
 import {ops} from './serializer'
@@ -34,6 +35,8 @@ const toPrivateObj = o => (o ? o.d ? o : PrivateKey.fromWif(o) : o/*null or unde
 const toPublicObj = o => (o ? o.Q ? o : PublicKey.fromString(o) : o/*null or undefined*/)
 
 export const emptyPublicKey = 'GLS1111111111111111111111111111111114T1Anm'
+
+const debugMsgs = newDebug('golos:messages')
 
 function validateAppVersion(app, version) {
     assert(typeof app === 'string' && app.length >= 1 && app.length <= 16,
@@ -248,6 +251,7 @@ function msgFromHex(hex, lengthPrefixed = false) {
 
 const parseMsg = (message, rawMsg, raw_messages = false) => {
     message.raw_message = rawMsg
+    message.decrypt_date = message.receive_date
     if (!raw_messages) {
         let msg = JSON.parse(message.raw_message)
         msg.type = msg.type || 'text'
@@ -258,6 +262,12 @@ const parseMsg = (message, rawMsg, raw_messages = false) => {
         validateMsgWithQuote(msg)
         message.message = msg
     }
+}
+
+const parseQuery = (query) => {
+    assert(query && typeof(query) === 'object' && !Array.isArray(query),
+        'argument should be an object with argument-field. See golos-lib-js documentation.')
+    return query
 }
 
 const warnDeprecation = (oldMethod, newMethod) => {
@@ -342,14 +352,25 @@ export function decode(private_memo_key, second_user_public_memo_key, message_ob
     return results;
 }
 
-export async function decodeMsgs({ msgs, before_decode, for_each, on_error,
-    raw_messages,
-    private_memo, // chats
-    api, login, // groups
-    begin_idx, end_idx,
-}) {
+const ExceptionTypes = {
+    NodeError: 1,
+    Error: 2,
+    OuterError: 3,
+    RequestError: 4,
+}
+
+export async function decodeMsgs(query) {
+    let { msgs, before_decode, for_each, on_error,
+        raw_messages,
+        private_memo, // chats
+        api, login, // groups
+        begin_idx, end_idx,
+    } = parseQuery(query)
+
+    assert(msgs, 'msgs is required')
+
     let private_key = private_memo && toPrivateObj(private_memo)
-    const myPublic = private_key.toPublic().toString()
+    const myPublic = private_key && private_key.toPublic().toString()
     let shareds = {}
 
     let results = []
@@ -357,18 +378,23 @@ export async function decodeMsgs({ msgs, before_decode, for_each, on_error,
 
     forEachMessage(msgs, begin_idx, end_idx, (message, i) => {
         // Return true if for_each should not be called
-        let processOnError = (exception) => {
+        let processOnError = (exception, exType = ExceptionTypes.Error) => {
             if (on_error) {
-                if (!on_error(message, i, exception)) {
+                if (!on_error(message, i, exception, exType)) {
                     results.push(message)
                 }
                 return true
             }
-            console.error('golos.messages.decodeMsgs', i, exception)
+            console.warn('golos.messages.decodeMsgs', i, exception)
             return false
         }
 
         try {
+            if (!message.group || message.decrypt_date !== message.receive_date) {
+                message.raw_message = null // Will be set if message will be successfully decoded
+                message.message = null // Will be set if message will be also successfully parsed and validated
+            }
+
             if (before_decode && before_decode(message, i, results)) {
                 return true
             }
@@ -378,9 +404,6 @@ export async function decodeMsgs({ msgs, before_decode, for_each, on_error,
                     message.to_memo_key : message.from_memo_key
                 // Most "heavy" line (in private chats)
                 if (!shareds[pubKey]) {
-                    console.error(pubKey)
-                    console.error(message.from_memo_key)
-                    console.error(message.to_memo_key)
                     shareds[pubKey] = private_key.get_shared_secret(toPublicObj(pubKey))
                 }
 
@@ -393,6 +416,7 @@ export async function decodeMsgs({ msgs, before_decode, for_each, on_error,
                 decrypted = msgFromBuf(mbuf, true)
 
                 parseMsg(message, decrypted, raw_messages)
+                message.decryptor = 'golos-lib'
             } else {
                 let rawMsg = msgFromHex(message.encrypted_message)
                 const isEncrypted = rawMsg.startsWith('{"t":"em"')
@@ -401,6 +425,7 @@ export async function decodeMsgs({ msgs, before_decode, for_each, on_error,
                     if (!message.decrypted || message.decrypt_date !== message.receive_date) {
                         entriesDec[i] = { group: message.group,
                             encrypted_message: message.encrypted_message, }
+                        results.push(message)
                         return true
                     }
                     rawMsg = msgFromHex(message.decrypted)
@@ -418,7 +443,7 @@ export async function decodeMsgs({ msgs, before_decode, for_each, on_error,
             }
         } catch (exception) {
             console.error(exception)
-            processOnError(exception)
+            processOnError(exception, ExceptionTypes.OuterError)
         }
 
         return true
@@ -429,32 +454,85 @@ export async function decodeMsgs({ msgs, before_decode, for_each, on_error,
         if (!api) {
             api = golosApi
         }
-        const { dgp, account, keys, sessionName } = login
-        const decRes = await auth.withNodeLogin({ account, keys, sessionName, dgp,
-            call: async (loginData) => {
-                const decRes = await api.decryptMessagesAsync({
-                    entries
-                })
-                return decRes
-            }
-        })
-        const idxs = Object.keys(entriesDec)
-        if (decRes.status !== 'ok') {
+        let decRes, decErr
+        try {
+            debugMsgs('decryptMessagesAsync', entries.length + ' msgs')
 
-        } else {
-            for (let i = 0; i < entries.length; ++i) {
-                const dec = decRes.results[i]
-                if (dec.body) {
-                    const msg = results[idxs[i]]
-                    dec.decrypted = dec.body // TODO: but `decrypted` should be hex
-                    parseMsg(msg, dec.decrypted, raw_messages)
-                    // for_each
-                } else {
-                    // on_error, for_each if not handled
+            const { dgp, account, keys, sessionName } = login
+            decRes = await auth.withNodeLogin({ account, keys, sessionName, dgp,
+                call: async (loginData) => {
+                    const decRes = await api.decryptMessagesAsync({
+                        ...loginData,
+                        entries
+                    })
+                    return decRes
                 }
+            })
+        } catch (err) {
+            decErr = err
+        }
+        debugMsgs('decryptMessagesAsync', entries.length + ' msgs')
+
+        // Return true if for_each should not be called
+        let processOnError = (msg, idx, exception, exType = ExceptionTypes.NodeError) => {
+            if (on_error) {
+                if (on_error(msg, idx, exception, exType)) {
+                    msg.ignore = true
+                }
+                return true
+            }
+            console.warn('golos.messages.decodeMsgs', i, exception)
+            return false
+        }
+
+        const idxs = Object.keys(entriesDec)
+        for (let j = 0; j < entries.length; ++j) {
+            let i = idxs[j]
+            let msg = msgs[i]
+
+            try {
+                let proceedId = true
+                if (!decRes) {
+                    proceedId = false
+                    const ex = new Error((decErr && decErr.message) || 'Unknown error')
+                    if (processOnError(msg, i, decErr, ExceptionTypes.RequestError))
+                        continue
+                } else if (decRes.status !== 'ok' || !decRes.results) {
+                    proceedId = false
+                    const ex = new Error(decRes.err || 'Unknown error')
+                    if (processOnError(msg, i, ex))
+                        continue
+                }
+
+                if (proceedId) {
+                    const dec = decRes.results[j]
+                    if (dec && dec.body) {
+                        dec.decrypted = dec.body // TODO: but `decrypted` should be hex
+                        parseMsg(msg, dec.decrypted, raw_messages)
+                        msg.decryptor = 'node/decrypt_messages'
+                    } else {
+                        const ex = new Error(dec.err || (!dec ? ' No decrypt result' : 'No body') + ', unknown error')
+                        if (processOnError(msg, i, ex))
+                            continue
+                    }
+                }
+            } catch (err) {
+                if (processOnError(msg, i, exception, ExceptionTypes.Error))
+                    continue
+            }
+
+            try {
+                if (!msg.ignore && for_each && for_each(msg, i)) {
+                    msg.ignore = true
+                }
+            } catch (exception) {
+                console.error(exception)
+                processOnError(exception, ExceptionTypes.OuterError)
             }
         }
     }
+
+    results = results.filter(res => !res.ignore)
 
     return results
 }
@@ -541,10 +619,15 @@ export async function encodeMsg({ group,
         if (!api) {
             api = golosApi
         }
-        const body = JSON.stringify(message)
-        console.time('eba')
-        const res = await api.encryptBodyAsync({ group: group.name, body })
-        console.timeEnd('eba')
+        const body = JSON.stringify(msg)
+
+        let res
+        {
+            debugMsgs('encryptBodyAsync')
+            res = await api.encryptBodyAsync({ group: group.name, body })
+            debugMsgs('encryptBodyAsync')
+        }
+
         if (res.error) {
             throw new Error(res.error)
         }
@@ -552,12 +635,12 @@ export async function encodeMsg({ group,
         let newBody = {}
         newBody.t = 'em'
         newBody.c = res.encrypted
-        message = msgToBuffer(newBody)
+        msg = msgToBuffer(newBody)
     } else {
-        message = msgToBuffer(message)
+        msg = msgToBuffer(msg)
     }
 
-    const encrypted_message = message.toString('hex')
+    const encrypted_message = msg.toString('hex')
     return {
         nonce: Aes.uniqueNonce().toString(),
         encrypted_message,
