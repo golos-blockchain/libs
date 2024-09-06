@@ -137,10 +137,6 @@ Auth.withNodeLogin = async function ({ account, keys,
         api = golosApi
     }
 
-    if (!dgp) {
-        dgp = await api.getDynamicGlobalPropertiesAsync()
-    }
-
     let resp
 
     const { MultiSession } = multiSession
@@ -154,7 +150,16 @@ Auth.withNodeLogin = async function ({ account, keys,
         }
     }
 
-    const { head_block_number, witness } = dgp
+    let gprops
+    if (!dgp) {
+        gprops = await api.getDynamicGlobalPropertiesAsync()
+    } else if (typeof(dgp) === 'function') {
+        gprops = await dgp()
+    } else {
+        gprops = dgp
+    }
+
+    const { head_block_number, witness } = gprops
 
     console.time('withNodeLogin - signData')
     const signed = this.signData(head_block_number.toString(), keys)

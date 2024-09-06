@@ -642,7 +642,7 @@ export async function encodeMsg({ group,
 
     const encrypted_message = msg.toString('hex')
     return {
-        nonce: Aes.uniqueNonce().toString(),
+        nonce: nonce || Aes.uniqueNonce().toString(),
         encrypted_message,
         checksum: 0,
         from_memo_key: emptyPublicKey,
