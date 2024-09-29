@@ -98,7 +98,7 @@ class MultiAuthMiddleware extends EmptyMiddleware {
         }
     }
 
-    async broadcast({ tx, privKeys, orig, prepareTx, }) {
+    async broadcast({ tx, privKeys, orig, prepareTx, signTx, }) {
         let result = { broadcast: true, };
         if (tx._meta && tx._meta._keys) {
             const kcState = await kcLoggedIn()
@@ -112,6 +112,9 @@ class MultiAuthMiddleware extends EmptyMiddleware {
             } else {
                 result = await this._processPending(tx)
             }
+        } else {
+            tx = await prepareTx(tx)
+            tx = await signTx(tx)
         }
         if (result.broadcast) {
             return await super.broadcast({ tx, privKeys, orig, });

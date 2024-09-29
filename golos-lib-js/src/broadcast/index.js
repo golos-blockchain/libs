@@ -38,6 +38,15 @@ steemBroadcast.send = async function steemBroadcast$send(tx, privKeys, callback)
             }
         }
     }
+
+    let mware
+    if (tx.middleware) {
+        mware = tx.middleware
+    } else {
+        mware = mw()
+    }
+    delete tx.middleware
+
     const broadcast = async (signedTransaction) => {
         const res = config.get('broadcast_transaction_with_callback') 
             ? await steemApi.broadcastTransactionWithCallbackAsync(() => {}, signedTransaction)
@@ -54,21 +63,27 @@ steemBroadcast.send = async function steemBroadcast$send(tx, privKeys, callback)
                 'Broadcasting transaction without signing (transaction, transaction.operations, transaction._meta)',
                 tx, tx.operations, tx._meta
             );
-            res = await mw().broadcast({ tx, privKeys, orig: broadcast,
-                prepareTx: steemBroadcast._prepareTransaction });
+            res = await mware.broadcast({ tx, privKeys, orig: broadcast,
+                prepareTx: steemBroadcast.prepareTransaction });
         } else {
-            const transaction = await steemBroadcast._prepareTransaction(tx);
-            debug(
-                'Signing transaction (transaction, transaction.operations)',
-                transaction, transaction.operations
-            );
-            const signedTransaction = steemAuth.signTransaction(transaction, privKeys);
-            debug(
-                'Broadcasting transaction (transaction, transaction.operations)',
-                transaction, transaction.operations
-            );
-            res = await mw().broadcast({ tx: signedTransaction,
-                privKeys, orig: broadcast, });
+            res = await mware.broadcast({ tx, privKeys, orig: broadcast,
+                prepareTx: async (tx) => {
+                    tx = await steemBroadcast.prepareTransaction(tx)
+                    debug(
+                        'Signing transaction (transaction, transaction.operations)',
+                        tx, tx.operations
+                    )
+                    return tx
+                },
+                signTx: (tx) => {
+                    const signedTx = steemAuth.signTransaction(tx, privKeys)
+                    debug(
+                        'Broadcasting transaction (transaction, transaction.operations)',
+                        signedTx, signedTx.operations
+                    );
+                    return signedTx
+                },
+            })
         }
         if (callback) callback(null, res);
     } catch (err) {
@@ -76,13 +91,25 @@ steemBroadcast.send = async function steemBroadcast$send(tx, privKeys, callback)
     }
 };
 
-steemBroadcast._prepareTransaction = async function steemBroadcast$_prepareTransaction(tx) {
-    const props = await steemApi.getDynamicGlobalPropertiesAsync();
+steemBroadcast.prepareTransaction = async function steemBroadcast$_prepareTransaction(tx) {
+    let props
+    if (tx && tx._dgp) {
+        props = tx._dgp
+    } else {
+        props = await steemApi.getDynamicGlobalPropertiesAsync()
+    }
+    delete tx._dgp
     // Set defaults on the transaction
     const chainDate = new Date(props.time + 'Z');
     const refBlockNum = (props.head_block_number - 3) & 0xFFFF;
 
-    const block = await steemApi.getBlockAsync(props.head_block_number - 2);
+    let block
+    if (tx && tx._block) {
+        block = tx._block
+    } else {
+        block = await steemApi.getBlockAsync(props.head_block_number - 2)
+    }
+    delete tx._block
     const headBlockId = block.previous;
     return Object.assign({
         ref_block_num: refBlockNum,
@@ -110,13 +137,25 @@ operations.forEach((operation) => {
     operationParams.indexOf('parent_permlink') !== -1;
 
   steemBroadcast[`${operationName}With`] =
-    function steemBroadcast$specializedSendWith(wif, options, callback) {
+    function steemBroadcast$specializedSendWith(wifOpts, options, callback) {
       debug(`Sending operation "${operationName}" with`, {options, callback});
       const keys = {};
+
+      let wif, middleware
+      if (wifOpts && ('wif' in wifOpts)) {
+        wif = wifOpts.wif
+      } else {
+        wif = wifOpts
+      }
+      if (wifOpts && wifOpts.middleware) {
+        middleware = wifOpts.middleware
+      }
+
       if (operation.roles && operation.roles.length) {
         keys[operation.roles[0]] = wif; // TODO - Automatically pick a role? Send all?
       }
       return steemBroadcast.send({
+        middleware,
         extensions: [],
         operations: [[operation.operation, Object.assign(
           {},
@@ -132,14 +171,14 @@ operations.forEach((operation) => {
     };
 
   steemBroadcast[operationName] =
-    function steemBroadcast$specializedSend(wif, ...args) {
+    function steemBroadcast$specializedSend(wifOpts, ...args) {
       debug(`Parsing operation "${operationName}" with`, {args});
       const options = operationParams.reduce((memo, param, i) => {
         memo[param] = args[i]; // eslint-disable-line no-param-reassign
         return memo;
       }, {});
       const callback = args[operationParams.length];
-      return steemBroadcast[`${operationName}With`](wif, options, callback);
+      return steemBroadcast[`${operationName}With`](wifOpts, options, callback);
     };
 });
 
