@@ -675,13 +675,17 @@ export function makeDatedGroups(message_objects, condition, wrapper, begin_idx, 
 
     const time_point_min = '1970-01-01T00:00:00';
 
-    let pushResult = (nonces, start_date, stop_date) => {
+    let pushResult = (nonces, msgs, start_date, stop_date) => {
         if (nonces) {
             for (const nonce of nonces) {
+                const msg = msgs[nonce]
+                const { from, to } = msg
                 let wrapped = wrapper({
                     start_date: time_point_min,
                     stop_date: time_point_min,
                     nonce,
+                    from,
+                    to,
                 });
                 if (wrapped) results.push(wrapped);
             }
@@ -699,31 +703,31 @@ export function makeDatedGroups(message_objects, condition, wrapper, begin_idx, 
         if (!group)
             return;
 
-        let { beforeNonces, nonces, afterNonces } = group;
+        let { beforeNonces, nonces, afterNonces, msgs } = group;
 
         if (!nextCreateDate || nextCreateDate !== group.start_date) {
             nonces.push(...afterNonces);
             afterNonces = [];
         }
 
-        pushResult(beforeNonces);
+        pushResult(beforeNonces, msgs);
 
         if (nonces.length > 1) {
             if (!afterNonces.length)
                 group.start_date = fixStartDate(group.start_date);
-            pushResult(null, group.start_date, group.stop_date);
+            pushResult(null, msgs, group.start_date, group.stop_date);
         } else if (nonces[0]) {
-            pushResult([nonces[0]]);
+            pushResult([nonces[0]], msgs);
         }
 
-        pushResult(afterNonces);
+        pushResult(afterNonces, msgs);
 
         group = null;
     };
 
     forEachMessage(message_objects, begin_idx, end_idx, (message_object, i) => {
         const cond = condition(message_object, i);
-        const { create_date, nonce } = message_object;
+        const { create_date, nonce, } = message_object;
         if (cond === -1) {
             return false;
         } else if (cond) {
@@ -733,6 +737,7 @@ export function makeDatedGroups(message_objects, condition, wrapper, begin_idx, 
                     beforeNonces: [],
                     afterNonces: [],
                     nonces: [],
+                    msgs: {},
                 };
             }
 
@@ -751,6 +756,8 @@ export function makeDatedGroups(message_objects, condition, wrapper, begin_idx, 
                 group.afterNonces.push(nonce);
             }
             group.start_date = create_date;
+
+            group.msgs[nonce] = message_object
         } else if (cond === false) {
             pushGroup(create_date);
             before = create_date;

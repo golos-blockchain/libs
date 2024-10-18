@@ -12,7 +12,7 @@ function clear() {
 }
 function add(create_date, cond) {
     create_date = '2021-01-01T' + create_date;
-    messages.push({create_date, cond, nonce: ++nonce});
+    messages.push({create_date, cond, nonce: ++nonce, from: 'alice', to: 'bob'});
 }
 function unprefix(group) {
     const { start_date, stop_date } = group;
@@ -63,7 +63,7 @@ describe('golos.messages_groups: makeDatedGroups()', function() {
         var res = makeDatedGroups(messages, this.condition, this.wrapper);
 
         assert.deepStrictEqual(res, [
-            {nonce: 2, start_date: time_point_min, stop_date: time_point_min},
+            {nonce: 2, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
         ]);
     })
 
@@ -95,7 +95,7 @@ describe('golos.messages_groups: makeDatedGroups()', function() {
 
         assert.deepStrictEqual(res, [
             {nonce: 0, start_date: '00:00:03', stop_date: '00:00:04'},
-            {nonce: 4, start_date: time_point_min, stop_date: time_point_min},
+            {nonce: 4, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
         ]);
     })
 
@@ -109,7 +109,7 @@ describe('golos.messages_groups: makeDatedGroups()', function() {
         var res = makeDatedGroups(messages, this.condition, this.wrapper);
 
         assert.deepStrictEqual(res, [
-            {nonce: 2, start_date: time_point_min, stop_date: time_point_min},
+            {nonce: 2, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
             {nonce: 0, start_date: '00:00:01', stop_date: '00:00:02'},
         ]);
     })
@@ -123,8 +123,8 @@ describe('golos.messages_groups: makeDatedGroups()', function() {
         var res = makeDatedGroups(messages, this.condition, this.wrapper);
 
         assert.deepStrictEqual(res, [
-            {nonce: 1, start_date: time_point_min, stop_date: time_point_min},
-            {nonce: 3, start_date: time_point_min, stop_date: time_point_min},
+            {nonce: 1, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
+            {nonce: 3, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
         ]);
     })
 
@@ -137,8 +137,8 @@ describe('golos.messages_groups: makeDatedGroups()', function() {
         var res = makeDatedGroups(messages, this.condition, this.wrapper);
 
         assert.deepStrictEqual(res, [
-            {nonce: 2, start_date: time_point_min, stop_date: time_point_min},
-            {nonce: 4, start_date: time_point_min, stop_date: time_point_min},
+            {nonce: 2, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
+            {nonce: 4, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
         ]);
     })
 
@@ -154,8 +154,8 @@ describe('golos.messages_groups: makeDatedGroups()', function() {
         var res = makeDatedGroups(messages, this.condition, this.wrapper);
 
         assert.deepStrictEqual(res, [
-            {nonce: 3, start_date: time_point_min, stop_date: time_point_min},
-            {nonce: 4, start_date: time_point_min, stop_date: time_point_min},
+            {nonce: 3, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
+            {nonce: 4, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
             {nonce: 0, start_date: '00:00:01', stop_date: '00:00:03'},
         ]);
     })
@@ -173,8 +173,8 @@ describe('golos.messages_groups: makeDatedGroups()', function() {
 
         assert.deepStrictEqual(res, [
             {nonce: 0, start_date: '00:00:02', stop_date: '00:00:04'},
-            {nonce: 4, start_date: time_point_min, stop_date: time_point_min},
-            {nonce: 5, start_date: time_point_min, stop_date: time_point_min},
+            {nonce: 4, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
+            {nonce: 5, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
         ]);
     })
 
@@ -195,11 +195,11 @@ describe('golos.messages_groups: makeDatedGroups()', function() {
         var res = makeDatedGroups(messages, this.condition, this.wrapper);
 
         assert.deepStrictEqual(res, [
-            {nonce: 3, start_date: time_point_min, stop_date: time_point_min},
-            {nonce: 4, start_date: time_point_min, stop_date: time_point_min},
+            {nonce: 3, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
+            {nonce: 4, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
             {nonce: 0, start_date: '00:00:02', stop_date: '00:00:04'},
-            {nonce: 9, start_date: time_point_min, stop_date: time_point_min},
-            {nonce: 10, start_date: time_point_min, stop_date: time_point_min},
+            {nonce: 9, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
+            {nonce: 10, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
         ]);
     })
 
@@ -217,8 +217,8 @@ describe('golos.messages_groups: makeDatedGroups()', function() {
 
         assert.deepStrictEqual(res, [
             {nonce: 0, start_date: '00:00:04', stop_date: '00:00:05'},
-            {nonce: 3, start_date: time_point_min, stop_date: time_point_min},
-            {nonce: 5, start_date: time_point_min, stop_date: time_point_min},
+            {nonce: 3, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
+            {nonce: 5, start_date: time_point_min, stop_date: time_point_min, from: 'alice', to: 'bob'},
             {nonce: 0, start_date: '00:00:01', stop_date: '00:00:03'},
         ]);
     })
