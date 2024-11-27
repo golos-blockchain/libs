@@ -100,6 +100,7 @@ export const methods_0_25_3 = [
     "get_market_history",
     "get_market_history_buckets",
     "get_market_pairs",
+    "get_exchange",
     "get_recent_trades",
     "get_recovery_info",
     "get_ticker",
@@ -113,6 +114,8 @@ export const methods_0_25_3 = [
     "get_contacts_size",
     "get_contact_info",
     "get_contacts",
+    "get_groups",
+    "get_group_members",
     "setBlockAppliedCallback",
     "setPendingTransactionCallback",
     "setPrivateMessageCallback",
@@ -130,6 +133,8 @@ export const methods_0_25_3 = [
     "get_nft_collections",
     "get_nft_tokens",
     "get_nft_orders",
+    "get_nft_bets",
     "encrypt_body",
-    "decrypt_comments"
+    "decrypt_comments",
+    "decrypt_messages"
 ]

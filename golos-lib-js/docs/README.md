@@ -21,6 +21,7 @@
 - [Golos Messenger](./files/msgs.md)
 - [Платные подписки](./files/paid_subscriptions.md)
 - [NFT](./files/nft.md)
+- [Шифрование платных постов (Cryptor)](./files/cryptor.md)
 - [Утилиты, ускоряющие разработку клиентов](./files/utils)
     - [Валидация имен аккаунтов](./files/utils/validate_account_name.md)
     - [Asset для финансовых расчетов](./files/utils/asset.md)
@@ -52,6 +53,12 @@ golos.api.getAccounts(['ned', 'dan'], (err, response) => {
 });
 </script>
 ```
+
+## Сборка своей golos-lib-js (с загрузкой в npm)
+
+Вы можете собрать свою собственную копию golos-lib-js, чтобы дополнительно проаудировать ее, или, к примеру,  доработать для использования в специфических проектах\задачах.
+
+[См. здесь](./files/build.md).
 
 ## Загрузка модуля WebAssembly
 

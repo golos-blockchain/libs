@@ -421,7 +421,8 @@ module.exports = [
   {
     "api": "database_api",
     "method": "get_accounts",
-    "params": ["accountNames"]
+    "has_default_values": true,
+    "params": ["accountNames", `query=${EMPTY_OBJECT}`]
   },
   {
     "api": "database_api",
@@ -662,6 +663,11 @@ module.exports = [
     "params": ["query"]
   },
   {
+    "api": "exchange",
+    "method": "get_exchange",
+    "params": ["query"]
+  },
+  {
     "api": "private_message",
     "method": "get_inbox",
     "params": ["to", "query"]
@@ -674,7 +680,12 @@ module.exports = [
   {
     "api": "private_message",
     "method": "get_thread",
-    "params": ["from", "to", "query"]
+    "has_default_values": true,
+    "params": [
+      "from_or_query",
+      `to=${EMPTY_STRING}`,
+      `opts=${EMPTY_OBJECT}`,
+    ]
   },
   {
     "api": "private_message",
@@ -690,12 +701,32 @@ module.exports = [
   {
     "api": "private_message",
     "method": "get_contact_info",
-    "params": ["owner", "contact"]
+    "has_default_values": true,
+    "params": [
+      "owner_or_query",
+      `contact=${EMPTY_STRING}`,
+    ]
   },
   {
     "api": "private_message",
     "method": "get_contacts",
-    "params": ["owner", "type", "limit", "offset"]
+    "has_default_values": true,
+    "params": [
+      "owner_or_query",
+      `type="unknown"`,
+      `limit=20`,
+      `offset=0`,
+    ]
+  },
+  {
+    "api": "private_message",
+    "method": "get_groups",
+    "params": ["query"]
+  },
+  {
+    "api": "private_message",
+    "method": "get_group_members",
+    "params": ["query"]
   },
   {
     "api": "worker_api",
@@ -764,6 +795,11 @@ module.exports = [
     "params": ["query={}"]
   },
   {
+    "api": "nft_api",
+    "method": "get_nft_bets",
+    "params": ["query={}"]
+  },
+  {
     "api": "cryptor",
     "method": "encrypt_body",
     "params": ["query={}"]
@@ -771,6 +807,11 @@ module.exports = [
   {
     "api": "cryptor",
     "method": "decrypt_comments",
+    "params": ["query={}"]
+  },
+  {
+    "api": "cryptor",
+    "method": "decrypt_messages",
     "params": ["query={}"]
   },
 ]

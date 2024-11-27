@@ -1,15 +1,16 @@
 {
   "name": "golos-lib-js",
-  "version": "0.9.64",
+  "version": "0.9.76",
   "description": "Golos-js the JavaScript library with API for GOLOS blockchain",
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha -t 20000 --recursive --require @babel/register",
     "test-auth": "npm test -- --grep 'golos.auth'",
     "test-messages": "npm test -- --watch --grep 'golos.messages'",
-    "build": "node ./include_core.js && npm run build-browser && npm run build-node",
+    "build": "node ./include_core.js && npm run build-browser && npm run build-node && npm run check-integrity",
     "build-browser": "rm -rf dist && NODE_ENV=production webpack && gzip -k -f ./dist/*.js && du -h ./dist/*",
     "build-node": "mkdir -p ./lib && cp -r ./src/* ./lib/ && babel ./src --out-dir ./lib",
+    "check-integrity": "node check_integrity.js",
     "disable-test-prepublish": "npm run test && npm run build"
   },
   "browser": {
@@ -64,6 +65,7 @@
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.1.0",
+    "folder-hash": "^4.0.4",
     "json-loader": "^0.5.4",
     "mocha": "^9.1.1",
     "mocha-make-stub": "^2.3.2",
