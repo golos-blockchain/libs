@@ -668,6 +668,11 @@ module.exports = [
     "params": ["query"]
   },
   {
+    "api": "exchange",
+    "method": "get_exchange_path",
+    "params": ["query"]
+  },
+  {
     "api": "private_message",
     "method": "get_inbox",
     "params": ["to", "query"]
