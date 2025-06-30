@@ -22,7 +22,7 @@ class Libs {
 
     remove = (libOrName) => {
         const { rootObj } = this
-        const libName = libOrName
+        let libName = libOrName
         if (!libName.split) {
             libName = libName.libName
             if (!libName) throw new Error('Lib should have field libName')
