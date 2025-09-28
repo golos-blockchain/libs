@@ -1,6 +1,6 @@
 {
   "name": "golos-lib-js",
-  "version": "0.9.79",
+  "version": "0.9.80",
   "description": "Golos-js the JavaScript library with API for GOLOS blockchain",
   "main": "lib/index.js",
   "scripts": {
@@ -57,10 +57,10 @@
     "ws": "^8.18.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.27.0",
-    "@babel/core": "^7.26.10",
-    "@babel/preset-env": "^7.26.9",
-    "@babel/register": "^7.25.9",
+    "@babel/cli": "^7.28.3",
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/register": "^7.28.3",
     "babel-loader": "^10.0.0",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
