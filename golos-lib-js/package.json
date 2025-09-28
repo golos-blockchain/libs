@@ -65,7 +65,7 @@
     "chai-as-promised": "^7.1.1",
     "cross-env": "^10.0.0",
     "eslint": "^8.1.0",
-    "folder-hash": "^4.0.4",
+    "folder-hash": "^4.1.1",
     "json-loader": "^0.5.4",
     "mocha": "^11.7.2",
     "mocha-make-stub": "^2.3.2",
