@@ -1,6 +1,6 @@
 {
   "name": "golos-lib-js",
-  "version": "0.9.80",
+  "version": "0.9.81",
   "description": "Golos-js the JavaScript library with API for GOLOS blockchain",
   "main": "lib/index.js",
   "scripts": {
@@ -48,6 +48,7 @@
     "debug": "^2.6.8",
     "detect-node": "^2.0.3",
     "ecurve": "^1.0.5",
+    "events": "^3.3.0",
     "lodash": "^4.17.21",
     "process": "^0.11.10",
     "regenerator-runtime": "^0.14.1",
