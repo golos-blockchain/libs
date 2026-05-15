@@ -34,7 +34,8 @@ export default class WsTransport extends Transport {
       return this.startP;
     }
 
-    const startP = new Promise((resolve, reject) => {
+    let startP
+    startP = new Promise((resolve, reject) => {
       if (startP !== this.startP) return;
       const url = this.getURL();
       this.ws = new WebSocket(url);

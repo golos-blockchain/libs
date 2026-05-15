@@ -62,6 +62,7 @@ function makeConfig(options) {
     resolve: {
       fallback: {
         assert: require.resolve('assert'),
+        events: require.resolve('events'),
         stream: require.resolve('stream-browserify'),
       }
     },

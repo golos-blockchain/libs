@@ -1,5 +1,5 @@
 var bigi = require('bigi'),
-    bs58 = require('bs58'),
+    bs58 = require('bs58').default,
     ecurve = require('ecurve'),
     Point = ecurve.Point,
     secp256k1 = ecurve.getCurveByName('secp256k1'),
